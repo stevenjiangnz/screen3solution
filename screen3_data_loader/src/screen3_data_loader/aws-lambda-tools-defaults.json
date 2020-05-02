@@ -5,11 +5,12 @@
     "dotnet lambda help",
     "All the command line options for the Lambda command can be specified in this file."
   ],
-  "profile": "",
-  "region": "",
+  "profile": "default",
+  "region": "ap-southeast-2",
   "configuration": "Release",
   "framework": "netcoreapp3.1",
-  "s3-prefix": "DebuggingExample/",
-  "template": "serverless.template",
-  "template-parameters": ""
+  "function-runtime": "dotnetcore3.1",
+  "function-memory-size": 256,
+  "function-timeout": 30,
+  "function-handler": "screen3_data_loader::screen3_data_loader.Function::FunctionHandler"
 }
