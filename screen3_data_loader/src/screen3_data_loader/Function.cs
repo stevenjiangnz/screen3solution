@@ -21,7 +21,8 @@ namespace screen3_data_loader
         /// <returns></returns>
         public string FunctionHandler(string input, ILambdaContext context)
         {
-            return input?.ToUpper();
+            String s3Path = Environment.GetEnvironmentVariable("SCREEN3_S3_SOURCE_FILE_PATH");
+            return input?.ToUpper() + " s3 path:   " + s3Path;
         }
     }
 }
