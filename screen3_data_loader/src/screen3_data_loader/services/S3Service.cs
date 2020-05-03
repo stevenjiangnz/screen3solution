@@ -1,10 +1,13 @@
 using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
+using Amazon.Lambda.Core;
 using System;
 using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace screen3_data_loader.services
 {
@@ -16,14 +19,65 @@ namespace screen3_data_loader.services
         private static readonly RegionEndpoint bucketRegion = RegionEndpoint.APSoutheast2;
         private static IAmazonS3 client;
 
-        public async Task<String> Connect()
+        public S3Service()
         {
             client = new AmazonS3Client(bucketRegion);
+        }
+        public async Task<String> Connect()
+        {
             var result = await this.ReadObjectDataAsync();
             return result;
         }
 
+        public async Task<Boolean> DownloadFileFromS3(string bucketName, string key, string targetPath)
+        {
+            Boolean isSuccess = false;
 
+            try
+            {
+                GetObjectRequest request = new GetObjectRequest
+                {
+                    BucketName = bucketName,
+                    Key = keyName
+                };
+                String path = tempFolder + keyName;
+
+                if (!Directory.Exists(tempFolder))
+                {
+                    Directory.CreateDirectory(tempFolder);
+                }
+
+                using (GetObjectResponse response = await client.GetObjectAsync(request))
+                using (Stream responseStream = response.ResponseStream)
+                using (FileStream fs = new FileStream(path, FileMode.OpenOrCreate))
+                {
+                    this.CopyStream(responseStream, fs);
+                    fs.Flush();
+
+                }
+
+                FileInfo fi = new FileInfo(path);
+
+                Console.WriteLine($"File info fullname: {fi.FullName}  size: {fi.Length}");
+
+                ZipFile.ExtractToDirectory(path, tempFolder + "/extractedFiles/");
+
+                this.DirSearch(tempFolder + "/extractedFiles/");
+
+            }
+            catch (AmazonS3Exception e)
+            {
+                Console.WriteLine("Error encountered ***. Message:'{0}' when writing an object", e.Message);
+                isSuccess = false;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unknown encountered on server. Message:'{0}' when writing an object", e.Message);
+                isSuccess = false;
+            }
+
+            return isSuccess;
+        }
         public async Task<String> ReadObjectDataAsync()
         {
             string responseBody = "";
@@ -102,5 +156,48 @@ namespace screen3_data_loader.services
                 dest.Write(buffer, 0, len);
             }
         }
+
+        public async Task<List<S3Object>> ListingObjectsAsync(String bucketName, String prefix)
+        {
+            List<S3Object> fileList = new List<S3Object>();
+            try
+            {
+                ListObjectsV2Request request = new ListObjectsV2Request
+                {
+                    BucketName = bucketName,
+                    MaxKeys = 10
+                };
+
+                if (!String.IsNullOrEmpty(prefix))
+                {
+                    request.Prefix = prefix;
+                }
+
+                ListObjectsV2Response response;
+                do
+                {
+                    response = await client.ListObjectsV2Async(request);
+
+                    // Console.WriteLine("length: ", response.S3Objects.Count);
+                    // Process the response.
+                    foreach (S3Object entry in response.S3Objects)
+                    {
+                        fileList.Add(entry);
+                    }
+                    request.ContinuationToken = response.NextContinuationToken;
+                } while (response.IsTruncated);
+            }
+            catch (AmazonS3Exception amazonS3Exception)
+            {
+                LambdaLogger.Log("S3 error occurred. Exception: " + amazonS3Exception.ToString());
+            }
+            catch (Exception e)
+            {
+                LambdaLogger.Log("Exception: " + e.ToString());
+            }
+
+            return fileList;
+        }
     }
+
 }
