@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Xunit;
-using screen3_data_loader;
+using screen3_data_loader.services;
 
-namespace screen3_data_loader.Tests
+namespace screen3_data_loader.services.Tests
 {
     public class S3ServiceTest
     {

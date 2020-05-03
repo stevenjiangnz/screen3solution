@@ -6,7 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
 
-namespace screen3_data_loader
+namespace screen3_data_loader.services
 {
     public class S3Service
     {

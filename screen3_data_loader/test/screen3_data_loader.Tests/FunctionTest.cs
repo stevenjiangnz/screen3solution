@@ -7,9 +7,9 @@ using Xunit;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.TestUtilities;
 
-using screen3_data_loader;
+using screen3_data_loader.services;
 
-namespace screen3_data_loader.Tests
+namespace screen3_data_loader.services.Tests
 {
     public class FunctionTest
     {
