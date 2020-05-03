@@ -19,10 +19,16 @@ namespace screen3_data_loader
         /// <param name="input"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public string FunctionHandler(string input, ILambdaContext context)
+        public async Task<string> FunctionHandler(string input, ILambdaContext context)
         {
             String s3Path = Environment.GetEnvironmentVariable("SCREEN3_S3_SOURCE_FILE_PATH");
-            return input?.ToUpper() + " s3 path:   " + s3Path;
+
+            
+            var s3Client = new S3Service();
+
+            var result = await s3Client.Connect();
+
+            return input?.ToUpper() + " s3 path:   " + result;
         }
     }
 }
