@@ -1,0 +1,10 @@
+{
+  "name": "screen3_data_loader",
+  "version": "1.0.0",
+  "description": "This starter project consists of: * Function.cs - class file containing a class with a single function handler method * aws-lambda-tools-defaults.json - default argument settings for use with Visual Studio and command line deployment tools for AWS",
+  "scripts": {
+    "deploy": "dotnet lambda deploy-function Screen3_Data_Loader_Func"
+  },
+  "author": "Steven Jiang",
+  "license": "ISC"
+}
