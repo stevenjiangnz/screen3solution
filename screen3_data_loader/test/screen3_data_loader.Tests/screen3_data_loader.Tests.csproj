@@ -11,5 +11,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\screen3_data_loader\screen3_data_loader.csproj" />
+    <ProjectReference Include="..\..\..\Screen3.S3Service\Screen3.S3Service.csproj" />
   </ItemGroup>
 </Project>

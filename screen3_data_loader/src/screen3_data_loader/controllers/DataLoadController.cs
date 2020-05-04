@@ -8,7 +8,7 @@ using Amazon.Lambda.Core;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Newtonsoft.Json;
-using screen3_data_loader.services;
+using Screen3.S3Service;
 using screen3_data_loader.utils;
 
 namespace screen3_data_loader.controllers
