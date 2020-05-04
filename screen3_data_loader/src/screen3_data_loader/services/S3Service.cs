@@ -8,28 +8,28 @@ using System.IO.Compression;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using screen3_data_loader.utils;
 
 namespace screen3_data_loader.services
 {
     public class S3Service
     {
-        private const string bucketName = "stevenjiangnz-screen3-eod-source";
-        private const string keyName = "1997-2006.zip";
-        private const string tempFolder = "/tmp/screen3_temp_files/";
         private static readonly RegionEndpoint bucketRegion = RegionEndpoint.APSoutheast2;
         private static IAmazonS3 client;
-
+        private string tempFolder = Environment.GetEnvironmentVariable("SCREEN3_TEMP_FOLDER");
+  
         public S3Service()
         {
             client = new AmazonS3Client(bucketRegion);
-        }
-        public async Task<String> Connect()
-        {
-            var result = await this.ReadObjectDataAsync();
-            return result;
+
+            if (!Directory.Exists(tempFolder))
+            {
+                Directory.CreateDirectory(tempFolder);
+            }
+
         }
 
-        public async Task<Boolean> DownloadFileFromS3(string bucketName, string key, string targetPath)
+        public async Task<Boolean> DownloadFileFromS3Async(string bucketName, string keyName, string targetPath)
         {
             Boolean isSuccess = false;
 
@@ -40,12 +40,15 @@ namespace screen3_data_loader.services
                     BucketName = bucketName,
                     Key = keyName
                 };
-                String path = tempFolder + keyName;
 
-                if (!Directory.Exists(tempFolder))
+                string fileName = S3Helper.GetFileNameFromKey(keyName);
+
+                if (!Directory.Exists(targetPath))
                 {
-                    Directory.CreateDirectory(tempFolder);
+                    Directory.CreateDirectory(targetPath);
                 }
+
+                String path = targetPath + fileName;
 
                 using (GetObjectResponse response = await client.GetObjectAsync(request))
                 using (Stream responseStream = response.ResponseStream)
@@ -53,16 +56,9 @@ namespace screen3_data_loader.services
                 {
                     this.CopyStream(responseStream, fs);
                     fs.Flush();
-
                 }
 
-                FileInfo fi = new FileInfo(path);
-
-                Console.WriteLine($"File info fullname: {fi.FullName}  size: {fi.Length}");
-
-                ZipFile.ExtractToDirectory(path, tempFolder + "/extractedFiles/");
-
-                this.DirSearch(tempFolder + "/extractedFiles/");
+                isSuccess = true;
 
             }
             catch (AmazonS3Exception e)
@@ -78,55 +74,56 @@ namespace screen3_data_loader.services
 
             return isSuccess;
         }
-        public async Task<String> ReadObjectDataAsync()
-        {
-            string responseBody = "";
-            try
-            {
-                GetObjectRequest request = new GetObjectRequest
-                {
-                    BucketName = bucketName,
-                    Key = keyName
-                };
-                String path = tempFolder + keyName;
+        // public async Task<String> ReadObjectDataAsync()
+        // {
+        //     string tempFolder = this.tempFolder;
+        //     string responseBody = "";
+        //     try
+        //     {
+        //         GetObjectRequest request = new GetObjectRequest
+        //         {
+        //             BucketName = "bucketName",
+        //             Key = "keyName"
+        //         };
+        //         String path = tempFolder + "keyName";
 
-                if (!Directory.Exists(tempFolder))
-                {
-                    Directory.CreateDirectory(tempFolder);
-                }
+        //         if (!Directory.Exists(tempFolder))
+        //         {
+        //             Directory.CreateDirectory(tempFolder);
+        //         }
 
-                using (GetObjectResponse response = await client.GetObjectAsync(request))
-                using (Stream responseStream = response.ResponseStream)
-                using (FileStream fs = new FileStream(path, FileMode.OpenOrCreate))
-                {
-                    this.CopyStream(responseStream, fs);
-                    fs.Flush();
+        //         using (GetObjectResponse response = await client.GetObjectAsync(request))
+        //         using (Stream responseStream = response.ResponseStream)
+        //         using (FileStream fs = new FileStream(path, FileMode.OpenOrCreate))
+        //         {
+        //             this.CopyStream(responseStream, fs);
+        //             fs.Flush();
 
-                }
+        //         }
 
-                FileInfo fi = new FileInfo(path);
+        //         FileInfo fi = new FileInfo(path);
 
-                Console.WriteLine($"File info fullname: {fi.FullName}  size: {fi.Length}");
+        //         Console.WriteLine($"File info fullname: {fi.FullName}  size: {fi.Length}");
 
-                ZipFile.ExtractToDirectory(path, tempFolder + "/extractedFiles/");
+        //         ZipFile.ExtractToDirectory(path, tempFolder + "/extractedFiles/");
 
-                this.DirSearch(tempFolder + "/extractedFiles/");
+        //         this.DirSearch(tempFolder + "/extractedFiles/");
 
 
-                return responseBody;
+        //         return responseBody;
 
-            }
-            catch (AmazonS3Exception e)
-            {
-                Console.WriteLine("Error encountered ***. Message:'{0}' when writing an object", e.Message);
-                return null;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Unknown encountered on server. Message:'{0}' when writing an object", e.Message);
-                return null;
-            }
-        }
+        //     }
+        //     catch (AmazonS3Exception e)
+        //     {
+        //         Console.WriteLine("Error encountered ***. Message:'{0}' when writing an object", e.Message);
+        //         return null;
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         Console.WriteLine("Unknown encountered on server. Message:'{0}' when writing an object", e.Message);
+        //         return null;
+        //     }
+        // }
 
         public void DirSearch(string sDir)
         {
@@ -178,8 +175,6 @@ namespace screen3_data_loader.services
                 {
                     response = await client.ListObjectsV2Async(request);
 
-                    // Console.WriteLine("length: ", response.S3Objects.Count);
-                    // Process the response.
                     foreach (S3Object entry in response.S3Objects)
                     {
                         fileList.Add(entry);

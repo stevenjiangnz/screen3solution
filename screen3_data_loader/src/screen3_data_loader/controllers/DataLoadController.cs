@@ -23,8 +23,6 @@ namespace screen3_data_loader.controllers
 
             List<S3Object> fileList = await this.GetSourceFileListAsync(this.S3_Bucket_Name, "source");
 
-            LambdaLogger.Log("About to start data loading process..." + S3_Bucket_Name);
-
             return result;
         }
 
@@ -32,7 +30,9 @@ namespace screen3_data_loader.controllers
             S3Service service = new S3Service();
             List<S3Object> fileList = await service.ListingObjectsAsync(bucketName, path);
 
-            Console.WriteLine("return item count: " + fileList.Count);
+            string json = JsonConvert.SerializeObject(fileList, Formatting.Indented);
+            Console.WriteLine(json);
+            
             return fileList;
         }
 
