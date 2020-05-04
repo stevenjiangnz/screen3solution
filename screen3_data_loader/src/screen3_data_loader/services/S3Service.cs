@@ -21,17 +21,14 @@ namespace screen3_data_loader.services
         public S3Service()
         {
             client = new AmazonS3Client(bucketRegion);
-
-            if (!Directory.Exists(tempFolder))
-            {
-                Directory.CreateDirectory(tempFolder);
-            }
+            // Create folder
+            Directory.CreateDirectory(tempFolder);
 
         }
 
-        public async Task<Boolean> DownloadFileFromS3Async(string bucketName, string keyName, string targetPath)
+        public async Task<String> DownloadFileFromS3Async(string bucketName, string keyName, string targetPath)
         {
-            Boolean isSuccess = false;
+            String downloadedFile = String.Empty;
 
             try
             {
@@ -56,23 +53,21 @@ namespace screen3_data_loader.services
                 {
                     this.CopyStream(responseStream, fs);
                     fs.Flush();
-                }
 
-                isSuccess = true;
+                    downloadedFile = path;
+                }
 
             }
             catch (AmazonS3Exception e)
             {
                 Console.WriteLine("Error encountered ***. Message:'{0}' when writing an object", e.Message);
-                isSuccess = false;
             }
             catch (Exception e)
             {
                 Console.WriteLine("Unknown encountered on server. Message:'{0}' when writing an object", e.Message);
-                isSuccess = false;
             }
 
-            return isSuccess;
+            return downloadedFile;
         }
         // public async Task<String> ReadObjectDataAsync()
         // {

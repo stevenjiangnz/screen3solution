@@ -9,6 +9,7 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using Newtonsoft.Json;
 using screen3_data_loader.services;
+using screen3_data_loader.utils;
 
 namespace screen3_data_loader.controllers
 {
@@ -32,11 +33,29 @@ namespace screen3_data_loader.controllers
 
             foreach (var fileInfo in fileList) {
                 if (fileInfo.Size > 0) {
-                    await this.DownloadFileAsync(fileInfo.BucketName, fileInfo.Key, this.Temp_Folder + "extractedFiles/");
+                    String resultFileName = await this.DownloadFileAsync(fileInfo.BucketName, fileInfo.Key, this.Temp_Folder + "originSourceFiles/");
+
+                    Console.WriteLine("result file name:" + resultFileName);
                 }
             }
 
             return result;
+        }
+
+        public List<String>  ExtractIntoDayData(string fileName, string targetPath) {
+            List<String> resultFileList = new List<String>();
+
+            S3Helper.ClearDirectory(targetPath, true);
+
+            ZipFile.ExtractToDirectory(fileName, targetPath);
+
+            var result = S3Helper.DirSearch(targetPath);
+
+            // string json = JsonConvert.SerializeObject(result, Formatting.Indented);
+            // Console.WriteLine(json);
+
+            return resultFileList;
+
         }
 
         public async Task<List<S3Object>> GetSourceFileListAsync(string bucketName, string path)
@@ -46,18 +65,17 @@ namespace screen3_data_loader.controllers
 
             // string json = JsonConvert.SerializeObject(fileList, Formatting.Indented);
             // Console.WriteLine(json);
-
             return fileList;
         }
 
-        public async Task<Boolean> DownloadFileAsync(string bucketName, string keyName, string tempFolder)
+        public async Task<String> DownloadFileAsync(string bucketName, string keyName, string tempFolder)
         {
             LambdaLogger.Log($"In DownloadFileAsync. bucketName: {bucketName}, keyName: {keyName}, tempFolder: {tempFolder}\n");
             S3Service service = new S3Service();
 
-            Boolean isSuccess = await service.DownloadFileFromS3Async(bucketName, keyName, tempFolder);
+            String resultFileName = await service.DownloadFileFromS3Async(bucketName, keyName, tempFolder);
 
-            return isSuccess;
+            return resultFileName;
         }
 
     }
