@@ -14,12 +14,11 @@ namespace screen3_data_loader.controllers.Tests
     public class DataLoadControllerTest
     {
         [Fact]
-        public void TestStartProcess()
+        public void TestStartProcessAsync()
         {
             DataLoadController controller = new DataLoadController();
 
             controller.StartProcessAsync().Wait();
-            // Assert.Equal("HELLO WORLD", upperCase);
         }
 
 

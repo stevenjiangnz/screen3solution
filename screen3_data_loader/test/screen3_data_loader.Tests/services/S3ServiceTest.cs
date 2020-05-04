@@ -11,13 +11,6 @@ namespace screen3_data_loader.services.Tests
     public class S3ServiceTest
     {
         [Fact]
-        public void TestToConnect()
-        {
-            var client = new S3Service();
-            client.Connect().Wait();
-        }
-
-        [Fact]
         public void TestListObjectsAsync()
         {
             var client = new S3Service();

@@ -22,7 +22,7 @@ namespace screen3_data_loader
         /// <returns></returns>
         public async Task<string> FunctionHandler(string input, ILambdaContext context)
         {
-            LambdaLogger.Log("About to start data loading process...");
+            LambdaLogger.Log("About to start data loading process...\n");
 
             DataLoadController controller = new DataLoadController();
             
