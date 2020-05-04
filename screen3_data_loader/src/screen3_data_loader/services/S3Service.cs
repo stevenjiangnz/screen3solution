@@ -16,14 +16,10 @@ namespace screen3_data_loader.services
     {
         private static readonly RegionEndpoint bucketRegion = RegionEndpoint.APSoutheast2;
         private static IAmazonS3 client;
-        private string tempFolder = Environment.GetEnvironmentVariable("SCREEN3_TEMP_FOLDER");
-  
+
         public S3Service()
         {
             client = new AmazonS3Client(bucketRegion);
-            // Create folder
-            Directory.CreateDirectory(tempFolder);
-
         }
 
         public async Task<String> DownloadFileFromS3Async(string bucketName, string keyName, string targetPath)
@@ -69,75 +65,7 @@ namespace screen3_data_loader.services
 
             return downloadedFile;
         }
-        // public async Task<String> ReadObjectDataAsync()
-        // {
-        //     string tempFolder = this.tempFolder;
-        //     string responseBody = "";
-        //     try
-        //     {
-        //         GetObjectRequest request = new GetObjectRequest
-        //         {
-        //             BucketName = "bucketName",
-        //             Key = "keyName"
-        //         };
-        //         String path = tempFolder + "keyName";
 
-        //         if (!Directory.Exists(tempFolder))
-        //         {
-        //             Directory.CreateDirectory(tempFolder);
-        //         }
-
-        //         using (GetObjectResponse response = await client.GetObjectAsync(request))
-        //         using (Stream responseStream = response.ResponseStream)
-        //         using (FileStream fs = new FileStream(path, FileMode.OpenOrCreate))
-        //         {
-        //             this.CopyStream(responseStream, fs);
-        //             fs.Flush();
-
-        //         }
-
-        //         FileInfo fi = new FileInfo(path);
-
-        //         Console.WriteLine($"File info fullname: {fi.FullName}  size: {fi.Length}");
-
-        //         ZipFile.ExtractToDirectory(path, tempFolder + "/extractedFiles/");
-
-        //         this.DirSearch(tempFolder + "/extractedFiles/");
-
-
-        //         return responseBody;
-
-        //     }
-        //     catch (AmazonS3Exception e)
-        //     {
-        //         Console.WriteLine("Error encountered ***. Message:'{0}' when writing an object", e.Message);
-        //         return null;
-        //     }
-        //     catch (Exception e)
-        //     {
-        //         Console.WriteLine("Unknown encountered on server. Message:'{0}' when writing an object", e.Message);
-        //         return null;
-        //     }
-        // }
-
-        public void DirSearch(string sDir)
-        {
-            try
-            {
-                foreach (string d in Directory.GetDirectories(sDir))
-                {
-                    foreach (string f in Directory.GetFiles(d))
-                    {
-                        Console.WriteLine(f);
-                    }
-                    DirSearch(d);
-                }
-            }
-            catch (System.Exception excpt)
-            {
-                Console.WriteLine(excpt.Message);
-            }
-        }
         private void CopyStream(Stream src, Stream dest)
         {
             int _bufferSize = 4096;
