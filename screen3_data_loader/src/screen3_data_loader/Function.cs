@@ -27,16 +27,20 @@ namespace screen3_data_loader
             string actions = Environment.GetEnvironmentVariable("SCREEN3_DATA_LOAD_ACTIONS").ToUpper();
 
             if (actions.IndexOf("STOCK") >= 0) {
-                LambdaLogger.Log("About to load stock into dynamoDB");
+                LambdaLogger.Log("About to load stock into dynamoDB.\n");
 
                 StockLoadController stockController  = new StockLoadController();
                 await stockController.LoadAsx300Async();
             }
-            // DataLoadController controller = new DataLoadController();
-            
-            // await controller.StartProcessAsync();
 
-            return "Data Loading process finished.";
+            if (actions.IndexOf("HISTORY") >= 0) {
+                LambdaLogger.Log("About to load stock stock history.\n");
+
+                DataLoadController controller = new DataLoadController();
+                await controller.StartProcessAsync();
+            }
+
+            return "Data Loading process finished.\n";
         }
     }
 }

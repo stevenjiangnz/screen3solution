@@ -22,8 +22,6 @@ namespace screen3_data_loader.controllers
         private string Temp_Folder;
         private S3Service s3service;
         private StockServiceDAL dal;
-    
-
         public StockLoadController()
         {
             this.S3_Bucket_Name = Environment.GetEnvironmentVariable("SCREEN3_S3_BUCKET");
