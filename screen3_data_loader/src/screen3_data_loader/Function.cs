@@ -24,9 +24,17 @@ namespace screen3_data_loader
         {
             LambdaLogger.Log("About to start data loading process...\n");
 
-            DataLoadController controller = new DataLoadController();
+            string actions = Environment.GetEnvironmentVariable("SCREEN3_DATA_LOAD_ACTIONS").ToUpper();
+
+            if (actions.IndexOf("STOCK") >= 0) {
+                LambdaLogger.Log("About to load stock into dynamoDB");
+
+                StockLoadController stockController  = new StockLoadController();
+                await stockController.LoadAsx300Async();
+            }
+            // DataLoadController controller = new DataLoadController();
             
-            await controller.StartProcessAsync();
+            // await controller.StartProcessAsync();
 
             return "Data Loading process finished.";
         }

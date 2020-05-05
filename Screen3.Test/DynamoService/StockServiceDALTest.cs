@@ -33,5 +33,23 @@ namespace Screen3.Test.DynamoService
             Console.WriteLine("list count: " +  stocklist.Count);
         }
 
+        [Fact]
+        public async void TestDelete()
+        {
+            StockServiceDAL service = new StockServiceDAL(this.tableName);
+
+            await service.Delete("SUN");
+
+        }
+
+        [Fact]
+        public async void TestGetItem()
+        {
+            StockServiceDAL service = new StockServiceDAL(this.tableName);
+
+            var stock = await service.GetItem("CCL");
+
+            Console.WriteLine("code : " +  stock.Code + " " + stock.Company);
+        }
     }
 }
