@@ -7,10 +7,11 @@ namespace Screen3.Test.DynamoService
 {
     public class StockServiceDALTest
     {
+        private string tableName = "stevenjiangnz-screen3-asx300";
         [Fact]
         public void TestInsertNewStock()
         {
-            StockServiceDAL service = new StockServiceDAL("stevenjiangnz-screen3-db");
+            StockServiceDAL service = new StockServiceDAL(this.tableName);
 
             StockEntity stock = new StockEntity{
                 Code = "sun",
@@ -21,5 +22,16 @@ namespace Screen3.Test.DynamoService
             };
             service.InsertNewStock(stock).Wait();
         }
+
+        [Fact]
+        public async void TestGetAll()
+        {
+            StockServiceDAL service = new StockServiceDAL(this.tableName);
+
+            var stocklist = await service.GetAll();
+
+            Console.WriteLine("list count: " +  stocklist.Count);
+        }
+
     }
 }

@@ -10,6 +10,8 @@ using Amazon.S3.Model;
 using Newtonsoft.Json;
 using Screen3.S3Service;
 using Screen3.Entity;
+using Screen3.DynamoService;
+
 using CsvHelper;
 
 namespace screen3_data_loader.controllers
@@ -19,12 +21,16 @@ namespace screen3_data_loader.controllers
         private string S3_Bucket_Name;
         private string Temp_Folder;
         private S3Service s3service;
+        private StockServiceDAL dal;
+    
 
         public StockLoadController()
         {
             this.S3_Bucket_Name = Environment.GetEnvironmentVariable("SCREEN3_S3_BUCKET");
             this.Temp_Folder = Environment.GetEnvironmentVariable("SCREEN3_TEMP_FOLDER");
             this.s3service = new S3Service();
+            string asx300TableName = Environment.GetEnvironmentVariable("SCREEN3_ASX300_TABLE_NAME");
+            this.dal = new StockServiceDAL(asx300TableName);
         }
 
         public async Task LoadAsx300Async()
@@ -33,8 +39,9 @@ namespace screen3_data_loader.controllers
 
             var stockList = this.LoadStockFromCSV(resultPath);
 
-            // string json = JsonConvert.SerializeObject(stockList, Formatting.Indented);
-            // Console.WriteLine(json);
+            foreach(var s in stockList) {
+                await this.dal.InsertNewStock(s);
+            }
         }
 
         public List<StockEntity> LoadStockFromCSV(string path)
