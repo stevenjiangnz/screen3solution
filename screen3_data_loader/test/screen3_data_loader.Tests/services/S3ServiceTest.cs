@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Xunit;
-using screen3_data_loader.services;
+using Screen3.S3Service;
 
 namespace screen3_data_loader.services.Tests
 {
@@ -24,7 +24,7 @@ namespace screen3_data_loader.services.Tests
         {
             var client = new S3Service();
             String bucketName = Environment.GetEnvironmentVariable("SCREEN3_S3_BUCKET");
-            string targetFolder = "/tmp/screen3_temp_files/extractedFiles/";
+            string targetFolder = "/tmp/screen3_temp_files/originSourceFiles/";
 
             client.DownloadFileFromS3Async(bucketName, "source/1997-2006.zip", targetFolder).Wait();
         }
