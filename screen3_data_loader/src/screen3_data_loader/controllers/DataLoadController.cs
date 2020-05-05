@@ -3,13 +3,13 @@ using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-
 using Amazon.Lambda.Core;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Newtonsoft.Json;
 using Screen3.S3Service;
 using screen3_data_loader.utils;
+using Screen3.Utils;
 
 namespace screen3_data_loader.controllers
 {
@@ -30,11 +30,17 @@ namespace screen3_data_loader.controllers
 
             List<S3Object> fileList = await this.GetSourceFileListAsync(this.S3_Bucket_Name, "source");
 
+            LambdaLogger.Log($"found files in the source folder, {ObjectHelper.ToJson(fileList)}\n");
+
             foreach (var fileInfo in fileList) {
                 if (fileInfo.Size > 0) {
+                    LambdaLogger.Log($"About to download file, {fileInfo.Key}\n");
                     String resultFileName = await this.DownloadFileAsync(fileInfo.BucketName, fileInfo.Key, this.Temp_Folder + "originSourceFiles/");
 
-                    Console.WriteLine("result file name:" + resultFileName);
+                    string dailyTargetFolder = this.Temp_Folder + $"originExtractedFiles/{fileInfo.Key}/";
+                    LambdaLogger.Log($"Download file, {fileInfo.Key}, about to extract to {dailyTargetFolder}.\n");
+                    var dailyFileList = this.ExtractIntoDayData(resultFileName, dailyTargetFolder);
+                    LambdaLogger.Log($"Extracted files done. {ObjectHelper.ToJson(dailyFileList)}\n");
                 }
             }
 
@@ -48,10 +54,7 @@ namespace screen3_data_loader.controllers
 
             ZipFile.ExtractToDirectory(fileName, targetPath);
 
-            var result = S3Helper.DirSearch(targetPath);
-
-            // string json = JsonConvert.SerializeObject(result, Formatting.Indented);
-            // Console.WriteLine(json);
+            resultFileList = S3Helper.DirSearch(targetPath);
 
             return resultFileList;
 
@@ -62,14 +65,12 @@ namespace screen3_data_loader.controllers
             S3Service service = new S3Service();
             List<S3Object> fileList = await service.ListingObjectsAsync(bucketName, path);
 
-            // string json = JsonConvert.SerializeObject(fileList, Formatting.Indented);
-            // Console.WriteLine(json);
             return fileList;
         }
 
         public async Task<String> DownloadFileAsync(string bucketName, string keyName, string tempFolder)
         {
-            LambdaLogger.Log($"In DownloadFileAsync. bucketName: {bucketName}, keyName: {keyName}, tempFolder: {tempFolder}\n");
+            LambdaLogger.Log($"In DownloadFileAsync. bucketName: {bucketName}, keyName: {keyName}, tempFolder: {tempFolder}.\n");
             S3Service service = new S3Service();
 
             String resultFileName = await service.DownloadFileFromS3Async(bucketName, keyName, tempFolder);

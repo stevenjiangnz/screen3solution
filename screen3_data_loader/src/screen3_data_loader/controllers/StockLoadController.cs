@@ -22,8 +22,6 @@ namespace screen3_data_loader.controllers
         private string Temp_Folder;
         private S3Service s3service;
         private StockServiceDAL dal;
-    
-
         public StockLoadController()
         {
             this.S3_Bucket_Name = Environment.GetEnvironmentVariable("SCREEN3_S3_BUCKET");
@@ -35,13 +33,28 @@ namespace screen3_data_loader.controllers
 
         public async Task LoadAsx300Async()
         {
+            LambdaLogger.Log($"In Load Asx300Async...\n");
+            var stockList = await dal.GetAll();
+
+            LambdaLogger.Log($"Found existing items {stockList.Count}, abou to remove them all.\n");
+
+            foreach(StockEntity stock in stockList) {
+                await dal.Delete(stock.Code);
+            }
+
+            LambdaLogger.Log($"Remove all items done.\n");
+
+            LambdaLogger.Log($"About populate all stocks.\n");
+
             string resultPath = await this.s3service.DownloadFileFromS3Async(this.S3_Bucket_Name, "asx300.csv", this.Temp_Folder + "asx300/");
 
-            var stockList = this.LoadStockFromCSV(resultPath);
+            var newStockList = this.LoadStockFromCSV(resultPath);
 
-            foreach(var s in stockList) {
+            foreach(var s in newStockList) {
                 await this.dal.InsertNewStock(s);
             }
+
+            LambdaLogger.Log($"{newStockList.Count} new items been populated into the db.\n");
         }
 
         public List<StockEntity> LoadStockFromCSV(string path)
