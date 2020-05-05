@@ -13,4 +13,9 @@
     <PackageReference Include="coverlet.collector" Version="1.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Screen3.Entity\Screen3.Entity.csproj" />
+    <ProjectReference Include="..\Screen3.DynamoService\Screen3.DynamoService.csproj" />
+  </ItemGroup>
+
 </Project>

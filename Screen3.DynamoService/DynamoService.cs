@@ -17,7 +17,7 @@ namespace Screen3.DynamoService
         }
         
         public async Task InsertNewStock(StockEntity stock) {
-
+            Console.WriteLine("in InsertNewStock");
         }
     }
 }
