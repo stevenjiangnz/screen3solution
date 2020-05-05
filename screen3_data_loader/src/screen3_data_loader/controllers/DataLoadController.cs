@@ -8,7 +8,6 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using Newtonsoft.Json;
 using Screen3.S3Service;
-using screen3_data_loader.utils;
 using Screen3.Utils;
 
 namespace screen3_data_loader.controllers
@@ -50,11 +49,11 @@ namespace screen3_data_loader.controllers
         public List<String>  ExtractIntoDayData(string fileName, string targetPath) {
             List<String> resultFileList = new List<String>();
 
-            S3Helper.ClearDirectory(targetPath, true);
+            FileHelper.ClearDirectory(targetPath, true);
 
             ZipFile.ExtractToDirectory(fileName, targetPath);
 
-            resultFileList = S3Helper.DirSearch(targetPath);
+            resultFileList = FileHelper.DirSearch(targetPath);
 
             return resultFileList;
 

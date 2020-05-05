@@ -1,13 +1,10 @@
-
 using System;
 using System.IO;
-using System.IO.Compression;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 
-namespace screen3_data_loader.utils
+namespace Screen3.Utils
 {
-    public class S3Helper
+    public class FileHelper
     {
         private static List<String> fileList = new List<String>();
 
@@ -46,5 +43,7 @@ namespace screen3_data_loader.utils
 
             return fileList; 
         }
+
+
     }
 }
