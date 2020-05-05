@@ -17,8 +17,15 @@ namespace Screen3.DynamoService
         }
         
         public async Task InsertNewStock(StockEntity stock) {
+            var doc = new Document();
 
-            Console.WriteLine("in insert new stock");
+            doc["code"] = stock.Code;
+            doc["company"] = stock.Company;
+            doc["sector"] = stock.Sector;
+            doc["cap"] = stock.Cap;
+            doc["weight"] = stock.Weight;
+
+            await this.table.PutItemAsync(doc);
         }
     }
 }

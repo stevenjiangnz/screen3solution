@@ -6,8 +6,11 @@ namespace Screen3.Entity
     {
         public String Code;
         public String Company;
-        public String Sector;
-        public Double Cap;
-        public Double Weight;
+
+        #nullable enable
+        public String? Sector;
+        public Double? Cap;
+        public Double? Weight;
+        #nullable disable
     }
 }
