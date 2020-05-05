@@ -28,6 +28,5 @@ namespace screen3_data_loader.controllers.Tests
 
             controller.LoadStockFromCSV(@"/tmp/screen3_temp_files/asx300/asx300.csv");
         }
-
     }
 }

@@ -33,8 +33,8 @@ namespace screen3_data_loader.controllers
 
             var stockList = this.LoadStockFromCSV(resultPath);
 
-            string json = JsonConvert.SerializeObject(stockList, Formatting.Indented);
-            Console.WriteLine(json);
+            // string json = JsonConvert.SerializeObject(stockList, Formatting.Indented);
+            // Console.WriteLine(json);
         }
 
         public List<StockEntity> LoadStockFromCSV(string path)
