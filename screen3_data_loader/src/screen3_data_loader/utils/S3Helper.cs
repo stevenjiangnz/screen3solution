@@ -10,21 +10,6 @@ namespace screen3_data_loader.utils
     public class S3Helper
     {
         private static List<String> fileList = new List<String>();
-        public static string GetFileNameFromKey(string key)
-        {
-            string fileName;
-
-            if (key.LastIndexOf("/") < 0)
-            {
-                fileName = key;
-            }
-            else
-            {
-                fileName = key.Substring(key.LastIndexOf("/") + 1);
-            }
-
-            return fileName;
-        }
 
         public static void ClearDirectory(string targetPath, bool? withCreate = false) {
             if (Directory.Exists(targetPath)) {

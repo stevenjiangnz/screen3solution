@@ -19,7 +19,6 @@ namespace screen3_data_loader.controllers
         private string S3_Bucket_Name;
         private string Temp_Folder;
 
-
         public DataLoadController()
         {
             this.S3_Bucket_Name = Environment.GetEnvironmentVariable("SCREEN3_S3_BUCKET");
