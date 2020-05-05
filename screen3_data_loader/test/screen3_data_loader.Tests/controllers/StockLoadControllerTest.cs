@@ -20,5 +20,14 @@ namespace screen3_data_loader.controllers.Tests
 
             controller.LoadAsx300Async().Wait();
         }
+
+        [Fact]
+        public void TestLoadStockFromCSV()
+        {
+            StockLoadController controller = new StockLoadController();
+
+            controller.LoadStockFromCSV(@"/tmp/screen3_temp_files/asx300/asx300.csv");
+        }
+
     }
 }
