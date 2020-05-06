@@ -22,7 +22,7 @@ namespace screen3_data_loader.controllers
         private string Temp_Folder;
         private List<StockEntity> stockList;
         private StockServiceDAL dal;
-
+        private Dictionary<String, List<TickerEntity>> stockDict;
 
         public DataLoadController()
         {
@@ -30,20 +30,19 @@ namespace screen3_data_loader.controllers
             this.Temp_Folder = Environment.GetEnvironmentVariable("SCREEN3_TEMP_FOLDER");
             string asx300TableName = Environment.GetEnvironmentVariable("SCREEN3_ASX300_TABLE_NAME");
             this.dal = new StockServiceDAL(asx300TableName);
+            this.stockDict = new Dictionary<string, List<TickerEntity>>();
         }
 
-        public async Task<String> StartProcessAsync()
+        public async Task StartProcessAsync()
         {
             this.stockList = await this.dal.GetAll();
 
             // retrieve all stock list.
             this.stockList = await this.dal.GetAll();
 
-            string result = "";
-
             List<S3Object> fileList = await this.GetSourceFileListAsync(this.S3_Bucket_Name, "source");
 
-            LambdaLogger.Log($"found files in the source folder, {ObjectHelper.ToJson(fileList)}\n");
+            LambdaLogger.Log($"found files in the source folder, {fileList.Count}\n");
 
             foreach (var fileInfo in fileList)
             {
@@ -55,12 +54,13 @@ namespace screen3_data_loader.controllers
                     string dailyTargetFolder = this.Temp_Folder + $"originExtractedFiles/{fileInfo.Key}/";
                     LambdaLogger.Log($"Download file, {fileInfo.Key}, about to extract to {dailyTargetFolder}.\n");
                     List<String> dailyFileList = this.ExtractIntoDayData(resultFileName, dailyTargetFolder);
+                    LambdaLogger.Log($"Extracted files done. items {dailyFileList.Count} \n");
 
-                    LambdaLogger.Log($"Extracted files done. {ObjectHelper.ToJson(dailyFileList)}\n");
+                    foreach (string path in dailyFileList) {
+                        this.AddDailyFileIntoStockDict(path);
+                    }
                 }
             }
-
-            return result;
         }
 
         public List<String> ExtractIntoDayData(string fileName, string targetPath)
@@ -95,9 +95,31 @@ namespace screen3_data_loader.controllers
             return resultFileName;
         }
 
-        public void AddDailyFileIntoStockDict(string path)
+        public async void AddDailyFileIntoStockDict(string path)
         {
+            if (this.stockList == null || this.stockList.Count == 0)
+            {
+                this.stockList = await this.dal.GetAll();
+            }
 
+            List<TickerEntity> tickerList = this.LoadTickerFromCSV(path);
+
+            foreach (TickerEntity ticker in tickerList)
+            {
+                if (stockList.Exists((stock) =>
+                {
+                    return stock.Code == ticker.Code;
+                }))
+                {
+
+                    if (!this.stockDict.ContainsKey(ticker.Code))
+                    {
+                        this.stockDict.Add(ticker.Code, new List<TickerEntity>());
+                    }
+
+                    this.stockDict[ticker.Code].Add(ticker);
+                }
+            }
         }
 
         public List<TickerEntity> LoadTickerFromCSV(string path)
@@ -111,13 +133,13 @@ namespace screen3_data_loader.controllers
                 {
                     var ticker = new TickerEntity();
 
-                    ticker.code = csv.GetField<string>(0);
-                    ticker.period = csv.GetField<int>(1);
-                    ticker.open = csv.GetField<float>(2);
-                    ticker.high = csv.GetField<float>(3);
-                    ticker.low = csv.GetField<float>(4);
-                    ticker.close = csv.GetField<float>(5);
-                    ticker.volume = csv.GetField<long>(6);
+                    ticker.Code = csv.GetField<string>(0);
+                    ticker.Period = csv.GetField<int>(1);
+                    ticker.Open = csv.GetField<float>(2);
+                    ticker.High = csv.GetField<float>(3);
+                    ticker.Low = csv.GetField<float>(4);
+                    ticker.Close = csv.GetField<float>(5);
+                    ticker.Volume = csv.GetField<long>(6);
 
                     tickers.Add(ticker);
                 }
@@ -125,6 +147,5 @@ namespace screen3_data_loader.controllers
                 return tickers;
             }
         }
-
     }
 }

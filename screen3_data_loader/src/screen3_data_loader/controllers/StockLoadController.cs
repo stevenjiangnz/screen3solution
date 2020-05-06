@@ -17,7 +17,7 @@ namespace screen3_data_loader.controllers
         private string Temp_Folder;
         private S3Service s3service;
         private StockServiceDAL dal;
-        private Dictionary<String, List<String>> stockDict;
+
         public StockLoadController()
         {
             this.S3_Bucket_Name = Environment.GetEnvironmentVariable("SCREEN3_S3_BUCKET");
@@ -25,7 +25,6 @@ namespace screen3_data_loader.controllers
             this.s3service = new S3Service();
             string asx300TableName = Environment.GetEnvironmentVariable("SCREEN3_ASX300_TABLE_NAME");
             this.dal = new StockServiceDAL(asx300TableName);
-            this.stockDict = new Dictionary<string, List<string>>();
         }
 
         public async Task LoadAsx300Async()
