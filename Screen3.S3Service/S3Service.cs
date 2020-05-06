@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Screen3.Utils;
 
 namespace Screen3.S3Service
 {
@@ -31,7 +32,7 @@ namespace Screen3.S3Service
                     Key = keyName
                 };
 
-                string fileName = this.GetFileNameFromKey(keyName);
+                string fileName = FileHelper.GetFileNameFromKey(keyName);
 
                 if (!Directory.Exists(targetPath))
                 {
@@ -44,7 +45,7 @@ namespace Screen3.S3Service
                 using (Stream responseStream = response.ResponseStream)
                 using (FileStream fs = new FileStream(path, FileMode.OpenOrCreate))
                 {
-                    this.CopyStream(responseStream, fs);
+                    ObjectHelper.CopyStream(responseStream, fs);
                     fs.Flush();
 
                     downloadedFile = path;
@@ -63,22 +64,14 @@ namespace Screen3.S3Service
             return downloadedFile;
         }
 
-        public async Task UploadFileToS3Async(string bucketName, string keyName, string localPath)
+        public async Task UploadStringContentToS3Async(string bucketName, string keyName, string content)
         {
             var fileTransferUtility = new TransferUtility(client);
 
-            await fileTransferUtility.UploadAsync(localPath, bucketName, keyName);
-
-        }
-
-        private void CopyStream(Stream src, Stream dest)
-        {
-            int _bufferSize = 4096;
-            var buffer = new byte[_bufferSize];
-            int len;
-            while ((len = src.Read(buffer, 0, buffer.Length)) > 0)
+            using (var streamToUpload =  ObjectHelper.GenerateStreamFromString(content))
             {
-                dest.Write(buffer, 0, len);
+                await fileTransferUtility.UploadAsync(streamToUpload,
+                                           bucketName, keyName);
             }
         }
 
@@ -123,21 +116,7 @@ namespace Screen3.S3Service
         }
 
 
-        private string GetFileNameFromKey(string key)
-        {
-            string fileName;
 
-            if (key.LastIndexOf("/") < 0)
-            {
-                fileName = key;
-            }
-            else
-            {
-                fileName = key.Substring(key.LastIndexOf("/") + 1);
-            }
-
-            return fileName;
-        }
     }
 
 }

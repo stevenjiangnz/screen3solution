@@ -18,27 +18,16 @@ namespace Screen3.BLL
 
         public async Task SaveTickers(string code, List<TickerEntity> tickerList)
         {
-            string localTickerFolder = Environment.GetEnvironmentVariable("SCREEN3_TEMP_FOLDER") + $@"localticker/{code}/";
-            string fileName = localTickerFolder + code + "_day.txt";
+            string keyName = $@"ticker/{code}/{code}_day.txt";
 
-            // Save the ticker to local
-            Directory.CreateDirectory(localTickerFolder);
+            string content = "";
 
-            if (File.Exists(fileName))
-            {
-                File.Delete(fileName);
-            }
-
-            using (StreamWriter outputFile = new StreamWriter(fileName))
-            {
-                foreach (TickerEntity ticker in tickerList)
-                {
-                    outputFile.WriteLine(ticker.ToString());
-                }
+            foreach(TickerEntity t in tickerList) {
+                content = content + t.ToString() + "\n";
             }
 
             S3Service.S3Service service = new S3Service.S3Service();
-            await service.UploadFileToS3Async(this.S3_Bucket_Name, $@"ticker/{code}/{code}_day.txt", fileName );
+            await service.UploadStringContentToS3Async(this.S3_Bucket_Name, keyName, content );
         }
     }
 }

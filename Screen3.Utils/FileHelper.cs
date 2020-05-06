@@ -44,6 +44,21 @@ namespace Screen3.Utils
             return fileList; 
         }
 
+        public static string GetFileNameFromKey(string key)
+        {
+            string fileName;
+
+            if (key.LastIndexOf("/") < 0)
+            {
+                fileName = key;
+            }
+            else
+            {
+                fileName = key.Substring(key.LastIndexOf("/") + 1);
+            }
+
+            return fileName;
+        }
 
     }
 }
