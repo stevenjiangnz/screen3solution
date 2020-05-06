@@ -1,5 +1,6 @@
 ﻿using Amazon;
 using Amazon.S3;
+using Amazon.S3.Transfer;
 using Amazon.S3.Model;
 using System;
 using System.IO;
@@ -60,6 +61,14 @@ namespace Screen3.S3Service
             }
 
             return downloadedFile;
+        }
+
+        public async Task UploadFileToS3Async(string bucketName, string keyName, string localPath)
+        {
+            var fileTransferUtility = new TransferUtility(client);
+
+            await fileTransferUtility.UploadAsync(localPath, bucketName, keyName);
+
         }
 
         private void CopyStream(Stream src, Stream dest)
