@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 namespace Screen3.S3Service
-{ public class S3Service
+{
+    public class S3Service
     {
         private static readonly RegionEndpoint bucketRegion = RegionEndpoint.APSoutheast2;
         private static IAmazonS3 client;
