@@ -48,18 +48,26 @@ namespace screen3_data_loader.controllers
             {
                 if (fileInfo.Size > 0)
                 {
-                    LambdaLogger.Log($"About to download file, {fileInfo.Key}\n");
-                    String resultFileName = await this.DownloadFileAsync(fileInfo.BucketName, fileInfo.Key, this.Temp_Folder + "originSourceFiles/");
-
-                    string dailyTargetFolder = this.Temp_Folder + $"originExtractedFiles/{fileInfo.Key}/";
-                    LambdaLogger.Log($"Download file, {fileInfo.Key}, about to extract to {dailyTargetFolder}.\n");
-                    List<String> dailyFileList = this.ExtractIntoDayData(resultFileName, dailyTargetFolder);
-                    LambdaLogger.Log($"Extracted files done. items {dailyFileList.Count} \n");
-
-                    foreach (string path in dailyFileList) {
-                        this.AddDailyFileIntoStockDict(path);
-                    }
+                    await this.ProcessSourceFile(fileInfo);
                 }
+            }
+
+            Console.WriteLine($"All count: {this.stockDict["ALL"].Count}");
+        }
+
+        public async Task ProcessSourceFile(S3Object fileInfo)
+        {
+            LambdaLogger.Log($"About to download file, {fileInfo.Key}\n");
+            String resultFileName = await this.DownloadFileAsync(fileInfo.BucketName, fileInfo.Key, this.Temp_Folder + "originSourceFiles/");
+
+            string dailyTargetFolder = this.Temp_Folder + $"originExtractedFiles/{fileInfo.Key}/";
+            LambdaLogger.Log($"Download file, {fileInfo.Key}, about to extract to {dailyTargetFolder}.\n");
+            List<String> dailyFileList = this.ExtractIntoDayData(resultFileName, dailyTargetFolder);
+            LambdaLogger.Log($"Extracted files done. items {dailyFileList.Count} \n");
+
+            foreach (string path in dailyFileList)
+            {
+                this.AddDailyFileIntoStockDict(path);
             }
         }
 
