@@ -26,12 +26,22 @@ namespace Screen3.Test.BLL
 
             tickerList.Add(new TickerEntity {
                 Code = "CLL",
-                Period = 20081201,
+                Period = 20071201,
                 Open = (float)111111.01,
                 High = (float)11111.01,
                 Low = (float)111.0,
                 Close = (float)111.1,
                 Volume = 123124
+            });
+
+            tickerList.Add(new TickerEntity {
+                Code = "CLL",
+                Period = 20091212,
+                Open = (float)33.01,
+                High = (float)199.01,
+                Low = (float)13.0,
+                Close = (float)13.1,
+                Volume = 2346
             });
 
             tickerList.Add(new TickerEntity {
@@ -44,7 +54,7 @@ namespace Screen3.Test.BLL
                 Volume = 2346
             });
 
-            bll.SaveTickers("CLL", tickerList).Wait();
+            bll.SaveTickers("CLL", tickerList, true).Wait();
         }
 
 

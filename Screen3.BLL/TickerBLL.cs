@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Screen3.Entity;
+using System.Linq;
 using Screen3.S3Service;
 using Screen3.Utils;
 
@@ -17,13 +18,22 @@ namespace Screen3.BLL
             this.S3_Bucket_Name = Environment.GetEnvironmentVariable("SCREEN3_S3_BUCKET");
         }
 
-        public async Task SaveTickers(string code, List<TickerEntity> tickerList)
+        public async Task SaveTickers(string code, List<TickerEntity> tickerList, Boolean mergeExisting = false)
         {
             string keyName = $@"ticker/{code}/{code}_day.txt";
-
             string content = string.Empty;
+            List<TickerEntity> mergedList = null;
+            if (mergeExisting) {
+                List<TickerEntity> existingList = await this.GetExistingDayTickers(code);
 
-            foreach (TickerEntity t in tickerList)
+                var comparer = new TickerComparer<TickerEntity>();
+                mergedList = tickerList.Union(existingList, comparer).ToList();
+            } else {
+                mergedList = tickerList;
+            }
+
+            List<TickerEntity> sortedList = mergedList.OrderBy(o=>o.Period).ToList();
+            foreach (TickerEntity t in sortedList)
             {
                 content = content + t.ToString() + "\n";
             }

@@ -41,5 +41,6 @@ namespace Screen3.Entity
         {
             return $"{this.Code},{this.Period},{this.Open},{this.High},{this.Low},{this.Close},{this.Volume}";
         }
+
     }
 }
