@@ -7,6 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Screen3.Utils;
+using System.Text;
 
 namespace Screen3.S3Service
 {
@@ -64,11 +65,43 @@ namespace Screen3.S3Service
             return downloadedFile;
         }
 
+        public async Task<String> DownloadContentFromS3Async(string bucketName, string keyName)
+        {
+            StringBuilder content = new StringBuilder();
+
+            try
+            {
+                GetObjectRequest request = new GetObjectRequest
+                {
+                    BucketName = bucketName,
+                    Key = keyName
+                };
+
+                using (GetObjectResponse response = await client.GetObjectAsync(request))
+                using (Stream responseStream = response.ResponseStream)
+                using (StreamReader reader = new StreamReader(responseStream))
+                {
+                    content.Append(reader.ReadToEnd()); // Now you process the response body.
+                }
+
+            }
+            catch (AmazonS3Exception e)
+            {
+                Console.WriteLine("Error encountered ***. Message:'{0}' when writing an object", e.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unknown encountered on server. Message:'{0}' when writing an object", e.Message);
+            }
+
+            return content.ToString();
+        }
+
         public async Task UploadStringContentToS3Async(string bucketName, string keyName, string content)
         {
             var fileTransferUtility = new TransferUtility(client);
 
-            using (var streamToUpload =  ObjectHelper.GenerateStreamFromString(content))
+            using (var streamToUpload = ObjectHelper.GenerateStreamFromString(content))
             {
                 await fileTransferUtility.UploadAsync(streamToUpload,
                                            bucketName, keyName);

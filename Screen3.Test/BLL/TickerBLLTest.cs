@@ -46,5 +46,12 @@ namespace Screen3.Test.BLL
 
             bll.SaveTickers("CLL", tickerList).Wait();
         }
+
+
+        [Fact]
+        public void TestGetExistingDayTickers() {
+            TickerBLL bll = new TickerBLL();
+            bll.GetExistingDayTickers("CLL").Wait();
+        }
     }
 }
