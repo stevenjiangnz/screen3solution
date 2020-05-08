@@ -42,6 +42,11 @@ namespace Screen3.BLL
             await service.UploadStringContentToS3Async(this.S3_Bucket_Name, keyName, content);
         }
 
+        
+        public List<TickerEntity> GetWeekListFromDay(List<TickerEntity> dayTickerList) {
+
+            return null;
+        }
         public async Task<List<TickerEntity>> GetExistingDayTickers(string code)
         {
             List<TickerEntity> tickerList = new List<TickerEntity>();
@@ -52,17 +57,25 @@ namespace Screen3.BLL
 
             content = await service.DownloadContentFromS3Async(this.S3_Bucket_Name, keyName);
 
+            tickerList = this.getTickerListFromString(content);
 
+            return tickerList;
+        }
+
+        public List<TickerEntity> getTickerListFromString(string content) {
+            List<TickerEntity> tickers = new List<TickerEntity>();
+
+            
             var tickerLines = StringHelper.SplitToLines(content);
 
             foreach (string line in tickerLines)
             {
                 if (!string.IsNullOrEmpty(line.Trim())){
-                    tickerList.Add(new TickerEntity(line));
+                    tickers.Add(new TickerEntity(line));
                 }
             }
 
-            return tickerList;
+            return tickers;
         }
     }
 }
