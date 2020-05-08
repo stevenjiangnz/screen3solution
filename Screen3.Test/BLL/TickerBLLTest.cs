@@ -1,9 +1,12 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using Xunit;
 using Screen3.DynamoService;
 using Screen3.Entity;
 using Screen3.BLL;
+using Screen3.Utils;
+
 namespace Screen3.Test.BLL
 {
     public class TickerBLLTest
@@ -62,6 +65,29 @@ namespace Screen3.Test.BLL
         public void TestGetExistingDayTickers() {
             TickerBLL bll = new TickerBLL();
             bll.GetExistingDayTickers("CLL").Wait();
+        }
+
+        [Fact]
+        public void TestGetWeekListFromDay() {
+            TickerBLL bll = new TickerBLL();
+            string tickerFile = "/home/steven/devlocal/screen3solution/Fixture/ANZ_day_small.txt";
+
+            string content = File.ReadAllText(tickerFile);
+
+            List<TickerEntity> tickers =  bll.getTickerListFromString(content);
+
+            foreach(var t in tickers ) {
+
+                Console.WriteLine(DateHelper.ToDate(t.Period).ToLongDateString() + "  " + t.ToString());
+            }
+
+            List<TickerEntity> weeklyTickers = bll.GetWeekListFromDay(tickers);
+
+            Console.Write("\n\n");
+            foreach(var wt in weeklyTickers) {
+                Console.WriteLine(DateHelper.ToDate(wt.Period).ToLongDateString() + "  " + wt.ToString());
+            }
+
         }
     }
 }
