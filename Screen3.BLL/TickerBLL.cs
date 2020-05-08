@@ -26,7 +26,7 @@ namespace Screen3.BLL
             if (mergeExisting) {
                 List<TickerEntity> existingList = await this.GetExistingDayTickers(code);
 
-                var comparer = new TickerComparer<TickerEntity>();
+                var comparer = new TickerComparer();
                 mergedList = tickerList.Union(existingList, comparer).ToList();
             } else {
                 mergedList = tickerList;
@@ -57,7 +57,9 @@ namespace Screen3.BLL
 
             foreach (string line in tickerLines)
             {
-                tickerList.Add(new TickerEntity(line));
+                if (!string.IsNullOrEmpty(line.Trim())){
+                    tickerList.Add(new TickerEntity(line));
+                }
             }
 
             return tickerList;

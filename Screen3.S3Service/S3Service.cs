@@ -55,11 +55,11 @@ namespace Screen3.S3Service
             }
             catch (AmazonS3Exception e)
             {
-                Console.WriteLine("Error encountered ***. Message:'{0}' when writing an object", e.Message);
+                Console.WriteLine("Error encountered ***. Message:'{0}' when downloading an object, keyname {1}", e.Message);
             }
             catch (Exception e)
             {
-                Console.WriteLine("Unknown encountered on server. Message:'{0}' when writing an object", e.Message);
+                Console.WriteLine("Unknown encountered on server. Message:'{0}' when downloading an object, keyname {1}", e.Message);
             }
 
             return downloadedFile;
@@ -87,11 +87,11 @@ namespace Screen3.S3Service
             }
             catch (AmazonS3Exception e)
             {
-                Console.WriteLine("Error encountered ***. Message:'{0}' when writing an object", e.Message);
+                Console.WriteLine("Error encountered ***. Message:'{0}' when downloading from S3, keyname {1}", e.Message, keyName);
             }
             catch (Exception e)
             {
-                Console.WriteLine("Unknown encountered on server. Message:'{0}' when writing an object", e.Message);
+                Console.WriteLine("Unknown encountered on server. Message:'{0}' when downloading from S3, keyname {1}", e.Message, keyName);
             }
 
             return content.ToString();
@@ -148,8 +148,47 @@ namespace Screen3.S3Service
             return fileList;
         }
 
+        public async Task CopyObject(string srcBuctet, string srcKey, string destBucket, string destKey) {
+            try
+            {
+                CopyObjectRequest request = new CopyObjectRequest
+                {
+                    SourceBucket = srcBuctet,
+                    SourceKey = srcKey,
+                    DestinationBucket = destBucket,
+                    DestinationKey = destKey
+                };
+                CopyObjectResponse response = await client.CopyObjectAsync(request);
+            }
+            catch (AmazonS3Exception e)
+            {
+                Console.WriteLine("Error encountered on server. Message:'{0}' when copying an object, keyname {1}", e.Message, srcKey);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unknown encountered on server. Message:'{0}' when copying an object, keyname {1}", e.Message, srcKey);
+            }
+        }
 
+        public async Task DeleteObject(string bucketName, string keyName) {
+           try
+            {
+                var deleteObjectRequest = new DeleteObjectRequest
+                {
+                    BucketName = bucketName,
+                    Key = keyName
+                };
 
+                await client.DeleteObjectAsync(deleteObjectRequest);
+            }
+            catch (AmazonS3Exception e)
+            {
+                Console.WriteLine("Error encountered on server. Message:'{0}' when deleting an object", e.Message, keyName);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unknown encountered on server. Message:'{0}' when deleting an object", e.Message, keyName);
+            }
+        }
     }
-
 }

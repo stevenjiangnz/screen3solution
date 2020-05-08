@@ -11,13 +11,14 @@ using Screen3.S3Service;
 using Screen3.Entity;
 using Screen3.Utils;
 using Screen3.DynamoService;
+using Screen3.BLL;
 using CsvHelper;
+
 
 namespace screen3_data_loader.controllers
 {
     public class DataLoadController
     {
-
         private string S3_Bucket_Name;
         private string Temp_Folder;
         private List<StockEntity> stockList;
@@ -52,7 +53,6 @@ namespace screen3_data_loader.controllers
                 }
             }
 
-            Console.WriteLine($"All count: {this.stockDict["ALL"].Count}");
         }
 
         public async Task ProcessSourceFile(S3Object fileInfo)
@@ -69,6 +69,29 @@ namespace screen3_data_loader.controllers
             {
                 this.AddDailyFileIntoStockDict(path);
             }
+
+            TickerBLL bll = new TickerBLL();
+            // save tickers into S3
+            foreach (KeyValuePair<string, List<TickerEntity>> tickerGroup in this.stockDict)
+            {
+                await bll.SaveTickers(tickerGroup.Key, tickerGroup.Value, true);
+
+                LambdaLogger.Log($"Save to S3 for {tickerGroup.Key} with items {tickerGroup.Value.Count} \n");
+            }
+
+            // move file to archive
+            S3Service service = new S3Service();
+            string archiveKey = fileInfo.Key.Replace("source", "archive");
+            await service.CopyObject(this.S3_Bucket_Name, fileInfo.Key, this.S3_Bucket_Name, archiveKey);
+            await service.DeleteObject(this.S3_Bucket_Name, fileInfo.Key);
+
+            // about to clean things
+            File.Delete(resultFileName);
+            FileHelper.ClearDirectory(this.Temp_Folder + $"originExtractedFiles/", true);
+
+            this.stockDict = new Dictionary<string, List<TickerEntity>>();
+
+            LambdaLogger.Log("Temp folder cleared");
         }
 
         public List<String> ExtractIntoDayData(string fileName, string targetPath)
@@ -139,17 +162,25 @@ namespace screen3_data_loader.controllers
                 // csv.Read();
                 while (csv.Read())
                 {
-                    var ticker = new TickerEntity();
+                    try
+                    {
+                        var ticker = new TickerEntity();
 
-                    ticker.Code = csv.GetField<string>(0);
-                    ticker.Period = csv.GetField<int>(1);
-                    ticker.Open = csv.GetField<float>(2);
-                    ticker.High = csv.GetField<float>(3);
-                    ticker.Low = csv.GetField<float>(4);
-                    ticker.Close = csv.GetField<float>(5);
-                    ticker.Volume = csv.GetField<long>(6);
+                        ticker.Code = csv.GetField<string>(0);
+                        ticker.Period = csv.GetField<int>(1);
+                        ticker.Open = csv.GetField<float>(2);
+                        ticker.High = csv.GetField<float>(3);
+                        ticker.Low = csv.GetField<float>(4);
+                        ticker.Close = csv.GetField<float>(5);
+                        ticker.Volume = csv.GetField<long>(6);
 
-                    tickers.Add(ticker);
+                        tickers.Add(ticker);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error load csv {ex.Message}, path: {path}");
+                    }
                 }
 
                 return tickers;

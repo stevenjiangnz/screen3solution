@@ -15,8 +15,10 @@ namespace Screen3.Entity
             {
                 string[] tickerParts = tickerString.Split(',');
 
-                for (int i = 0; i < tickerParts.Length; i++)
+                if (tickerParts.Length > 6)
                 {
+                    for (int i = 0; i < tickerParts.Length; i++)
+                    {
                         this.Code = tickerParts[0];
                         this.Period = int.Parse(tickerParts[1]);
                         this.Open = float.Parse(tickerParts[2]);
@@ -24,6 +26,8 @@ namespace Screen3.Entity
                         this.Low = float.Parse(tickerParts[4]);
                         this.Close = float.Parse(tickerParts[5]);
                         this.Volume = long.Parse(tickerParts[6]);
+
+                    }
 
                 }
             }

@@ -4,7 +4,7 @@ using Screen3.Entity;
 
 namespace Screen3.BLL
 {
-    public class TickerComparer<TickerEntity> : IEqualityComparer<TickerEntity>
+    public class TickerComparer : IEqualityComparer<TickerEntity>
     {
         public bool Equals(TickerEntity t1, TickerEntity t2)
         {
@@ -15,9 +15,9 @@ namespace Screen3.BLL
             return false;
         }
 
-        public int GetHashCode(TickerEntity obj)
+        public int GetHashCode(TickerEntity o)
         {
-            return 0;
+            return o.Period;
         }
     }
 
