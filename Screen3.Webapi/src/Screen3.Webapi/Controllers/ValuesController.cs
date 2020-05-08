@@ -3,17 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace Screen3.Webapi.Controllers
 {
+   
     [Route("api/[controller]")]
     public class ValuesController : ControllerBase
     {
+        private IConfiguration configuration;
+
+        public ValuesController(IConfiguration iConfig) {
+            this.configuration = iConfig;
+        }
         // GET api/values
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "value111", "value222" };
+            string config = this.configuration.GetValue<string>("AWS:Region");
+
+            return new string[] { "value111", "value222222: " + config };
         }
 
         // GET api/values/5
