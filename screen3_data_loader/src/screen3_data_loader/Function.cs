@@ -20,7 +20,7 @@ namespace screen3_data_loader
         /// <param name="input"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public async Task<string> FunctionHandler(string input, ILambdaContext context)
+        public async Task<string> FunctionHandler(Object input, ILambdaContext context)
         {
             LambdaLogger.Log("About to start data loading process...\n");
 

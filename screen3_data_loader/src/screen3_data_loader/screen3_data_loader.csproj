@@ -15,5 +15,6 @@
     <ProjectReference Include="..\..\..\Screen3.S3Service\Screen3.S3Service.csproj" />
     <ProjectReference Include="..\..\..\Screen3.Entity\Screen3.Entity.csproj" />
     <ProjectReference Include="..\..\..\Screen3.DynamoService\Screen3.DynamoService.csproj" />
+    <ProjectReference Include="..\..\..\Screen3.BLL\Screen3.BLL.csproj" />
   </ItemGroup>
 </Project>

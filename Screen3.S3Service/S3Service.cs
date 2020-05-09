@@ -1,13 +1,17 @@
 ﻿using Amazon;
 using Amazon.S3;
+using Amazon.S3.Transfer;
 using Amazon.S3.Model;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Screen3.Utils;
+using System.Text;
 
 namespace Screen3.S3Service
-{ public class S3Service
+{
+    public class S3Service
     {
         private static readonly RegionEndpoint bucketRegion = RegionEndpoint.APSoutheast2;
         private static IAmazonS3 client;
@@ -29,7 +33,7 @@ namespace Screen3.S3Service
                     Key = keyName
                 };
 
-                string fileName = this.GetFileNameFromKey(keyName);
+                string fileName = FileHelper.GetFileNameFromKey(keyName);
 
                 if (!Directory.Exists(targetPath))
                 {
@@ -42,7 +46,7 @@ namespace Screen3.S3Service
                 using (Stream responseStream = response.ResponseStream)
                 using (FileStream fs = new FileStream(path, FileMode.OpenOrCreate))
                 {
-                    this.CopyStream(responseStream, fs);
+                    ObjectHelper.CopyStream(responseStream, fs);
                     fs.Flush();
 
                     downloadedFile = path;
@@ -51,24 +55,56 @@ namespace Screen3.S3Service
             }
             catch (AmazonS3Exception e)
             {
-                Console.WriteLine("Error encountered ***. Message:'{0}' when writing an object", e.Message);
+                Console.WriteLine("Error encountered ***. Message:'{0}' when downloading an object, keyname {1}", e.Message);
             }
             catch (Exception e)
             {
-                Console.WriteLine("Unknown encountered on server. Message:'{0}' when writing an object", e.Message);
+                Console.WriteLine("Unknown encountered on server. Message:'{0}' when downloading an object, keyname {1}", e.Message);
             }
 
             return downloadedFile;
         }
 
-        private void CopyStream(Stream src, Stream dest)
+        public async Task<String> DownloadContentFromS3Async(string bucketName, string keyName)
         {
-            int _bufferSize = 4096;
-            var buffer = new byte[_bufferSize];
-            int len;
-            while ((len = src.Read(buffer, 0, buffer.Length)) > 0)
+            StringBuilder content = new StringBuilder();
+
+            try
             {
-                dest.Write(buffer, 0, len);
+                GetObjectRequest request = new GetObjectRequest
+                {
+                    BucketName = bucketName,
+                    Key = keyName
+                };
+
+                using (GetObjectResponse response = await client.GetObjectAsync(request))
+                using (Stream responseStream = response.ResponseStream)
+                using (StreamReader reader = new StreamReader(responseStream))
+                {
+                    content.Append(reader.ReadToEnd()); // Now you process the response body.
+                }
+
+            }
+            catch (AmazonS3Exception e)
+            {
+                Console.WriteLine("Error encountered ***. Message:'{0}' when downloading from S3, keyname {1}", e.Message, keyName);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unknown encountered on server. Message:'{0}' when downloading from S3, keyname {1}", e.Message, keyName);
+            }
+
+            return content.ToString();
+        }
+
+        public async Task UploadStringContentToS3Async(string bucketName, string keyName, string content)
+        {
+            var fileTransferUtility = new TransferUtility(client);
+
+            using (var streamToUpload = ObjectHelper.GenerateStreamFromString(content))
+            {
+                await fileTransferUtility.UploadAsync(streamToUpload,
+                                           bucketName, keyName);
             }
         }
 
@@ -112,22 +148,47 @@ namespace Screen3.S3Service
             return fileList;
         }
 
-
-        private string GetFileNameFromKey(string key)
-        {
-            string fileName;
-
-            if (key.LastIndexOf("/") < 0)
+        public async Task CopyObject(string srcBuctet, string srcKey, string destBucket, string destKey) {
+            try
             {
-                fileName = key;
+                CopyObjectRequest request = new CopyObjectRequest
+                {
+                    SourceBucket = srcBuctet,
+                    SourceKey = srcKey,
+                    DestinationBucket = destBucket,
+                    DestinationKey = destKey
+                };
+                CopyObjectResponse response = await client.CopyObjectAsync(request);
             }
-            else
+            catch (AmazonS3Exception e)
             {
-                fileName = key.Substring(key.LastIndexOf("/") + 1);
+                Console.WriteLine("Error encountered on server. Message:'{0}' when copying an object, keyname {1}", e.Message, srcKey);
             }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unknown encountered on server. Message:'{0}' when copying an object, keyname {1}", e.Message, srcKey);
+            }
+        }
 
-            return fileName;
+        public async Task DeleteObject(string bucketName, string keyName) {
+           try
+            {
+                var deleteObjectRequest = new DeleteObjectRequest
+                {
+                    BucketName = bucketName,
+                    Key = keyName
+                };
+
+                await client.DeleteObjectAsync(deleteObjectRequest);
+            }
+            catch (AmazonS3Exception e)
+            {
+                Console.WriteLine("Error encountered on server. Message:'{0}' when deleting an object", e.Message, keyName);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unknown encountered on server. Message:'{0}' when deleting an object", e.Message, keyName);
+            }
         }
     }
-
 }

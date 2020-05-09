@@ -1,17 +1,12 @@
 using System;
 using System.IO;
-using System.IO.Compression;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Globalization;
 using Amazon.Lambda.Core;
-using Amazon.S3;
-using Amazon.S3.Model;
-using Newtonsoft.Json;
 using Screen3.S3Service;
 using Screen3.Entity;
 using Screen3.DynamoService;
-
 using CsvHelper;
 
 namespace screen3_data_loader.controllers
@@ -22,6 +17,7 @@ namespace screen3_data_loader.controllers
         private string Temp_Folder;
         private S3Service s3service;
         private StockServiceDAL dal;
+
         public StockLoadController()
         {
             this.S3_Bucket_Name = Environment.GetEnvironmentVariable("SCREEN3_S3_BUCKET");
@@ -33,12 +29,14 @@ namespace screen3_data_loader.controllers
 
         public async Task LoadAsx300Async()
         {
+            // Load asx list.
             LambdaLogger.Log($"In Load Asx300Async...\n");
             var stockList = await dal.GetAll();
 
             LambdaLogger.Log($"Found existing items {stockList.Count}, abou to remove them all.\n");
 
-            foreach(StockEntity stock in stockList) {
+            foreach (StockEntity stock in stockList)
+            {
                 await dal.Delete(stock.Code);
             }
 
@@ -50,7 +48,8 @@ namespace screen3_data_loader.controllers
 
             var newStockList = this.LoadStockFromCSV(resultPath);
 
-            foreach(var s in newStockList) {
+            foreach (var s in newStockList)
+            {
                 await this.dal.InsertNewStock(s);
             }
 
@@ -62,23 +61,23 @@ namespace screen3_data_loader.controllers
             using (var reader = new StreamReader(path))
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
-                var records = new List<StockEntity>();
+                var stocks = new List<StockEntity>();
                 csv.Read();
                 csv.ReadHeader();
                 while (csv.Read())
                 {
-                    var record = new StockEntity();
+                    var stock = new StockEntity();
 
-                    record.Code = csv.GetField<string>("code");
-                    record.Company = csv.GetField<string>("company");
-                    record.Sector = csv.GetField<string>("sector");
-                    record.Cap = csv.GetField<double>("cap");
-                    record.Weight = csv.GetField<double>("weight");
+                    stock.Code = csv.GetField<string>("code");
+                    stock.Company = csv.GetField<string>("company");
+                    stock.Sector = csv.GetField<string>("sector");
+                    stock.Cap = csv.GetField<double>("cap");
+                    stock.Weight = csv.GetField<double>("weight");
 
-                    records.Add(record);
+                    stocks.Add(stock);
                 }
 
-                return records;
+                return stocks;
             }
         }
     }
