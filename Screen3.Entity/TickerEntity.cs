@@ -3,7 +3,6 @@ using System.Runtime.Serialization;
 
 namespace Screen3.Entity
 {
-    [DataContract]
     public class TickerEntity
     {
         public TickerEntity()
@@ -28,26 +27,17 @@ namespace Screen3.Entity
                         this.Low = float.Parse(tickerParts[4]);
                         this.Close = float.Parse(tickerParts[5]);
                         this.Volume = long.Parse(tickerParts[6]);
-
                     }
-
                 }
             }
         }
-        [DataMember]
-        public string Code {get;set;}
-        [DataMember]
-        public int Period {get;set;}
-        [DataMember]
-        public float Open {get;set;}
-        [DataMember]
-        public float High {get;set;}
-        [DataMember]
-        public float Low {get;set;}
-        [DataMember]
-        public float Close {get;set;}
-        [DataMember]
-        public long Volume {get;set;}
+        public string Code { get; set; }
+        public int Period { get; set; }
+        public float Open { get; set; }
+        public float High { get; set; }
+        public float Low { get; set; }
+        public float Close { get; set; }
+        public long Volume { get; set; }
 
         public override string ToString()
         {
