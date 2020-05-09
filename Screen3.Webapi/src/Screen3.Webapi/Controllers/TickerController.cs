@@ -14,20 +14,21 @@ namespace Screen3.Webapi.Controllers
     public class TickerController : ControllerBase
     {
         private string s3_bucket_name;  
-
+        private string local_temp_folder;
         private IConfiguration configuration;
 
         public TickerController(IConfiguration iConfig)
         {
             this.configuration = iConfig;
             this.s3_bucket_name = this.configuration.GetValue<string>("Screen3BucketName");
+            this.local_temp_folder = this.configuration.GetValue<string>("LocalTempFolder");
         }
 
-        [HttpGet]
-        public async Task<ActionResult> Get()
+        [HttpGet("{code}")]
+        public async Task<ActionResult> Get(string code)
         {
             TickerBLL bll = new TickerBLL(this.s3_bucket_name);
-            var result = await bll.GetExistingDayTickers("ANZ");
+            var result = await bll.GetDailyTickerEntityList(code, this.local_temp_folder);
             return  Ok(result);
         }
     }

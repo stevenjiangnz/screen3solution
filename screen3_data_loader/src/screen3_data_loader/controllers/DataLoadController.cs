@@ -74,7 +74,7 @@ namespace screen3_data_loader.controllers
             // save tickers into S3
             foreach (KeyValuePair<string, List<TickerEntity>> tickerGroup in this.stockDict)
             {
-                await bll.SaveTickers(tickerGroup.Key, tickerGroup.Value, true);
+                await bll.SaveTickersToS3(tickerGroup.Key, tickerGroup.Value, true);
 
                 LambdaLogger.Log($"Save to S3 for {tickerGroup.Key} with items {tickerGroup.Value.Count} \n");
             }

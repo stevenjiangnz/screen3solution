@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Screen3.Entity;
 using System.Linq;
+using System.Text;
 using Screen3.S3Service;
 using Screen3.Utils;
 
@@ -12,20 +13,61 @@ namespace Screen3.BLL
     public class TickerBLL
     {
         private string S3_Bucket_Name;
+        private int local_ticker_ttL = 12; // 12 hours
 
         public TickerBLL(string bucketName)
         {
             this.S3_Bucket_Name = bucketName;
         }
 
-        public async Task SaveTickers(string code, List<TickerEntity> tickerList, Boolean mergeExisting = false)
+        public async Task<List<TickerEntity>> GetDailyTickerEntityList(string code, string localFolder, int? start = null, int? end = null) {
+            List<TickerEntity> tickerList = null;
+            string localTickerFilePath = $@"{localFolder}{code}/{code}_day.txt";
+            bool isLocalAvailable = false;
+            
+            Directory.CreateDirectory($@"{localFolder}{code}/");
+            if (File.Exists(localTickerFilePath)) {
+                FileInfo tickerFile = new FileInfo(localTickerFilePath);
+
+                if (tickerFile.CreationTime > DateTime.Now.AddHours(this.local_ticker_ttL * -1)) {
+                    isLocalAvailable = true;
+                } else {
+                    File.Delete(localTickerFilePath);
+                }
+            }
+
+            if (isLocalAvailable) {
+                Console.WriteLine("Screen3: load ticker form local");
+                string content = File.ReadAllText(localTickerFilePath);
+                tickerList = this.getTickerListFromString(content);
+            } else {
+                Console.WriteLine("Screen3: load ticker form S3");
+
+                tickerList = await this.GetExistingDayTickersFromS3(code);
+                this.SaveTickerlistToLocal(localTickerFilePath, tickerList);
+            }
+
+            return tickerList;
+        }
+
+
+        public void SaveTickerlistToLocal(string path, List<TickerEntity> tickerList) {
+            StringBuilder sb = new StringBuilder();
+
+            foreach(var ticker in tickerList) {
+                sb.AppendLine(ticker.ToString());
+            }
+
+            File.WriteAllText(path, sb.ToString());
+        }
+        public async Task SaveTickersToS3(string code, List<TickerEntity> tickerList, Boolean mergeExisting = false)
         {
             string keyName = $@"ticker/{code}/{code}_day.txt";
             string content = string.Empty;
             List<TickerEntity> mergedList = null;
             if (mergeExisting)
             {
-                List<TickerEntity> existingList = await this.GetExistingDayTickers(code);
+                List<TickerEntity> existingList = await this.GetExistingDayTickersFromS3(code);
 
                 var comparer = new TickerComparer();
                 mergedList = tickerList.Union(existingList, comparer).ToList();
@@ -46,7 +88,7 @@ namespace Screen3.BLL
         }
 
 
-        public List<TickerEntity> GetWeekListFromDayList(List<TickerEntity> dayTickerList)
+        public List<TickerEntity> GetWeeklyTickerListFromDayList(List<TickerEntity> dayTickerList)
         {
             List<TickerEntity> weeklyTickerList = new List<TickerEntity>();
             Dictionary<int, List<TickerEntity>> tickerDict = new Dictionary<int, List<TickerEntity>>();
@@ -109,7 +151,7 @@ namespace Screen3.BLL
 
             return weeklyTicker;
         }
-        public async Task<List<TickerEntity>> GetExistingDayTickers(string code)
+        public async Task<List<TickerEntity>> GetExistingDayTickersFromS3(string code)
         {
             List<TickerEntity> tickerList = new List<TickerEntity>();
             string keyName = $@"ticker/{code}/{code}_day.txt";
