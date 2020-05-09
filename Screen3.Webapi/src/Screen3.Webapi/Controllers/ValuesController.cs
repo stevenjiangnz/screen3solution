@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 
 namespace Screen3.Webapi.Controllers
 {
-   
     [Route("api/[controller]")]
     public class ValuesController : ControllerBase
     {

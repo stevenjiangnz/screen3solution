@@ -5,8 +5,12 @@
     <AWSProjectType>Lambda</AWSProjectType>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AWSSDK.S3" Version="3.3.110.58" />
+    <PackageReference Include="AWSSDK.S3" Version="3.3.110.62" />
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.3.100.1" />
     <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="5.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Screen3.Entity\Screen3.Entity.csproj" />
+    <ProjectReference Include="..\..\..\Screen3.BLL\Screen3.BLL.csproj" />
   </ItemGroup>
 </Project>

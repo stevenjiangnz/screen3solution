@@ -1,7 +1,9 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace Screen3.Entity
 {
+    [DataContract]
     public class TickerEntity
     {
         public TickerEntity()
@@ -32,14 +34,20 @@ namespace Screen3.Entity
                 }
             }
         }
-
-        public string Code;
-        public int Period;
-        public float Open;
-        public float High;
-        public float Low;
-        public float Close;
-        public long Volume;
+        [DataMember]
+        public string Code {get;set;}
+        [DataMember]
+        public int Period {get;set;}
+        [DataMember]
+        public float Open {get;set;}
+        [DataMember]
+        public float High {get;set;}
+        [DataMember]
+        public float Low {get;set;}
+        [DataMember]
+        public float Close {get;set;}
+        [DataMember]
+        public long Volume {get;set;}
 
         public override string ToString()
         {
