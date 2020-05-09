@@ -19,9 +19,9 @@ namespace Screen3.Webapi.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            string config = this.configuration.GetValue<string>("AWS:Region");
+            string bucket_name = this.configuration.GetValue<string>("Screen3BucketName");
 
-            return new string[] { "value111", "value222222: " + config };
+            return new string[] { "value111", "value222222: " + bucket_name };
         }
 
         // GET api/values/5

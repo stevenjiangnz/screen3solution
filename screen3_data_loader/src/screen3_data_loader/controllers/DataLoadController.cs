@@ -70,7 +70,7 @@ namespace screen3_data_loader.controllers
                 this.AddDailyFileIntoStockDict(path);
             }
 
-            TickerBLL bll = new TickerBLL();
+            TickerBLL bll = new TickerBLL(this.S3_Bucket_Name);
             // save tickers into S3
             foreach (KeyValuePair<string, List<TickerEntity>> tickerGroup in this.stockDict)
             {

@@ -13,9 +13,9 @@ namespace Screen3.BLL
     {
         private string S3_Bucket_Name;
 
-        public TickerBLL()
+        public TickerBLL(string bucketName)
         {
-            this.S3_Bucket_Name = Environment.GetEnvironmentVariable("SCREEN3_S3_BUCKET");
+            this.S3_Bucket_Name = bucketName;
         }
 
         public async Task SaveTickers(string code, List<TickerEntity> tickerList, Boolean mergeExisting = false)
@@ -46,7 +46,7 @@ namespace Screen3.BLL
         }
 
 
-        public List<TickerEntity> GetWeekListFromDay(List<TickerEntity> dayTickerList)
+        public List<TickerEntity> GetWeekListFromDayList(List<TickerEntity> dayTickerList)
         {
             List<TickerEntity> weeklyTickerList = new List<TickerEntity>();
             Dictionary<int, List<TickerEntity>> tickerDict = new Dictionary<int, List<TickerEntity>>();

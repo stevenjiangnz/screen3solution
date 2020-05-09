@@ -11,9 +11,10 @@ namespace Screen3.Test.BLL
 {
     public class TickerBLLTest
     {
+        private string s3_bucket_name = "stevenjiangnz-screen3-eod-source";
         [Fact]
         public void TestSaveTickers() {
-            TickerBLL bll = new TickerBLL();
+            TickerBLL bll = new TickerBLL(this.s3_bucket_name);
 
             List<TickerEntity> tickerList = new List<TickerEntity>();
 
@@ -63,13 +64,13 @@ namespace Screen3.Test.BLL
 
         [Fact]
         public void TestGetExistingDayTickers() {
-            TickerBLL bll = new TickerBLL();
+            TickerBLL bll = new TickerBLL(this.s3_bucket_name);
             bll.GetExistingDayTickers("CLL").Wait();
         }
 
         [Fact]
         public void TestGetWeekListFromDay() {
-            TickerBLL bll = new TickerBLL();
+            TickerBLL bll = new TickerBLL(this.s3_bucket_name);
             string tickerFile = "/home/steven/devlocal/screen3solution/Fixture/ANZ_day_small.txt";
 
             string content = File.ReadAllText(tickerFile);
@@ -81,7 +82,7 @@ namespace Screen3.Test.BLL
                 Console.WriteLine(DateHelper.ToDate(t.Period).ToLongDateString() + "  " + t.ToString());
             }
 
-            List<TickerEntity> weeklyTickers = bll.GetWeekListFromDay(tickers);
+            List<TickerEntity> weeklyTickers = bll.GetWeekListFromDayList(tickers);
 
             Console.Write("\n\n");
             foreach(var wt in weeklyTickers) {
