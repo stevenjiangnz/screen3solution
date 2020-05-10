@@ -36,7 +36,7 @@ namespace Screen3.BLL
 
             weeklyTickerList = this.GetWeeklyTickerListFromDayList(dayList);
 
-            return weeklyTickerList.Where(t => (start == 0 || t.Period >= start) && (end ==0 || t.Period <= end)).ToList();
+            return weeklyTickerList.Where(t => (start == 0 || t.P >= start) && (end ==0 || t.P <= end)).ToList();
         }
 
 
@@ -67,7 +67,7 @@ namespace Screen3.BLL
                 this.SaveTickerlistToLocal(localTickerFilePath, tickerList);
             }
             
-            return tickerList.Where(t => (start == 0 || t.Period >= start) && (end ==0 || t.Period <= end)).ToList();
+            return tickerList.Where(t => (start == 0 || t.P >= start) && (end ==0 || t.P <= end)).ToList();
         }
 
         public void SaveTickerlistToLocal(string path, List<TickerEntity> tickerList) {
@@ -97,7 +97,7 @@ namespace Screen3.BLL
                 mergedList = tickerList;
             }
 
-            List<TickerEntity> sortedList = mergedList.OrderBy(o => o.Period).ToList();
+            List<TickerEntity> sortedList = mergedList.OrderBy(o => o.P).ToList();
             foreach (TickerEntity t in sortedList)
             {
                 content = content + t.ToString() + "\n";
@@ -115,7 +115,7 @@ namespace Screen3.BLL
 
             foreach (TickerEntity ticker in dayTickerList)
             {
-                int endOfWeek = DateHelper.EndOfWeek(ticker.Period);
+                int endOfWeek = DateHelper.EndOfWeek(ticker.P);
                 if (!tickerDict.ContainsKey(endOfWeek))
                 {
                     tickerDict.Add(endOfWeek, new List<TickerEntity>());
@@ -143,7 +143,7 @@ namespace Screen3.BLL
 
             if (dayTickerList.Count > 0)
             {
-                TickerEntity[] tickerArray = dayTickerList.OrderBy(o => o.Period).ToArray();
+                TickerEntity[] tickerArray = dayTickerList.OrderBy(o => o.P).ToArray();
 
                 for (int i = 0; i < tickerArray.Length; i++)
                 {
@@ -153,18 +153,18 @@ namespace Screen3.BLL
                     }
                     else
                     {
-                        if (weeklyTicker.High < tickerArray[i].High)
-                            weeklyTicker.High = tickerArray[i].High;
+                        if (weeklyTicker.H < tickerArray[i].H)
+                            weeklyTicker.H = tickerArray[i].H;
 
-                        if (weeklyTicker.Low > tickerArray[i].Low)
-                            weeklyTicker.Low = tickerArray[i].Low;
+                        if (weeklyTicker.L > tickerArray[i].L)
+                            weeklyTicker.L = tickerArray[i].L;
 
                         if (i == tickerArray.Length - 1) {
-                            weeklyTicker.Close = tickerArray[i].Close;
-                            weeklyTicker.Period = period;
+                            weeklyTicker.C = tickerArray[i].C;
+                            weeklyTicker.P = period;
                         }
 
-                        weeklyTicker.Volume += tickerArray[i].Volume;
+                        weeklyTicker.V += tickerArray[i].V;
                     }
                 }
             }

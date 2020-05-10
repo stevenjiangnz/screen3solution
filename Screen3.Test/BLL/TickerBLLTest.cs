@@ -19,43 +19,43 @@ namespace Screen3.Test.BLL
             List<TickerEntity> tickerList = new List<TickerEntity>();
 
             tickerList.Add(new TickerEntity {
-                Code = "CLL",
-                Period = 20081201,
-                Open = (float)66.01,
-                High = (float)77.01,
-                Low = (float)999.0,
-                Close = (float)12.1,
-                Volume = 123124
+                T = "CLL",
+                P = 20081201,
+                O = (float)66.01,
+                H = (float)77.01,
+                L = (float)999.0,
+                C = (float)12.1,
+                V = 123124
             });
 
             tickerList.Add(new TickerEntity {
-                Code = "CLL",
-                Period = 20071201,
-                Open = (float)111111.01,
-                High = (float)11111.01,
-                Low = (float)111.0,
-                Close = (float)111.1,
-                Volume = 123124
+                T = "CLL",
+                P = 20071201,
+                O = (float)111111.01,
+                H = (float)11111.01,
+                L = (float)111.0,
+                C = (float)111.1,
+                V = 123124
             });
 
             tickerList.Add(new TickerEntity {
-                Code = "CLL",
-                Period = 20091212,
-                Open = (float)33.01,
-                High = (float)199.01,
-                Low = (float)13.0,
-                Close = (float)13.1,
-                Volume = 2346
+                T = "CLL",
+                P = 20091212,
+                O = (float)33.01,
+                H = (float)199.01,
+                L = (float)13.0,
+                C = (float)13.1,
+                V = 2346
             });
 
             tickerList.Add(new TickerEntity {
-                Code = "CLL",
-                Period = 20081202,
-                Open = (float)33.01,
-                High = (float)99.01,
-                Low = (float)13.0,
-                Close = (float)13.1,
-                Volume = 2346
+                T = "CLL",
+                P = 20081202,
+                O = (float)33.01,
+                H = (float)99.01,
+                L = (float)13.0,
+                C = (float)13.1,
+                V = 2346
             });
 
             bll.SaveTickersToS3("CLL", tickerList, true).Wait();
@@ -79,14 +79,14 @@ namespace Screen3.Test.BLL
 
             foreach(var t in tickers ) {
 
-                Console.WriteLine(DateHelper.ToDate(t.Period).ToLongDateString() + "  " + t.ToString());
+                Console.WriteLine(DateHelper.ToDate(t.P).ToLongDateString() + "  " + t.ToString());
             }
 
             List<TickerEntity> weeklyTickers = bll.GetWeeklyTickerListFromDayList(tickers);
 
             Console.Write("\n\n");
             foreach(var wt in weeklyTickers) {
-                Console.WriteLine(DateHelper.ToDate(wt.Period).ToLongDateString() + "  " + wt.ToString());
+                Console.WriteLine(DateHelper.ToDate(wt.P).ToLongDateString() + "  " + wt.ToString());
             }
 
         }
