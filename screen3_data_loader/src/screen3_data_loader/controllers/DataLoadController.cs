@@ -74,7 +74,7 @@ namespace screen3_data_loader.controllers
             // save tickers into S3
             foreach (KeyValuePair<string, List<TickerEntity>> tickerGroup in this.stockDict)
             {
-                await bll.SaveTickers(tickerGroup.Key, tickerGroup.Value, true);
+                await bll.SaveTickersToS3(tickerGroup.Key, tickerGroup.Value, true);
 
                 LambdaLogger.Log($"Save to S3 for {tickerGroup.Key} with items {tickerGroup.Value.Count} \n");
             }
@@ -139,16 +139,16 @@ namespace screen3_data_loader.controllers
             {
                 if (stockList.Exists((stock) =>
                 {
-                    return stock.Code == ticker.Code;
+                    return stock.Code == ticker.T;
                 }))
                 {
 
-                    if (!this.stockDict.ContainsKey(ticker.Code))
+                    if (!this.stockDict.ContainsKey(ticker.T))
                     {
-                        this.stockDict.Add(ticker.Code, new List<TickerEntity>());
+                        this.stockDict.Add(ticker.T, new List<TickerEntity>());
                     }
 
-                    this.stockDict[ticker.Code].Add(ticker);
+                    this.stockDict[ticker.T].Add(ticker);
                 }
             }
         }
@@ -166,13 +166,13 @@ namespace screen3_data_loader.controllers
                     {
                         var ticker = new TickerEntity();
 
-                        ticker.Code = csv.GetField<string>(0);
-                        ticker.Period = csv.GetField<int>(1);
-                        ticker.Open = csv.GetField<float>(2);
-                        ticker.High = csv.GetField<float>(3);
-                        ticker.Low = csv.GetField<float>(4);
-                        ticker.Close = csv.GetField<float>(5);
-                        ticker.Volume = csv.GetField<long>(6);
+                        ticker.T = csv.GetField<string>(0);
+                        ticker.P = csv.GetField<int>(1);
+                        ticker.O = csv.GetField<float>(2);
+                        ticker.H = csv.GetField<float>(3);
+                        ticker.L = csv.GetField<float>(4);
+                        ticker.C = csv.GetField<float>(5);
+                        ticker.V = csv.GetField<long>(6);
 
                         tickers.Add(ticker);
 

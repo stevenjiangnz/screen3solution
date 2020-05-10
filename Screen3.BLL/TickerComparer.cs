@@ -17,7 +17,7 @@ namespace Screen3.BLL
 
         public int GetHashCode(TickerEntity o)
         {
-            return o.Period;
+            return o.P;
         }
     }
 

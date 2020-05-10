@@ -20,28 +20,28 @@ namespace Screen3.Entity
                 {
                     for (int i = 0; i < tickerParts.Length; i++)
                     {
-                        this.Code = tickerParts[0];
-                        this.Period = int.Parse(tickerParts[1]);
-                        this.Open = float.Parse(tickerParts[2]);
-                        this.High = float.Parse(tickerParts[3]);
-                        this.Low = float.Parse(tickerParts[4]);
-                        this.Close = float.Parse(tickerParts[5]);
-                        this.Volume = long.Parse(tickerParts[6]);
+                        this.T = tickerParts[0];
+                        this.P = int.Parse(tickerParts[1]);
+                        this.O = float.Parse(tickerParts[2]);
+                        this.H = float.Parse(tickerParts[3]);
+                        this.L = float.Parse(tickerParts[4]);
+                        this.C = float.Parse(tickerParts[5]);
+                        this.V = long.Parse(tickerParts[6]);
                     }
                 }
             }
         }
-        public string Code { get; set; }
-        public int Period { get; set; }
-        public float Open { get; set; }
-        public float High { get; set; }
-        public float Low { get; set; }
-        public float Close { get; set; }
-        public long Volume { get; set; }
+        public string T { get; set; } // Ticker or Code
+        public int P { get; set; } // Period
+        public float O { get; set; } // Open
+        public float H { get; set; } // High
+        public float L { get; set; } // Low
+        public float C { get; set; } // Close
+        public long V { get; set; } // Volume
 
         public override string ToString()
         {
-            return $"{this.Code},{this.Period},{this.Open},{this.High},{this.Low},{this.Close},{this.Volume}";
+            return $"{this.T},{this.P},{this.O},{this.H},{this.L},{this.C},{this.V}";
         }
 
     }
