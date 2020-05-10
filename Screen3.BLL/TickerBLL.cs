@@ -36,7 +36,7 @@ namespace Screen3.BLL
 
             weeklyTickerList = this.GetWeeklyTickerListFromDayList(dayList);
 
-            return weeklyTickerList;
+            return weeklyTickerList.Where(t => (start == 0 || t.Period >= start) && (end ==0 || t.Period <= end)).ToList();
         }
 
 
