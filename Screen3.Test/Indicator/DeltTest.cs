@@ -1,7 +1,5 @@
 using System;
 using Xunit;
-using Screen3.DynamoService;
-using Screen3.Entity;
 using Screen3.Indicator;
 using Screen3.Utils;
 
