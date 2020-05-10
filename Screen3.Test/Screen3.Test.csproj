@@ -17,6 +17,7 @@
     <ProjectReference Include="..\Screen3.Entity\Screen3.Entity.csproj" />
     <ProjectReference Include="..\Screen3.DynamoService\Screen3.DynamoService.csproj" />
     <ProjectReference Include="..\Screen3.BLL\Screen3.BLL.csproj" />
+    <ProjectReference Include="..\Screen3.Indicator\Screen3.Indicator.csproj" />
   </ItemGroup>
 
 </Project>
