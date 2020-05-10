@@ -20,6 +20,26 @@ namespace Screen3.BLL
             this.S3_Bucket_Name = bucketName;
         }
 
+        public async Task<List<TickerEntity>> GetWeeklyTickerEntityList(string code, string localFolder, int? start = 0, int? end = 0) {
+            List<TickerEntity> weeklyTickerList = null;
+            int weekStart = 0;
+            int weekEnd = 0;
+
+            if (start != 0) {
+                weekStart =  DateHelper.ToInt(DateHelper.ToDate(start.Value).AddDays(-7));
+            }
+
+            if ( end !=0 ) {
+                weekEnd = DateHelper.ToInt(DateHelper.ToDate(end.Value).AddDays(7));
+            }
+            List<TickerEntity> dayList = await this.GetDailyTickerEntityList(code, localFolder, weekStart, weekEnd);
+
+            weeklyTickerList = this.GetWeeklyTickerListFromDayList(dayList);
+
+            return weeklyTickerList;
+        }
+
+
         public async Task<List<TickerEntity>> GetDailyTickerEntityList(string code, string localFolder, int? start = 0, int? end = 0) {
             List<TickerEntity> tickerList = null;
             string localTickerFilePath = $@"{localFolder}{code}/{code}_day.txt";
@@ -50,7 +70,6 @@ namespace Screen3.BLL
             return tickerList.Where(t => (start == 0 || t.Period >= start) && (end ==0 || t.Period <= end)).ToList();
         }
 
-
         public void SaveTickerlistToLocal(string path, List<TickerEntity> tickerList) {
             StringBuilder sb = new StringBuilder();
 
@@ -60,6 +79,7 @@ namespace Screen3.BLL
 
             File.WriteAllText(path, sb.ToString());
         }
+
         public async Task SaveTickersToS3(string code, List<TickerEntity> tickerList, Boolean mergeExisting = false)
         {
             string keyName = $@"ticker/{code}/{code}_day.txt";
