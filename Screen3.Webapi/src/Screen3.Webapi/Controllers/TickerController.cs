@@ -25,10 +25,12 @@ namespace Screen3.Webapi.Controllers
         }
 
         [HttpGet("{code}")]
-        public async Task<ActionResult> Get(string code)
+        public async Task<ActionResult> Get(string code, int? start = 0, int? end = 0)
         {
             TickerBLL bll = new TickerBLL(this.s3_bucket_name);
-            var result = await bll.GetDailyTickerEntityList(code, this.local_temp_folder);
+
+            Console.WriteLine($"code: {code} start: {start} end: {end}");
+            var result = await bll.GetDailyTickerEntityList(code, this.local_temp_folder, start, end);
             return  Ok(result);
         }
     }

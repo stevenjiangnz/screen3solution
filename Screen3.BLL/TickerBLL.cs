@@ -20,7 +20,7 @@ namespace Screen3.BLL
             this.S3_Bucket_Name = bucketName;
         }
 
-        public async Task<List<TickerEntity>> GetDailyTickerEntityList(string code, string localFolder, int? start = null, int? end = null) {
+        public async Task<List<TickerEntity>> GetDailyTickerEntityList(string code, string localFolder, int? start = 0, int? end = 0) {
             List<TickerEntity> tickerList = null;
             string localTickerFilePath = $@"{localFolder}{code}/{code}_day.txt";
             bool isLocalAvailable = false;
@@ -46,8 +46,8 @@ namespace Screen3.BLL
                 tickerList = await this.GetExistingDayTickersFromS3(code);
                 this.SaveTickerlistToLocal(localTickerFilePath, tickerList);
             }
-
-            return tickerList;
+            
+            return tickerList.Where(t => (start == 0 || t.Period >= start) && (end ==0 || t.Period <= end)).ToList();
         }
 
 
