@@ -115,13 +115,13 @@ namespace Screen3.BLL
 
             foreach (TickerEntity ticker in dayTickerList)
             {
-                int endOfWeek = DateHelper.EndOfWeek(ticker.P);
-                if (!tickerDict.ContainsKey(endOfWeek))
+                int beginOfWeek = DateHelper.BeginOfWeek(ticker.P);
+                if (!tickerDict.ContainsKey(beginOfWeek))
                 {
-                    tickerDict.Add(endOfWeek, new List<TickerEntity>());
+                    tickerDict.Add(beginOfWeek, new List<TickerEntity>());
                 }
 
-                tickerDict[endOfWeek].Add(ticker);
+                tickerDict[beginOfWeek].Add(ticker);
             }
 
             foreach (var item in tickerDict)
