@@ -26,7 +26,6 @@ namespace Screen3.Test.Indicator
 
             var setting = new SMASetting();
             setting.Period = period;
-            setting.Offset = 30;
 
             Result res = new SMA().Calculate(input, setting);
 

@@ -14,7 +14,7 @@ namespace Screen3.Indicator
 
             int len = input.Data.Length;
 
-            if(len< setting.Period + setting.Offset)
+            if(len< setting.Period)
             {
                 res.Status = ResultStatus.Fail;
                 res.Message = "input data error";
@@ -91,7 +91,7 @@ namespace Screen3.Indicator
 
     public class SMASetting {
         public int Period { get; set; }
-        public int Offset { get; set; }
+        // public int Offset { get; set; }
     }
 
     public class SMAItem
