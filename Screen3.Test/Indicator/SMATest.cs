@@ -10,7 +10,7 @@ namespace Screen3.Test.Indicator
         [Fact]
         public void TestSMA()
         {
-             double[] inputData = new double[] { 11, 12, 13, 14, 15, 16, 17 };
+            double[] inputData = new double[] { 11, 12, 13, 14, 15, 16, 17 };
             int len = inputData.Length;
 
             int period = 5;
@@ -18,7 +18,7 @@ namespace Screen3.Test.Indicator
             var input = new SMAIn();
             input.Data = new SMAItem[inputData.Length];
 
-            for(int i=0; i <inputData.Length; i++)
+            for (int i = 0; i < inputData.Length; i++)
             {
                 input.Data[i] = new SMAItem();
                 input.Data[i].iClose = inputData[i];
@@ -30,7 +30,7 @@ namespace Screen3.Test.Indicator
             Result res = new SMA().Calculate(input, setting);
 
             Console.WriteLine(ObjectHelper.ToJson(input));
-           
+
         }
 
     }
