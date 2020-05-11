@@ -22,7 +22,7 @@ namespace Screen3.Indicator
                 {
                     if (inputData[i - offset].HasValue && inputData[i].HasValue && inputData[i].Value != 0)
                     {
-                        outData[i] = 100 * (inputData[i].Value - inputData[i - offset].Value) / inputData[i].Value;
+                        outData[i] = Math.Round(100 * (inputData[i].Value - inputData[i - offset].Value) / inputData[i].Value, 4);
                     }
                 }
             }

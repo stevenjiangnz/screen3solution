@@ -29,7 +29,7 @@ namespace Screen3.Indicator
                         tmpLow[j] = inputLow[bIndex + j];
                     }
 
-                    outData[i] = GetWR(tmpHigh, tmpLow, inputData[i]);
+                    outData[i] = Math.Round(GetWR(tmpHigh, tmpLow, inputData[i]), 4);
                 }
 
             }

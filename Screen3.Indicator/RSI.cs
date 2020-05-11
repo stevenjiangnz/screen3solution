@@ -71,7 +71,7 @@ namespace Screen3.Indicator
                         }
                         else {
                             rs[i] = avgGain[i].Value / avgLoss[i].Value;
-                            outRSI[i] = 100 - 100.0 / (1 + rs[i].Value);
+                            outRSI[i] = Math.Round(100 - 100.0 / (1 + rs[i].Value), 4);
                         }
                     }
                 }

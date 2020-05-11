@@ -12,7 +12,7 @@ namespace Screen3.Test.BLL
     public class TickerBLLTest
     {
         private string s3_bucket_name = "stevenjiangnz-screen3-eod-source";
-        private string tempTickerFolder = "/tmp/screen3_temp_files/localticker/";
+        // private string tempTickerFolder = "/tmp/screen3_temp_files/localticker/";
 
         [Fact]
         public void TestSaveTickers() {

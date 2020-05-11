@@ -52,6 +52,17 @@ namespace Screen3.Indicator
                     outDataK[j] = null;
                     outDataD[j] = null;
                 }
+
+
+                for (int i =0; i< len; i++) {
+                    if (outDataD[i].HasValue) {
+                        outDataD[i] = Math.Round(outDataD[i].Value, 4);
+                    }
+
+                    if (outDataK[i].HasValue) {
+                        outDataK[i] = Math.Round(outDataK[i].Value, 4);
+                    }
+                }
             }
             catch (Exception ex)
             {

@@ -52,6 +52,20 @@ namespace Screen3.Indicator
                 outHist[m] = outMACD[m].Value - outSignal[m].Value;
             }
 
+
+            for (int i =0; i< len; i++) {
+                if (outHist[i].HasValue) {
+                    outHist[i] = Math.Round(outHist[i].Value, 4);
+                }
+
+                if (outSignal[i].HasValue) {
+                    outSignal[i] = Math.Round(outSignal[i].Value, 4);
+                }
+
+                if (outMACD[i].HasValue) {
+                    outMACD[i] = Math.Round(outMACD[i].Value, 4);
+                }
+            }
             return result;
         }
     }

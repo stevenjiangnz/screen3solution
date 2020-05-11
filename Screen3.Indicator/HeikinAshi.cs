@@ -18,16 +18,16 @@ namespace Screen3.Indicator
             outHigh[0] = inHigh[0];
             outLow[0] = inLow[0];
 
-            for(int i = 1; i < len; i++)
+            for (int i = 1; i < len; i++)
             {
-                outClose[i] = (inOpen[i] + inHigh[i] + inLow[i] + inClose[i]) / 4;
-                outOpen[i] = (outOpen[i-1] + outClose[i-1]) / 2;
+                outClose[i] = Math.Round((inOpen[i] + inHigh[i] + inLow[i] + inClose[i]) / 4, 4);
+                outOpen[i] = Math.Round(((outOpen[i - 1] + outClose[i - 1]) / 2).Value, 4);
 
                 var h2 = (outClose[i] > outOpen[i]) ? outClose[i] : outOpen[i];
-                outHigh[i] = (h2 > inHigh[i]) ? h2 : inHigh[i];
+                outHigh[i] = Math.Round(((h2 > inHigh[i]) ? h2 : inHigh[i]).Value, 4);
 
                 var l2 = (outClose[i] < outOpen[i]) ? outClose[i] : outOpen[i];
-                outLow[i] = (l2 < inLow[i]) ? l2 : inLow[i];
+                outLow[i] = Math.Round(((l2 < inLow[i]) ? l2 : inLow[i]).Value, 4);
             }
 
 

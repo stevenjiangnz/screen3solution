@@ -69,9 +69,8 @@ namespace Screen3.Indicator
                         periodData[k] = inputData[b + k];
                     }
 
-                    outData[i] = GenericHelper.GetAvg(periodData);
+                    outData[i] = Math.Round(GenericHelper.GetAvg(periodData), 4);
                 }
-
             }
             catch (Exception ex)
             {

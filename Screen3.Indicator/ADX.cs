@@ -98,6 +98,20 @@ namespace Screen3.Indicator
                 {
                     adx[i] = (adx[i - 1] * (period - 1) + dx[i]) / period;
                 }
+
+                for (int i =0; i< len; i++) {
+                    if (adx[i].HasValue) {
+                        adx[i] = Math.Round(adx[i].Value, 4);
+                    }
+
+                    if (di14plus[i].HasValue) {
+                        di14plus[i] = Math.Round(di14plus[i].Value, 4);
+                    }
+
+                    if (di14minus[i].HasValue) {
+                        di14minus[i] = Math.Round(di14minus[i].Value, 4);
+                    }
+                }
             }
             catch (Exception ex)
             {

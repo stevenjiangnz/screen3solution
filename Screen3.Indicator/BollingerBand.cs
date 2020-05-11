@@ -32,11 +32,11 @@ namespace Screen3.Indicator
                         d[j] = inputData[bIndex + j];
                     }
 
-                    sd[i] = GenericHelper.StandardDeviation(d);
+                    sd[i] = Math.Round(GenericHelper.StandardDeviation(d), 4);
 
-                    outHigh[i] = outMiddle[i] + factor * sd[i];
+                    outHigh[i] = Math.Round((outMiddle[i] + factor * sd[i]).Value, 4);
 
-                    outLow[i] = outMiddle[i] - factor * sd[i];
+                    outLow[i] = Math.Round((outMiddle[i] - factor * sd[i]).Value, 4);
 
                 } }
             catch (Exception ex)

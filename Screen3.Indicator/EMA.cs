@@ -23,7 +23,7 @@ namespace Screen3.Indicator
                 for (int i = period; i < len; i++)
                 {
                     double emaPre = outData[i - 1].Value;
-                    outData[i] = (inputData[i] - emaPre) * multiplier + emaPre;
+                    outData[i] = Math.Round(((inputData[i] - emaPre) * multiplier + emaPre), 4);
                 }
             }
             catch(Exception ex)
