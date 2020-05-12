@@ -4,7 +4,7 @@ namespace Screen3.Entity
 {
     public class IndSmaEntity
     {
-        public String C {get;set;} // Code
+        public String T {get;set;} // Code, Ticker
         public int P {get;set;} // Period
 
         #nullable enable

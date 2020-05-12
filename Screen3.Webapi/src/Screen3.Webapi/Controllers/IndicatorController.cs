@@ -13,19 +13,22 @@ namespace Screen3.Webapi.Controllers
     public class IndicatorController: ControllerBase
     {
         private IConfiguration configuration;
-
+        private string s3_bucket_name;  
+        private string local_temp_folder;
         public IndicatorController(IConfiguration iConfig) {
             this.configuration = iConfig;
+            this.s3_bucket_name = this.configuration.GetValue<string>("Screen3BucketName");
+            this.local_temp_folder = this.configuration.GetValue<string>("LocalTempFolder");
         }
 
         // GET api/values
         [HttpGet("sma/{code}")]
-        public async Task<ActionResult> Get_sma(string code, string type = "day", int? start = 0, int? end = 0)
+        public async Task<ActionResult> Get_sma(string code, int period,  string type = "day", int? start = 0, int? end = 0)
         {
-            string bucket_name = this.configuration.GetValue<string>("Screen3BucketName");
+            IndicatorBLL bll =new IndicatorBLL(this.s3_bucket_name, this.local_temp_folder);
+            IndSmaEntity[] resultList = await bll.GetDaySMA(code.ToUpper(), period, start, end);
 
-            return  Ok (new IndSmaEntity[] { new IndSmaEntity {C = "12", P=123, V=1.11}, new IndSmaEntity {C = "23", P=23, V=2.222}});
+            return Ok(resultList);
         }
-
     }
 }

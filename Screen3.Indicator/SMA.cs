@@ -6,47 +6,47 @@ using System.Threading.Tasks;
 
 namespace Screen3.Indicator
 {
-    public class SMA : BaseIndicator<SMAIn,SMASetting>
+    public class SMA 
     {
-        public override Result Calculate(SMAIn input, SMASetting setting)
-        {
-            Result res = new Result();
+        // public override Result Calculate(SMAIn input, SMASetting setting)
+        // {
+        //     Result res = new Result();
 
-            int len = input.Data.Length;
+        //     int len = input.Data.Length;
 
-            if(len< setting.Period)
-            {
-                res.Status = ResultStatus.Fail;
-                res.Message = "input data error";
-                return res;
-            }
+        //     if(len< setting.Period)
+        //     {
+        //         res.Status = ResultStatus.Fail;
+        //         res.Message = "input data error";
+        //         return res;
+        //     }
 
-            try
-            {
-                double[] inputData = new double[len];
-                double?[] outData = new double?[len];
+        //     try
+        //     {
+        //         double[] inputData = new double[len];
+        //         double?[] outData = new double?[len];
 
-                for(int i =0; i< len; i++)
-                {
-                    inputData[i] = input.Data[i].iClose;
-                }
+        //         for(int i =0; i< len; i++)
+        //         {
+        //             inputData[i] = input.Data[i].iClose;
+        //         }
 
-                res = Calculate(inputData, setting.Period, outData);
-                for (int i = 0; i < len; i++)
-                {
-                    input.Data[i].oSMA = outData[i];
-                }
-            }
-            catch (Exception ex)
-            {
-                res.Status = ResultStatus.Fail;
-                res.Message = ex.ToString();
-                return res;
-            }
+        //         res = Calculate(inputData, setting.Period, outData);
+        //         for (int i = 0; i < len; i++)
+        //         {
+        //             input.Data[i].oSMA = outData[i];
+        //         }
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         res.Status = ResultStatus.Fail;
+        //         res.Message = ex.ToString();
+        //         return res;
+        //     }
 
-            res.Status = ResultStatus.Success;
-            return res;
-        }
+        //     res.Status = ResultStatus.Success;
+        //     return res;
+        // }
 
 
 

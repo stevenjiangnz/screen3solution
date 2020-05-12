@@ -11,25 +11,15 @@ namespace Screen3.Test.Indicator
         public void TestSMA()
         {
             double[] inputData = new double[] { 11, 12, 13, 14, 15, 16, 17 };
+            double?[] outputData;
             int len = inputData.Length;
-
+            outputData = new double?[len];
             int period = 5;
 
-            var input = new SMAIn();
-            input.Data = new SMAItem[inputData.Length];
 
-            for (int i = 0; i < inputData.Length; i++)
-            {
-                input.Data[i] = new SMAItem();
-                input.Data[i].iClose = inputData[i];
-            }
+            Result res = SMA.Calculate(inputData, period, outputData);
 
-            var setting = new SMASetting();
-            setting.Period = period;
-
-            Result res = new SMA().Calculate(input, setting);
-
-            Console.WriteLine(ObjectHelper.ToJson(input));
+            Console.WriteLine(ObjectHelper.ToJson(outputData));
 
         }
 
