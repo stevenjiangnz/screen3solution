@@ -23,10 +23,10 @@ namespace Screen3.Webapi.Controllers
 
         // GET api/values
         [HttpGet("sma/{code}")]
-        public async Task<ActionResult> Get_sma(string code, int period,  string type = "day", int? start = 0, int? end = 0)
+        public async Task<ActionResult> Get_SMA(string code, int period,  string type = "day", int? start = 0, int? end = 0)
         {
             IndicatorBLL bll =new IndicatorBLL(this.s3_bucket_name, this.local_temp_folder);
-            IndSmaEntity[] resultList;  
+            IndSMAEntity[] resultList;  
 
             if (type.ToLower() == "day") {
                 resultList = await bll.GetSMA(code.ToUpper(), period, start, end);
@@ -38,5 +38,23 @@ namespace Screen3.Webapi.Controllers
 
             return Ok(resultList);
         }
+
+        [HttpGet("ema/{code}")]
+        public async Task<ActionResult> Get_EMA(string code, int period,  string type = "day", double mfactor = 2, int? start = 0, int? end = 0)
+        {
+            IndicatorBLL bll =new IndicatorBLL(this.s3_bucket_name, this.local_temp_folder);
+            IndEMAEntity[] resultList;  
+
+            if (type.ToLower() == "day") {
+                resultList = await bll.GetEMA(code.ToUpper(), period, mfactor, start, end);
+            } else if (type.ToLower() == "week") {
+                resultList = await bll.GetEMA(code.ToUpper(), period, mfactor, start, end, "week");
+            } else {
+                return BadRequest($"Wrong type input: {type}");
+            }
+
+            return Ok(resultList);
+        }
+
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Screen3.Entity
 {
-    public class IndSmaEntity
+    public class IndSMAEntity
     {
         public String T {get;set;} // Code, Ticker
         public int P {get;set;} // Period
