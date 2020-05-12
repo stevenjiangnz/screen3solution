@@ -21,6 +21,7 @@ namespace Screen3.BLL
             this.tickerBLL = new TickerBLL(this.S3_Bucket_Name, this.localFolder);
         }
 
+       
         public async Task<IndSingleValueEntity[]> GetSMA(string code, int period, int? start = 0, int? end = 0, string type = "day" ) {
             TickerEntity[] tickers = await base.getTickerEntityArray(code, start, end, type);
             List<IndSingleValueEntity> outList = new List<IndSingleValueEntity>();
@@ -66,6 +67,29 @@ namespace Screen3.BLL
             return outList.Where(r => (start == 0 || r.P >= start) && (end ==0 || r.P <= end)).ToArray();
         }
 
+        public async Task<IndSingleValueEntity[]> GetATR(string code, int period, int? start = 0, int? end = 0, string type = "day" ) {
+            TickerEntity[] tickers = await base.getTickerEntityArray(code, start, end, type);
+            List<IndSingleValueEntity> outList = new List<IndSingleValueEntity>();
+
+            int len = tickers.Length;
+
+            double[] close = tickers.Select(t => (double)t.C).ToArray(); 
+            double[] high = tickers.Select(t => (double)t.H).ToArray(); 
+            double[] low = tickers.Select(t => (double)t.L).ToArray(); 
+            double?[] outATR = new double?[len];
+            
+            ATR.Calculate(high, low, close, period, outATR);
+
+            for (int i =0; i< len; i++) {
+                outList.Add(new IndSingleValueEntity{
+                    T = tickers[i].T,
+                    P = tickers[i].P,
+                    V = outATR[i]
+                });
+            }
+            
+            return outList.Where(r => (start == 0 || r.P >= start) && (end ==0 || r.P <= end)).ToArray();
+        }
 
         public async Task<IndADXEntity[]> GetADX(string code, int start = 0, int end = 0, string type = "day", int period = 14) {
             TickerEntity[] tickers = await base.getTickerEntityArray(code, start, end, type);

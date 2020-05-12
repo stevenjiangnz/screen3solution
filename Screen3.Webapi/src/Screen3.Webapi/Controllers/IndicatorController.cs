@@ -74,5 +74,23 @@ namespace Screen3.Webapi.Controllers
             return Ok(resultList);
         }
 
+
+        [HttpGet("atr/{code}")]
+        public async Task<ActionResult> Get_ATR(string code, int period = 14,  string type = "day", int start = 0, int end = 0)
+        {
+            IndicatorBLL bll =new IndicatorBLL(this.s3_bucket_name, this.local_temp_folder);
+            IndSingleValueEntity[] resultList;  
+
+            if (type.ToLower() == "day") {
+                resultList = await bll.GetATR(code.ToUpper(), period, start, end, "day");
+            } else if (type.ToLower() == "week") {
+                resultList = await bll.GetATR(code.ToUpper(), period, start, end, "week");
+            } else {
+                return BadRequest($"Wrong type input: {type}");
+            }
+
+            return Ok(resultList);
+        }
+
     }
 }
