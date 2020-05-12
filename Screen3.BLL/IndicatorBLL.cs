@@ -22,16 +22,22 @@ namespace Screen3.BLL
             this.tickerBLL = new TickerBLL(this.S3_Bucket_Name, this.localFolder);
         }
 
-        public async Task<IndSmaEntity[]> GetDaySMA(string code, int period, int? start = 0, int? end = 0 ) {
-            var offsetedStarted = base.getOffsetedDate(start);
+        public async Task<IndSmaEntity[]> GetSMA(string code, int period, int? start = 0, int? end = 0, string type = "day" ) {
+            int offsetedStarted;
+            TickerEntity[] tickers;
 
-            Console.WriteLine("offseted date: " + offsetedStarted);
-            TickerEntity[] tickers = (await this.tickerBLL.GetDailyTickerEntityList(code, offsetedStarted, end)).ToArray();
+            if (type == "week") {
+                offsetedStarted = base.getOffsetedDate(start);
+                tickers = (await this.tickerBLL.GetWeeklyTickerEntityList(code, offsetedStarted, end)).ToArray();
+            } else {
+                offsetedStarted = base.getOffsetedDate(start);
+                tickers = (await this.tickerBLL.GetDailyTickerEntityList(code, offsetedStarted, end)).ToArray();
+            }
+
             List<IndSmaEntity> outList = new List<IndSmaEntity>();
 
             int len = tickers.Length;
 
-            Console.WriteLine("len" + len);
             double[] close = tickers.Select(t => (double)t.C).ToArray(); 
             double?[] outSMA = new double?[len];
             

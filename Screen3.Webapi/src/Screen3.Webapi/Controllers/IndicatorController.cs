@@ -26,7 +26,15 @@ namespace Screen3.Webapi.Controllers
         public async Task<ActionResult> Get_sma(string code, int period,  string type = "day", int? start = 0, int? end = 0)
         {
             IndicatorBLL bll =new IndicatorBLL(this.s3_bucket_name, this.local_temp_folder);
-            IndSmaEntity[] resultList = await bll.GetDaySMA(code.ToUpper(), period, start, end);
+            IndSmaEntity[] resultList;  
+
+            if (type.ToLower() == "day") {
+                resultList = await bll.GetSMA(code.ToUpper(), period, start, end);
+            } else if (type.ToLower() == "week") {
+                resultList = await bll.GetSMA(code.ToUpper(), period, start, end, "week");
+            } else {
+                return BadRequest($"Wrong type input: {type}");
+            }
 
             return Ok(resultList);
         }
