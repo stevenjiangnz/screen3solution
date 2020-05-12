@@ -109,7 +109,6 @@ namespace Screen3.Webapi.Controllers
             return Ok(resultList);
         }
 
-
         [HttpGet("delt/{code}")]
         public async Task<ActionResult> Get_Delt(string code, int period = 1, int start = 0, int end = 0, string type = "day")
         {
@@ -120,6 +119,23 @@ namespace Screen3.Webapi.Controllers
                 resultList = await bll.GetDelt(code, period, start, end, "day");
             } else if (type.ToLower() == "week") {
                 resultList = await bll.GetDelt(code, period, start, end, "week");
+            } else {
+                return BadRequest($"Wrong type input: {type}");
+            }
+
+            return Ok(resultList);
+        }
+
+        [HttpGet("heikin/{code}")]
+        public async Task<ActionResult> Get_Heikin(string code, int start = 0, int end = 0, string type = "day")
+        {
+            IndicatorBLL bll =new IndicatorBLL(this.s3_bucket_name, this.local_temp_folder);
+            IndHeikinEntity[] resultList;  
+
+            if (type.ToLower() == "day") {
+                resultList = await bll.GetHeikin(code, start, end, "day");
+            } else if (type.ToLower() == "week") {
+                resultList = await bll.GetHeikin(code, start, end, "week");
             } else {
                 return BadRequest($"Wrong type input: {type}");
             }

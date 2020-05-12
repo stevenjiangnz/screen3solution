@@ -121,7 +121,6 @@ namespace Screen3.BLL
             return outList.Where(r => (start == 0 || r.P >= start) && (end ==0 || r.P <= end)).ToArray();
         }
 
-
         public async Task<IndBBEntity[]> GetBB(string code, int start = 0, int end = 0, double factor = 2.0, int period = 20, string type = "day") {
             Console.WriteLine($"{code} {start} {end} {type}");
             TickerEntity[] tickers = await base.getTickerEntityArray(code, start, end, type);
@@ -129,7 +128,6 @@ namespace Screen3.BLL
 
             int len = tickers.Length;
 
-            Console.WriteLine("len " + len);
             double[] close = tickers.Select(t => (double)t.C).ToArray(); 
             double[] high = tickers.Select(t => (double)t.H).ToArray(); 
             double[] low = tickers.Select(t => (double)t.L).ToArray(); 
@@ -169,6 +167,38 @@ namespace Screen3.BLL
                     T = tickers[i].T,
                     P = tickers[i].P,
                     V = outDelt[i]
+                });
+            }
+            
+            return outList.Where(r => (start == 0 || r.P >= start) && (end ==0 || r.P <= end)).ToArray();
+        }
+
+        public async Task<IndHeikinEntity[]> GetHeikin(string code, int start = 0, int end = 0, string type = "day") {
+            TickerEntity[] tickers = await base.getTickerEntityArray(code, start, end, type);
+            List<IndHeikinEntity> outList = new List<IndHeikinEntity>();
+
+            int len = tickers.Length;
+
+            double[] open = tickers.Select(t => (double)t.O).ToArray(); 
+            double[] close = tickers.Select(t => (double)t.C).ToArray(); 
+            double[] high = tickers.Select(t => (double)t.H).ToArray(); 
+            double[] low = tickers.Select(t => (double)t.L).ToArray(); 
+
+            double?[] outOpen = new double?[len];
+            double?[] outClose = new double?[len];
+            double?[] outHigh = new double?[len];
+            double?[] outLow = new double?[len];
+
+            HeikinAshi.Calculate(open,close,high, low, outOpen, outClose,outHigh,outLow);
+
+            for (int i =0; i< len; i++) {
+                outList.Add(new IndHeikinEntity{
+                    T = tickers[i].T,
+                    P = tickers[i].P,
+                    Open = outOpen[i],
+                    Close = outClose[i],
+                    High = outHigh[i],
+                    Low = outLow[i]
                 });
             }
             
