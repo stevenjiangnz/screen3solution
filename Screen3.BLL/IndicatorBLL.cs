@@ -15,7 +15,6 @@ namespace Screen3.BLL
     { 
         private string S3_Bucket_Name;
         private string localFolder;
-        private TickerBLL tickerBLL;
         public IndicatorBLL(string bucketName, string localFolder) {
             this.S3_Bucket_Name = bucketName;
             this.localFolder = localFolder;
@@ -23,17 +22,7 @@ namespace Screen3.BLL
         }
 
         public async Task<IndSmaEntity[]> GetSMA(string code, int period, int? start = 0, int? end = 0, string type = "day" ) {
-            int offsetedStarted;
-            TickerEntity[] tickers;
-
-            if (type == "week") {
-                offsetedStarted = base.getOffsetedDate(start);
-                tickers = (await this.tickerBLL.GetWeeklyTickerEntityList(code, offsetedStarted, end)).ToArray();
-            } else {
-                offsetedStarted = base.getOffsetedDate(start);
-                tickers = (await this.tickerBLL.GetDailyTickerEntityList(code, offsetedStarted, end)).ToArray();
-            }
-
+            TickerEntity[] tickers = await base.getTickerEntityArray(code, start, end, type);
             List<IndSmaEntity> outList = new List<IndSmaEntity>();
 
             int len = tickers.Length;
