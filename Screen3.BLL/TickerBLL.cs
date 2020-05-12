@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Screen3.Entity;
 using System.Linq;
 using System.Text;
-using Screen3.S3Service;
 using Screen3.Utils;
 
 namespace Screen3.BLL
@@ -13,14 +12,16 @@ namespace Screen3.BLL
     public class TickerBLL
     {
         private string S3_Bucket_Name;
+        private string localFolder;
         private int local_ticker_ttL = 12; // 12 hours
 
-        public TickerBLL(string bucketName)
+        public TickerBLL(string bucketName, string localFolder)
         {
             this.S3_Bucket_Name = bucketName;
+            this.localFolder = localFolder;
         }
 
-        public async Task<List<TickerEntity>> GetWeeklyTickerEntityList(string code, string localFolder, int? start = 0, int? end = 0) {
+        public async Task<List<TickerEntity>> GetWeeklyTickerEntityList(string code, int? start = 0, int? end = 0) {
             List<TickerEntity> weeklyTickerList = null;
             int weekStart = 0;
             int weekEnd = 0;
@@ -32,7 +33,7 @@ namespace Screen3.BLL
             if ( end !=0 ) {
                 weekEnd = DateHelper.ToInt(DateHelper.ToDate(end.Value).AddDays(7));
             }
-            List<TickerEntity> dayList = await this.GetDailyTickerEntityList(code, localFolder, weekStart, weekEnd);
+            List<TickerEntity> dayList = await this.GetDailyTickerEntityList(code, weekStart, weekEnd);
 
             weeklyTickerList = this.GetWeeklyTickerListFromDayList(dayList);
 
@@ -40,7 +41,7 @@ namespace Screen3.BLL
         }
 
 
-        public async Task<List<TickerEntity>> GetDailyTickerEntityList(string code, string localFolder, int? start = 0, int? end = 0) {
+        public async Task<List<TickerEntity>> GetDailyTickerEntityList(string code, int? start = 0, int? end = 0) {
             List<TickerEntity> tickerList = null;
             string localTickerFilePath = $@"{localFolder}{code}/{code}_day.txt";
             bool isLocalAvailable = false;

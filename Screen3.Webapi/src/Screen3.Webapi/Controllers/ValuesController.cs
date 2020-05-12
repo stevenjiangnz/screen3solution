@@ -15,6 +15,7 @@ namespace Screen3.Webapi.Controllers
         public ValuesController(IConfiguration iConfig) {
             this.configuration = iConfig;
         }
+
         // GET api/values
         [HttpGet]
         public IEnumerable<string> Get()

@@ -27,15 +27,15 @@ namespace Screen3.Webapi.Controllers
         [HttpGet("{code}")]
         public async Task<ActionResult> Get(string code, string type = "day", int? start = 0, int? end = 0)
         {
-            TickerBLL bll = new TickerBLL(this.s3_bucket_name);
+            TickerBLL bll = new TickerBLL(this.s3_bucket_name, this.local_temp_folder);
             List<TickerEntity> tickerList = new List<TickerEntity>();
 
             Console.WriteLine($"code: {code} type: {type} start: {start} end: {end}");
 
             if (type.ToLower() == "day") {
-                tickerList = await bll.GetDailyTickerEntityList(code.ToUpper(), this.local_temp_folder, start, end);
+                tickerList = await bll.GetDailyTickerEntityList(code.ToUpper(), start, end);
             } else if (type.ToLower() == "week") {
-                tickerList = await bll.GetWeeklyTickerEntityList(code.ToUpper(), this.local_temp_folder, start, end);
+                tickerList = await bll.GetWeeklyTickerEntityList(code.ToUpper(), start, end);
             } else {
                 return BadRequest($"Wrong type input: {type}");
             }

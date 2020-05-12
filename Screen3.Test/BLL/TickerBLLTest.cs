@@ -12,11 +12,11 @@ namespace Screen3.Test.BLL
     public class TickerBLLTest
     {
         private string s3_bucket_name = "stevenjiangnz-screen3-eod-source";
-        // private string tempTickerFolder = "/tmp/screen3_temp_files/localticker/";
+        private string tempTickerFolder = "/tmp/screen3_temp_files/localticker/";
 
         [Fact]
         public void TestSaveTickers() {
-            TickerBLL bll = new TickerBLL(this.s3_bucket_name);
+            TickerBLL bll = new TickerBLL(this.s3_bucket_name, this.tempTickerFolder);
 
             List<TickerEntity> tickerList = new List<TickerEntity>();
 
@@ -66,13 +66,13 @@ namespace Screen3.Test.BLL
 
         [Fact]
         public void TestGetExistingDayTickers() {
-            TickerBLL bll = new TickerBLL(this.s3_bucket_name);
+            TickerBLL bll = new TickerBLL(this.s3_bucket_name, this.tempTickerFolder);
             bll.GetExistingDayTickersFromS3("CLL").Wait();
         }
 
         [Fact]
         public void TestGetWeekListFromDay() {
-            TickerBLL bll = new TickerBLL(this.s3_bucket_name);
+            TickerBLL bll = new TickerBLL(this.s3_bucket_name, this.tempTickerFolder);
             string tickerFile = "/home/steven/devlocal/screen3solution/Fixture/ANZ_day_small.txt";
 
             string content = File.ReadAllText(tickerFile);
@@ -95,11 +95,11 @@ namespace Screen3.Test.BLL
 
         [Fact]
         public async void TestGetDailyTickerEntityList(){
-            TickerBLL bll = new TickerBLL(this.s3_bucket_name);
             string tempTickerFolder = "/tmp/screen3_temp_files/localticker/";
+            TickerBLL bll = new TickerBLL(this.s3_bucket_name, tempTickerFolder);
 
-            await bll.GetDailyTickerEntityList("ANZ", tempTickerFolder);
-            await bll.GetDailyTickerEntityList("SUN", tempTickerFolder);
+            await bll.GetDailyTickerEntityList("ANZ");
+            await bll.GetDailyTickerEntityList("SUN");
 
         }
     }

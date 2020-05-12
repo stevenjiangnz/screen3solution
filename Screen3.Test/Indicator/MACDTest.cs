@@ -17,8 +17,8 @@ namespace Screen3.Test.Indicator
         [Fact]
         public async void TestMACD()
         {
-            TickerBLL bll = new TickerBLL(this.s3_bucket_name);
-            List<TickerEntity> tList = await bll.GetDailyTickerEntityList("ORG", this.tempTickerFolder, 20181001, 20191101);
+            TickerBLL bll = new TickerBLL(this.s3_bucket_name, this.tempTickerFolder);
+            List<TickerEntity> tList = await bll.GetDailyTickerEntityList("ORG", 20181001, 20191101);
 
             double[] inputData = new double[tList.Count];
             

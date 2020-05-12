@@ -17,8 +17,8 @@ namespace Screen3.Test.Indicator
         [Fact]
         public async void TestHeikinAshi()
         {
-            TickerBLL bll = new TickerBLL(this.s3_bucket_name);
-            List<TickerEntity> tList = await bll.GetDailyTickerEntityList("ORG", this.tempTickerFolder, 20191001, 20191101);
+            TickerBLL bll = new TickerBLL(this.s3_bucket_name, this.tempTickerFolder);
+            List<TickerEntity> tList = await bll.GetDailyTickerEntityList("ORG", 20191001, 20191101);
             
             double[] o = new double[tList.Count];
             double[] h = new double[tList.Count];
