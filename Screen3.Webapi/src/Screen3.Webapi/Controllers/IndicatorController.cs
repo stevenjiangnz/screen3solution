@@ -56,5 +56,23 @@ namespace Screen3.Webapi.Controllers
             return Ok(resultList);
         }
 
+
+        [HttpGet("adx/{code}")]
+        public async Task<ActionResult> Get_ADX(string code, int period = 14,  string type = "day", int start = 0, int end = 0)
+        {
+            IndicatorBLL bll =new IndicatorBLL(this.s3_bucket_name, this.local_temp_folder);
+            IndADXEntity[] resultList;  
+
+            if (type.ToLower() == "day") {
+                resultList = await bll.GetADX(code.ToUpper(), start, end, "day", period);
+            } else if (type.ToLower() == "week") {
+                resultList = await bll.GetADX(code.ToUpper(), start, end, "week", period);
+            } else {
+                return BadRequest($"Wrong type input: {type}");
+            }
+
+            return Ok(resultList);
+        }
+
     }
 }

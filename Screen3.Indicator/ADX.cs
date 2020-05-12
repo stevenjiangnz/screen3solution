@@ -8,10 +8,9 @@ namespace Screen3.Indicator
 {
     public class ADX
     {
-        public static Result Calculate(double[] high, double[] low, double[] close,
-            double?[] di14plus, double?[] di14minus, double?[] adx)
+        public static Result Calculate(double[] high, double[] low, double[] close, 
+            double?[] di14plus, double?[] di14minus, double?[] adx, int period = 14)
         {
-            int period = 14;
             Result result = new Result();
             result.Status = ResultStatus.Success;
 

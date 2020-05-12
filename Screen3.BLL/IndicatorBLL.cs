@@ -65,5 +65,37 @@ namespace Screen3.BLL
             
             return outList.Where(r => (start == 0 || r.P >= start) && (end ==0 || r.P <= end)).ToArray();
         }
+
+
+        public async Task<IndADXEntity[]> GetADX(string code, int start = 0, int end = 0, string type = "day", int period = 14) {
+            TickerEntity[] tickers = await base.getTickerEntityArray(code, start, end, type);
+            List<IndADXEntity> outList = new List<IndADXEntity>();
+
+            int len = tickers.Length;
+
+            double[] close = tickers.Select(t => (double)t.C).ToArray(); 
+            double[] high = tickers.Select(t => (double)t.H).ToArray(); 
+            double[] low = tickers.Select(t => (double)t.L).ToArray(); 
+
+            double?[] outADX = new double?[len];
+            double?[] outDi_P = new double?[len];
+            double?[] outDi_M = new double?[len];
+
+            ADX.Calculate(high, low, close, outDi_P, outDi_M, outADX, period);
+
+
+            for (int i =0; i< len; i++) {
+                outList.Add(new IndADXEntity{
+                    T = tickers[i].T,
+                    P = tickers[i].P,
+                    Di_plus = outDi_P[i],
+                    Di_minus = outDi_M[i],
+                    Adx = outADX[i]
+                });
+            }
+            
+            return outList.Where(r => (start == 0 || r.P >= start) && (end ==0 || r.P <= end)).ToArray();
+        }
+
     }
 }
