@@ -29,9 +29,9 @@ namespace Screen3.Webapi.Controllers
             IndSingleValueEntity[] resultList;  
 
             if (type.ToLower() == "day") {
-                resultList = await bll.GetSMA(code.ToUpper(), period, start, end);
+                resultList = await bll.GetSMA(code, period, start, end);
             } else if (type.ToLower() == "week") {
-                resultList = await bll.GetSMA(code.ToUpper(), period, start, end, "week");
+                resultList = await bll.GetSMA(code, period, start, end, "week");
             } else {
                 return BadRequest($"Wrong type input: {type}");
             }
@@ -46,9 +46,9 @@ namespace Screen3.Webapi.Controllers
             IndSingleValueEntity[] resultList;  
 
             if (type.ToLower() == "day") {
-                resultList = await bll.GetEMA(code.ToUpper(), period, mfactor, start, end, "day");
+                resultList = await bll.GetEMA(code, period, mfactor, start, end, "day");
             } else if (type.ToLower() == "week") {
-                resultList = await bll.GetEMA(code.ToUpper(), period, mfactor, start, end, "week");
+                resultList = await bll.GetEMA(code, period, mfactor, start, end, "week");
             } else {
                 return BadRequest($"Wrong type input: {type}");
             }
@@ -64,9 +64,9 @@ namespace Screen3.Webapi.Controllers
             IndADXEntity[] resultList;  
 
             if (type.ToLower() == "day") {
-                resultList = await bll.GetADX(code.ToUpper(), start, end, period, "day");
+                resultList = await bll.GetADX(code, start, end, period, "day");
             } else if (type.ToLower() == "week") {
-                resultList = await bll.GetADX(code.ToUpper(), start, end, period, "week");
+                resultList = await bll.GetADX(code, start, end, period, "week");
             } else {
                 return BadRequest($"Wrong type input: {type}");
             }
@@ -82,9 +82,9 @@ namespace Screen3.Webapi.Controllers
             IndSingleValueEntity[] resultList;  
 
             if (type.ToLower() == "day") {
-                resultList = await bll.GetATR(code.ToUpper(), period, start, end, "day");
+                resultList = await bll.GetATR(code, period, start, end, "day");
             } else if (type.ToLower() == "week") {
-                resultList = await bll.GetATR(code.ToUpper(), period, start, end, "week");
+                resultList = await bll.GetATR(code, period, start, end, "week");
             } else {
                 return BadRequest($"Wrong type input: {type}");
             }
@@ -92,5 +92,21 @@ namespace Screen3.Webapi.Controllers
             return Ok(resultList);
         }
 
+        [HttpGet("bb/{code}")]
+        public async Task<ActionResult> Get_BB(string code, int period = 20, double factor =2.0, int start = 0, int end = 0, string type = "day")
+        {
+            IndicatorBLL bll =new IndicatorBLL(this.s3_bucket_name, this.local_temp_folder);
+            IndBBEntity[] resultList;  
+
+            if (type.ToLower() == "day") {
+                resultList = await bll.GetBB(code, start, end,factor, period, "day");
+            } else if (type.ToLower() == "week") {
+                resultList = await bll.GetBB(code, start, end,factor, period, "week");
+            } else {
+                return BadRequest($"Wrong type input: {type}");
+            }
+
+            return Ok(resultList);
+        }
     }
 }

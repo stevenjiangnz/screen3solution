@@ -26,9 +26,9 @@ namespace Screen3.BLL
             offsetedStarted = this.getOffsetedDate(start);
 
             if (type == "week") {
-                tickers = (await this.tickerBLL.GetWeeklyTickerEntityList(code, offsetedStarted, end)).ToArray();
+                tickers = (await this.tickerBLL.GetWeeklyTickerEntityList(code.ToUpper(), offsetedStarted, end)).ToArray();
             } else {
-                tickers = (await this.tickerBLL.GetDailyTickerEntityList(code, offsetedStarted, end)).ToArray();
+                tickers = (await this.tickerBLL.GetDailyTickerEntityList(code.ToUpper(), offsetedStarted, end)).ToArray();
             }
 
             return tickers;

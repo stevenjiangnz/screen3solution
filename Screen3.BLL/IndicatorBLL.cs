@@ -122,12 +122,14 @@ namespace Screen3.BLL
         }
 
 
-        public async Task<IndBBEntity[]> GetBB(string code, int start = 0, int end = 0, double factor = 2.0, int period = 14, string type = "day") {
+        public async Task<IndBBEntity[]> GetBB(string code, int start = 0, int end = 0, double factor = 2.0, int period = 20, string type = "day") {
+            Console.WriteLine($"{code} {start} {end} {type}");
             TickerEntity[] tickers = await base.getTickerEntityArray(code, start, end, type);
             List<IndBBEntity> outList = new List<IndBBEntity>();
 
             int len = tickers.Length;
 
+            Console.WriteLine("len " + len);
             double[] close = tickers.Select(t => (double)t.C).ToArray(); 
             double[] high = tickers.Select(t => (double)t.H).ToArray(); 
             double[] low = tickers.Select(t => (double)t.L).ToArray(); 
