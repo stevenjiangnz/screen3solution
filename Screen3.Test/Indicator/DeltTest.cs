@@ -26,6 +26,5 @@ namespace Screen3.Test.Indicator
 
             Console.WriteLine("result: " + ObjectHelper.ToJson(outData));
         }
-
     }
 }

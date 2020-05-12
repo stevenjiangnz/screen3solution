@@ -108,5 +108,23 @@ namespace Screen3.Webapi.Controllers
 
             return Ok(resultList);
         }
+
+
+        [HttpGet("delt/{code}")]
+        public async Task<ActionResult> Get_Delt(string code, int period = 1, int start = 0, int end = 0, string type = "day")
+        {
+            IndicatorBLL bll =new IndicatorBLL(this.s3_bucket_name, this.local_temp_folder);
+            IndSingleValueEntity[] resultList;  
+
+            if (type.ToLower() == "day") {
+                resultList = await bll.GetDelt(code, period, start, end, "day");
+            } else if (type.ToLower() == "week") {
+                resultList = await bll.GetDelt(code, period, start, end, "week");
+            } else {
+                return BadRequest($"Wrong type input: {type}");
+            }
+
+            return Ok(resultList);
+        }
     }
 }

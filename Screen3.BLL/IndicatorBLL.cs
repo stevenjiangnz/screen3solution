@@ -153,5 +153,28 @@ namespace Screen3.BLL
             return outList.Where(r => (start == 0 || r.P >= start) && (end ==0 || r.P <= end)).ToArray();
         }
 
+        public async Task<IndSingleValueEntity[]> GetDelt(string code, int period = 1, int start = 0, int end = 0, string type = "day" ) {
+            TickerEntity[] tickers = await base.getTickerEntityArray(code, start, end, type);
+            List<IndSingleValueEntity> outList = new List<IndSingleValueEntity>();
+
+            int len = tickers.Length;
+
+            double[] close = tickers.Select(t => (double)t.C).ToArray(); 
+            double?[] outDelt = new double?[len];
+            
+            Delt.Calculate(close, period, outDelt);
+
+            for (int i =0; i< len; i++) {
+                outList.Add(new IndSingleValueEntity{
+                    T = tickers[i].T,
+                    P = tickers[i].P,
+                    V = outDelt[i]
+                });
+            }
+            
+            return outList.Where(r => (start == 0 || r.P >= start) && (end ==0 || r.P <= end)).ToArray();
+        }
+
+
     }
 }
