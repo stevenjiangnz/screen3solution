@@ -26,7 +26,7 @@ namespace Screen3.Webapi.Controllers
         public async Task<ActionResult> Get_SMA(string code, int period,  string type = "day", int? start = 0, int? end = 0)
         {
             IndicatorBLL bll =new IndicatorBLL(this.s3_bucket_name, this.local_temp_folder);
-            IndSMAEntity[] resultList;  
+            IndSingleValueEntity[] resultList;  
 
             if (type.ToLower() == "day") {
                 resultList = await bll.GetSMA(code.ToUpper(), period, start, end);
@@ -43,7 +43,7 @@ namespace Screen3.Webapi.Controllers
         public async Task<ActionResult> Get_EMA(string code, int period,  string type = "day", double mfactor = 2, int? start = 0, int? end = 0)
         {
             IndicatorBLL bll =new IndicatorBLL(this.s3_bucket_name, this.local_temp_folder);
-            IndEMAEntity[] resultList;  
+            IndSingleValueEntity[] resultList;  
 
             if (type.ToLower() == "day") {
                 resultList = await bll.GetEMA(code.ToUpper(), period, mfactor, start, end);

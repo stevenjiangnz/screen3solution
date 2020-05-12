@@ -21,9 +21,9 @@ namespace Screen3.BLL
             this.tickerBLL = new TickerBLL(this.S3_Bucket_Name, this.localFolder);
         }
 
-        public async Task<IndSMAEntity[]> GetSMA(string code, int period, int? start = 0, int? end = 0, string type = "day" ) {
+        public async Task<IndSingleValueEntity[]> GetSMA(string code, int period, int? start = 0, int? end = 0, string type = "day" ) {
             TickerEntity[] tickers = await base.getTickerEntityArray(code, start, end, type);
-            List<IndSMAEntity> outList = new List<IndSMAEntity>();
+            List<IndSingleValueEntity> outList = new List<IndSingleValueEntity>();
 
             int len = tickers.Length;
 
@@ -33,7 +33,7 @@ namespace Screen3.BLL
             SMA.Calculate(close, period, outSMA);
 
             for (int i =0; i< len; i++) {
-                outList.Add(new IndSMAEntity{
+                outList.Add(new IndSingleValueEntity{
                     T = tickers[i].T,
                     P = tickers[i].P,
                     V = outSMA[i]
@@ -44,9 +44,9 @@ namespace Screen3.BLL
         }
 
 
-        public async Task<IndEMAEntity[]> GetEMA(string code, int period, double mfactor = 2, int? start = 0, int? end = 0, string type = "day" ) {
+        public async Task<IndSingleValueEntity[]> GetEMA(string code, int period, double mfactor = 2, int? start = 0, int? end = 0, string type = "day" ) {
             TickerEntity[] tickers = await base.getTickerEntityArray(code, start, end, type);
-            List<IndEMAEntity> outList = new List<IndEMAEntity>();
+            List<IndSingleValueEntity> outList = new List<IndSingleValueEntity>();
 
             int len = tickers.Length;
 
@@ -56,7 +56,7 @@ namespace Screen3.BLL
             EMA.Calculate(close, period, mfactor, outSMA);
 
             for (int i =0; i< len; i++) {
-                outList.Add(new IndEMAEntity{
+                outList.Add(new IndSingleValueEntity{
                     T = tickers[i].T,
                     P = tickers[i].P,
                     V = outSMA[i]
