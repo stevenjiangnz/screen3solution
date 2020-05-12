@@ -23,7 +23,7 @@ namespace Screen3.Webapi.Controllers
 
         // GET api/values
         [HttpGet("sma/{code}")]
-        public async Task<ActionResult> Get_SMA(string code, int period,  string type = "day", int? start = 0, int? end = 0)
+        public async Task<ActionResult> Get_SMA(string code, int period,  int start = 0, int end = 0, string type = "day")
         {
             IndicatorBLL bll =new IndicatorBLL(this.s3_bucket_name, this.local_temp_folder);
             IndSingleValueEntity[] resultList;  
@@ -40,13 +40,13 @@ namespace Screen3.Webapi.Controllers
         }
 
         [HttpGet("ema/{code}")]
-        public async Task<ActionResult> Get_EMA(string code, int period,  string type = "day", double mfactor = 2, int? start = 0, int? end = 0)
+        public async Task<ActionResult> Get_EMA(string code, int period, double mfactor = 2, int? start = 0, int? end = 0, string type = "day")
         {
             IndicatorBLL bll =new IndicatorBLL(this.s3_bucket_name, this.local_temp_folder);
             IndSingleValueEntity[] resultList;  
 
             if (type.ToLower() == "day") {
-                resultList = await bll.GetEMA(code.ToUpper(), period, mfactor, start, end);
+                resultList = await bll.GetEMA(code.ToUpper(), period, mfactor, start, end, "day");
             } else if (type.ToLower() == "week") {
                 resultList = await bll.GetEMA(code.ToUpper(), period, mfactor, start, end, "week");
             } else {
@@ -58,15 +58,15 @@ namespace Screen3.Webapi.Controllers
 
 
         [HttpGet("adx/{code}")]
-        public async Task<ActionResult> Get_ADX(string code, int period = 14,  string type = "day", int start = 0, int end = 0)
+        public async Task<ActionResult> Get_ADX(string code, int period = 14, int start = 0, int end = 0, string type = "day")
         {
             IndicatorBLL bll =new IndicatorBLL(this.s3_bucket_name, this.local_temp_folder);
             IndADXEntity[] resultList;  
 
             if (type.ToLower() == "day") {
-                resultList = await bll.GetADX(code.ToUpper(), start, end, "day", period);
+                resultList = await bll.GetADX(code.ToUpper(), start, end, period, "day");
             } else if (type.ToLower() == "week") {
-                resultList = await bll.GetADX(code.ToUpper(), start, end, "week", period);
+                resultList = await bll.GetADX(code.ToUpper(), start, end, period, "week");
             } else {
                 return BadRequest($"Wrong type input: {type}");
             }
@@ -76,7 +76,7 @@ namespace Screen3.Webapi.Controllers
 
 
         [HttpGet("atr/{code}")]
-        public async Task<ActionResult> Get_ATR(string code, int period = 14,  string type = "day", int start = 0, int end = 0)
+        public async Task<ActionResult> Get_ATR(string code, int period = 14, int start = 0, int end = 0, string type = "day")
         {
             IndicatorBLL bll =new IndicatorBLL(this.s3_bucket_name, this.local_temp_folder);
             IndSingleValueEntity[] resultList;  
