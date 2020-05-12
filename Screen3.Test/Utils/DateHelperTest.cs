@@ -26,7 +26,7 @@ namespace Screen3.Test.Utils
         public void TestEndOfWeek() {
             int period = 19980401;
 
-            Console.WriteLine("friday: " + DateHelper.EndOfWeek(period) +  "   " + DateHelper.ToDate(period).ToLongDateString());
+            Console.WriteLine("friday: " + DateHelper.BeginOfWeek(period) +  "   " + DateHelper.ToDate(period).ToLongDateString());
         }
     }
 }

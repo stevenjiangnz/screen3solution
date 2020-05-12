@@ -35,6 +35,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{C62D3C12-0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Screen3.Webapi.Tests", "Screen3.Webapi\test\Screen3.Webapi.Tests\Screen3.Webapi.Tests.csproj", "{C18ABC57-3235-4F34-A785-B000D5FC1925}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Screen3.Indicator", "Screen3.Indicator\Screen3.Indicator.csproj", "{0D1A57EF-0853-439E-B087-B37857F0A4D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -168,6 +170,18 @@ Global
 		{C18ABC57-3235-4F34-A785-B000D5FC1925}.Release|x64.Build.0 = Release|Any CPU
 		{C18ABC57-3235-4F34-A785-B000D5FC1925}.Release|x86.ActiveCfg = Release|Any CPU
 		{C18ABC57-3235-4F34-A785-B000D5FC1925}.Release|x86.Build.0 = Release|Any CPU
+		{0D1A57EF-0853-439E-B087-B37857F0A4D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D1A57EF-0853-439E-B087-B37857F0A4D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D1A57EF-0853-439E-B087-B37857F0A4D2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0D1A57EF-0853-439E-B087-B37857F0A4D2}.Debug|x64.Build.0 = Debug|Any CPU
+		{0D1A57EF-0853-439E-B087-B37857F0A4D2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0D1A57EF-0853-439E-B087-B37857F0A4D2}.Debug|x86.Build.0 = Debug|Any CPU
+		{0D1A57EF-0853-439E-B087-B37857F0A4D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D1A57EF-0853-439E-B087-B37857F0A4D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D1A57EF-0853-439E-B087-B37857F0A4D2}.Release|x64.ActiveCfg = Release|Any CPU
+		{0D1A57EF-0853-439E-B087-B37857F0A4D2}.Release|x64.Build.0 = Release|Any CPU
+		{0D1A57EF-0853-439E-B087-B37857F0A4D2}.Release|x86.ActiveCfg = Release|Any CPU
+		{0D1A57EF-0853-439E-B087-B37857F0A4D2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{37044EE3-4091-48A0-B61C-D38D1C20B87D} = {F2DEE5D3-2ABD-44E6-9DFB-B5F834A3AC48}

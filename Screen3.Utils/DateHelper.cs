@@ -25,14 +25,25 @@ namespace Screen3.Utils
             return year * 10000 + month * 100 + day;
         }
 
+        // public static int EndOfWeek(int intDate, DayOfWeek endOfWeek = DayOfWeek.Friday)
+        // {
+        //     DateTime dt = ToDate(intDate);
 
-        public static int EndOfWeek(int intDate, DayOfWeek endOfWeek = DayOfWeek.Friday)
+        //     while (dt.DayOfWeek != endOfWeek)
+        //     {
+        //         dt = dt.AddDays(1);
+        //     }
+
+        //     return ToInt(dt);
+        // }
+
+        public static int BeginOfWeek(int intDate, DayOfWeek beginOfWeek = DayOfWeek.Monday)
         {
             DateTime dt = ToDate(intDate);
 
-            while (dt.DayOfWeek != endOfWeek)
+            while (dt.DayOfWeek != beginOfWeek)
             {
-                dt = dt.AddDays(1);
+                dt = dt.AddDays(-1);
             }
 
             return ToInt(dt);

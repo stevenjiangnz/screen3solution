@@ -45,7 +45,7 @@ namespace screen3_data_loader.controllers.Tests
             DataLoadController controller = new DataLoadController();
             string path = @"/tmp/screen3_temp_files/originExtractedFiles/source/1997-2006.zip/1997-2006/20061229.TXT";
 
-            // string tickerString = ObjectHelper.ToJson(controller.LoadTickerFromCSV(path));
+            string tickerString = ObjectHelper.ToJson(controller.LoadTickerFromCSV(path));
 
             // Console.WriteLine(tickerString);
         }
