@@ -222,5 +222,28 @@ namespace Screen3.Webapi.Controllers
             return Ok(resultList);
         }
 
+        [HttpGet("williamr/{code}")]
+        public async Task<ActionResult> Get_WilliamR(string code, int period = 14, int start = 0, int end = 0, string type = "day")
+        {
+            IndicatorBLL bll = new IndicatorBLL(this.s3_bucket_name, this.local_temp_folder);
+            IndSingleValueEntity[] resultList;
+
+            if (type.ToLower() == "day")
+            {
+                resultList = await bll.GetWilliamR(code, period, start, end, "day");
+            }
+            else if (type.ToLower() == "week")
+            {
+                resultList = await bll.GetWilliamR(code, period, start, end, "week");
+            }
+            else
+            {
+                return BadRequest($"Wrong type input: {type}");
+            }
+
+            return Ok(resultList);
+        }
+
+
     }
 }
