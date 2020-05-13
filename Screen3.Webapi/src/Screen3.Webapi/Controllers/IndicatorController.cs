@@ -244,6 +244,27 @@ namespace Screen3.Webapi.Controllers
             return Ok(resultList);
         }
 
+        [HttpGet("stochastic/{code}")]
+        public async Task<ActionResult> Get_Stochastic(string code, int period = 14, int slow =3, int start = 0, int end = 0, string type = "day")
+        {
+            IndicatorBLL bll = new IndicatorBLL(this.s3_bucket_name, this.local_temp_folder);
+            IndStochasticEntity[] resultList;
+
+            if (type.ToLower() == "day")
+            {
+                resultList = await bll.GetStochastic(code, period, slow, start, end, "day");
+            }
+            else if (type.ToLower() == "week")
+            {
+                resultList = await bll.GetStochastic(code, period, slow, start, end, "week");
+            }
+            else
+            {
+                return BadRequest($"Wrong type input: {type}");
+            }
+
+            return Ok(resultList);
+        }
 
     }
 }
