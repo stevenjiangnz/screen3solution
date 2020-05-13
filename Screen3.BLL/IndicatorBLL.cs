@@ -205,6 +205,33 @@ namespace Screen3.BLL
             return outList.Where(r => (start == 0 || r.P >= start) && (end ==0 || r.P <= end)).ToArray();
         }
 
+        public async Task<IndMACDEntity[]> GetMACD(string code, int slow = 26, int fast = 12, int signal = 9, int start = 0, int end = 0, string type = "day" ) {
+            TickerEntity[] tickers = await base.getTickerEntityArray(code, start, end, type);
+            List<IndMACDEntity> outList = new List<IndMACDEntity>();
+
+            int len = tickers.Length;
+
+            double[] close = tickers.Select(t => (double)t.C).ToArray(); 
+
+            double?[] outMACD = new double?[len];
+            double?[] outSignal = new double?[len];
+            double?[] outHist = new double?[len];
+            
+            MACD.Calculate(close, slow, fast, signal, outMACD, outSignal, outHist);
+
+            for (int i =0; i< len; i++) {
+                outList.Add(new IndMACDEntity{
+                    T = tickers[i].T,
+                    P = tickers[i].P,
+                    MACD = outMACD[i],
+                    Signal = outSignal[i],
+                    Hist = outHist[i]
+                });
+            }
+            
+            return outList.Where(r => (start == 0 || r.P >= start) && (end ==0 || r.P <= end)).ToArray();
+        }
+
 
     }
 }

@@ -8,7 +8,7 @@ namespace Screen3.BLL
 {
     public class BaseIndicatorBLL
     { 
-        public int offset = 200;
+        public int offset = 300;
         protected TickerBLL tickerBLL;
 
         public int getOffsetedDate(int? period) {
