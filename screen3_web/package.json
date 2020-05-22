@@ -14,7 +14,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "aws s3 sync /home/steven/devlocal/screen3solution/screen3_web/build s3://stevenjiangnz-screen3-web/"
   },
   "eslintConfig": {
     "extends": "react-app"
