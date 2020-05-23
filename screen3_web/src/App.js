@@ -1,20 +1,18 @@
-import React from "react";
+import React, { Component } from "react";
+import TopNav from "./component/TopNav";
+import Stock from "./component/stock/Stock";
+import Screen from "./component/screen/Screen";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <button
-          className="btn btn-primary"
-          onClick={() => {
-            alert("test buttone clicked");
-          }}
-        >
-          test button
-        </button>
-      </header>
-    </div>
-  );
+export class App extends Component {
+  render() {
+    return (
+      <div>
+        <TopNav />
+        <Stock />
+        <Screen />
+      </div>
+    );
+  }
 }
 
 export default App;

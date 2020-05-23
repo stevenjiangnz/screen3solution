@@ -1,0 +1,60 @@
+$primaryColor: #ebebeb;
+$main-background-color: #2b3e50;
+$highlight-background-color: #4e5d6c;
+$tree-hover-color: #4caf50;
+$hover-background-color: #111;
+$active-background-color: #4caf50;
+$icon-color: #47d1ff;
+$icon-color-right: #ffe427;
+
+body {
+  background: $main-background-color;
+  color: $primaryColor;
+}
+
+#top-nav-bar {
+  background: $highlight-background-color;
+  padding: 0px;
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+    .navbar-brand {
+      font-size: 1.05em;
+      .fa {
+        color: red;
+        margin-right: 5px;
+      }
+    }
+    li {
+      float: left;
+      list-style-type: none;
+      padding-right: 10px;
+      a {
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+      }
+      a:focus,
+      a:hover {
+        text-decoration: none;
+      }
+      a:hover:not(.active) {
+        background-color: $hover-background-color;
+      }
+      .active {
+        background-color: $active-background-color;
+      }
+    }
+    .logo {
+      margin-top: 8px;
+      margin-left: 10px;
+      font-size: 1.1em;
+      font-weight: bolder;
+    }
+  }
+}
