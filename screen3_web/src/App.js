@@ -17,6 +17,9 @@ export class App extends Component {
             <Route exact path="/screen">
               <Screen />
             </Route>
+            <Route path="*">
+              <NotFound />
+            </Route>
           </Switch>
         </div>
       </Router>
@@ -24,4 +27,7 @@ export class App extends Component {
   }
 }
 
+function NotFound() {
+  return <h3>404. not found</h3>;
+}
 export default App;

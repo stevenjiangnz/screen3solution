@@ -5,15 +5,26 @@ export class TopNav extends Component {
   render() {
     return (
       <div>
-        thisi s the top Nav
-        <ul>
-          <li>
-            <Link to="/">Stock</Link>
-          </li>
-          <li>
-            <Link to="/screen">Screen</Link>
-          </li>
-        </ul>
+        <nav
+          id="top-nav-bar"
+          className="navbar navbar-default navbar-fixed-top"
+        >
+          <div className="top-menu">
+            <ul>
+              <li className="logo">
+                <span className="navbar-brand">
+                  <i className="fa fa-lg fa-chain "></i>Screen<span>.3</span>
+                </span>
+              </li>
+              <li>
+                <Link to="/">Stock</Link>
+              </li>
+              <li>
+                <Link to="/screen">Screen</Link>
+              </li>
+            </ul>
+          </div>
+        </nav>
       </div>
     );
   }
