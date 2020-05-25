@@ -1,7 +1,5 @@
 import axios from "axios";
 
-// axios.defaults.headers.common["Authorization"] = AUTH_TOKEN;
-
 export class RequestHelper {
   constructor() {
     axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL;
