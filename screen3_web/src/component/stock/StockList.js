@@ -9,9 +9,14 @@ export class StockList extends Component {
   componentDidMount() {
     const req = new RequestHelper().getIntance();
 
-    req.get("/users").then((resp) => {
-      console.log("resp: ", resp.data);
-    });
+    req
+      .get("stock")
+      .then((resp) => {
+        console.log("resp: ", resp.data);
+      })
+      .catch((error) => {
+        console.log("error", error);
+      });
   }
   render() {
     return <div>this is the stock list</div>;
