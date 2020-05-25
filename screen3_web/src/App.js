@@ -6,6 +6,10 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 export class App extends Component {
   render() {
+    // console.log(
+    //   "env config REACT_APP_API_BASE_URL",
+    //   process.env.REACT_APP_API_BASE_URL
+    // );
     return (
       <Router>
         <div>
@@ -18,6 +22,7 @@ export class App extends Component {
               <Screen />
             </Route>
             <Route path="*">
+              require('dotenv').config()
               <NotFound />
             </Route>
           </Switch>
