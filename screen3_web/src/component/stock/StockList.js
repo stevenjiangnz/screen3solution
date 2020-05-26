@@ -11,11 +11,10 @@ export class StockList extends Component {
     this.adRef = React.createRef();
 
     this.state = {
-      filterText: "",
       defaultColDef: {
         sortable: true,
-        filter: true,
         resizable: true,
+        cellClass: "ag-cell",
       },
       columnDefs: [
         { headerName: "Code", field: "code", width: 60 },
@@ -30,7 +29,10 @@ export class StockList extends Component {
   onFilterChanged = (e) => {
     const grid = this.adRef.current;
     grid.api.setQuickFilter(e.target.value);
-    console.log("button clicked", e.target.value);
+  };
+
+  onRowClicked = (e) => {
+    console.log("row clicked: ", e.data);
   };
 
   componentDidMount() {
@@ -67,6 +69,7 @@ export class StockList extends Component {
           domLayout="autoHeight"
           quickFilter={this.state.filterText}
           ref={this.adRef}
+          onRowClicked={this.onRowClicked}
         ></AgGridReact>
       </div>
     );

@@ -18,7 +18,6 @@ export class App extends Component {
               <Screen />
             </Route>
             <Route path="*">
-              require('dotenv').config()
               <NotFound />
             </Route>
           </Switch>
