@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import RequestHelper from "../../util/RequestHelper";
 import { AgGridReact } from "ag-grid-react";
+import StockService from "../../service/StockService";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
 
@@ -36,10 +36,10 @@ export class StockList extends Component {
   };
 
   componentDidMount() {
-    const req = new RequestHelper().getIntance();
+    const service = new StockService();
 
-    req
-      .get("stock")
+    service
+      .getStockList()
       .then((resp) => {
         this.setState({
           stocks: resp.data,
