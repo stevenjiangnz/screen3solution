@@ -6,7 +6,11 @@ $hover-background-color: #111;
 $active-background-color: #4caf50;
 $icon-color: #47d1ff;
 $icon-color-right: #ffe427;
-
+html,
+body {
+  height: 100%;
+  width: 100%;
+}
 body {
   background: $main-background-color;
   color: $primaryColor;
@@ -62,4 +66,9 @@ body {
 #main-panel {
   min-height: 750px;
   padding: 0px;
+}
+
+.ag-grid-container {
+  width: 100%;
+  height: 700px;
 }

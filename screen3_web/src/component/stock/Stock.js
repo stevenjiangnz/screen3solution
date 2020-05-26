@@ -11,7 +11,7 @@ export class Stock extends Component {
             <StockList />
           </div>
           <div className="col-sm-9">
-            <StockDetail></StockDetail>
+            <StockDetail />
           </div>
         </div>
       </div>
