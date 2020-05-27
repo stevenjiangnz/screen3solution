@@ -10,7 +10,7 @@ export class Stock extends Component {
           <div className="col-sm-3">
             <StockList />
           </div>
-          <div className="col-sm-9">
+          <div className="col-sm-9" style={{ paddingLeft: 0, paddingRight: 0 }}>
             <StockDetail />
           </div>
         </div>

@@ -1,4 +1,5 @@
 $primaryColor: #ebebeb;
+$titleColor: #e3d9a6;
 $main-background-color: #2b3e50;
 $highlight-background-color: #4e5d6c;
 $tree-hover-color: #4caf50;
@@ -75,4 +76,8 @@ body {
 
 .ag-cell {
   font-size: 1.15em;
+}
+.page-title {
+  margin: 20px;
+  color: $titleColor;
 }

@@ -1,7 +1,12 @@
 import React from "react";
+import Title from "../Title";
 
 function StockDetail() {
-  return <div>this the StockDetail panel</div>;
+  return (
+    <div>
+      <Title title="Stock"></Title>
+    </div>
+  );
 }
 
 export default StockDetail;
