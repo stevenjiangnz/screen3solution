@@ -7,11 +7,7 @@ $hover-background-color: #111;
 $active-background-color: #4caf50;
 $icon-color: #47d1ff;
 $icon-color-right: #ffe427;
-html,
-body {
-  height: 100%;
-  width: 100%;
-}
+
 body {
   background: $main-background-color;
   color: $primaryColor;
@@ -81,3 +77,26 @@ body {
   margin: 20px;
   color: $titleColor;
 }
+
+// .row {
+//   margin-left: 0px;
+//   margin-right: 0px;
+// }
+.row {
+  margin: 0px;
+  padding: 0px;
+}
+
+.col-sm-3,
+.col-sm-9 {
+  margin: 0px;
+  padding: 0px;
+}
+
+// .highcharts-container {
+//   width: 100% !important;
+// }
+
+// .highcharts-root {
+//   width: 100% !important;
+// }

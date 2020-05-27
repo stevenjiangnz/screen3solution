@@ -7,6 +7,7 @@ import AppContext from "../../Context";
 
 export class StockList extends Component {
   context;
+  adRef;
   constructor(props) {
     super(props);
 
@@ -20,9 +21,9 @@ export class StockList extends Component {
       },
       columnDefs: [
         { headerName: "Code", field: "code", width: 60 },
-        { headerName: "Company", field: "company", width: 150 },
+        { headerName: "Company", field: "company" },
         { headerName: "Sector", field: "sector", width: 120 },
-        { headerName: "Weight", field: "weight" },
+        { headerName: "Weight", field: "weight", width: 70 },
       ],
       stocks: [],
     };
@@ -56,7 +57,6 @@ export class StockList extends Component {
       <AppContext.Consumer>
         {(context) => {
           this.context = context;
-          const { state, updateSelectedStock } = context;
 
           return (
             <div
