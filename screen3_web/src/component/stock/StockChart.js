@@ -16,6 +16,10 @@ export class StockChart extends Component {
 
   render() {
     const options = {
+      chart: {
+        marginRight: 15,
+        marginLeft: 10,
+      },
       title: {
         text: "My stock chart",
       },
@@ -32,12 +36,14 @@ export class StockChart extends Component {
           this.context = context;
 
           return (
-            <div>
-              <HighchartsReact
-                highcharts={Highcharts}
-                constructorType={"stockChart"}
-                options={options}
-              />
+            <div className="chart-wrapper">
+              <div className="chart-inner">
+                <HighchartsReact
+                  highcharts={Highcharts}
+                  constructorType={"stockChart"}
+                  options={options}
+                />
+              </div>
             </div>
           );
         }}

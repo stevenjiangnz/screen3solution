@@ -4,9 +4,11 @@ import StockChart from "./StockChart";
 
 function StockDetail() {
   return (
-    <div>
+    <div className="detail-panel">
       <Title title="Stock"></Title>
-      <StockChart></StockChart>
+      <div>
+        <StockChart></StockChart>
+      </div>
     </div>
   );
 }
