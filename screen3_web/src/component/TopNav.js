@@ -17,7 +17,7 @@ export class TopNav extends Component {
                 </span>
               </li>
               <li>
-                <Link to="/">Stock</Link>
+                <Link to="/stock">Stock</Link>
               </li>
               <li>
                 <Link to="/screen">Screen</Link>

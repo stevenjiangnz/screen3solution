@@ -3,8 +3,10 @@ import { AgGridReact } from "ag-grid-react";
 import StockService from "../../service/StockService";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
+import AppContext from "../../Context";
 
 export class StockList extends Component {
+  context;
   constructor(props) {
     super(props);
 
@@ -32,12 +34,11 @@ export class StockList extends Component {
   };
 
   onRowClicked = (e) => {
-    console.log("row clicked: ", e.data);
+    this.context.updateSelectedStock(e.data);
   };
 
   componentDidMount() {
     const service = new StockService();
-
     service
       .getStockList()
       .then((resp) => {
@@ -49,29 +50,39 @@ export class StockList extends Component {
         console.log("error", error);
       });
   }
+
   render() {
     return (
-      <div
-        className="ag-theme-balham ag-grid-container"
-        style={{ marginTop: "2px" }}
-      >
-        <input
-          type="text"
-          className="form-control"
-          placeholder="filter"
-          onChange={this.onFilterChanged}
-        ></input>
+      <AppContext.Consumer>
+        {(context) => {
+          this.context = context;
+          const { state, updateSelectedStock } = context;
 
-        <AgGridReact
-          defaultColDef={this.state.defaultColDef}
-          columnDefs={this.state.columnDefs}
-          rowData={this.state.stocks}
-          domLayout="autoHeight"
-          quickFilter={this.state.filterText}
-          ref={this.adRef}
-          onRowClicked={this.onRowClicked}
-        ></AgGridReact>
-      </div>
+          return (
+            <div
+              className="ag-theme-balham ag-grid-container"
+              style={{ marginTop: "2px" }}
+            >
+              <input
+                type="text"
+                className="form-control"
+                placeholder="filter"
+                onChange={this.onFilterChanged}
+              ></input>
+
+              <AgGridReact
+                defaultColDef={this.state.defaultColDef}
+                columnDefs={this.state.columnDefs}
+                rowData={this.state.stocks}
+                domLayout="autoHeight"
+                quickFilter={this.state.filterText}
+                ref={this.adRef}
+                onRowClicked={this.onRowClicked}
+              ></AgGridReact>
+            </div>
+          );
+        }}
+      </AppContext.Consumer>
     );
   }
 }
