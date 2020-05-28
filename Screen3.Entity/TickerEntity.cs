@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.Serialization;
+using Screen3.Utils;
 
 namespace Screen3.Entity
 {
@@ -33,6 +34,14 @@ namespace Screen3.Entity
         }
         public string T { get; set; } // Ticker or Code
         public int P { get; set; } // Period
+        public long P_Stamp
+        {
+            get
+            {
+                return DateHelper.ToTimeStamp(P);
+            }
+        }
+
         public float O { get; set; } // Open
         public float H { get; set; } // High
         public float L { get; set; } // Low
