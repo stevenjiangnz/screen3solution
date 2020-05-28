@@ -4,6 +4,7 @@ import Highcharts from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
 import TickerServer from "../../service/TickerService";
 import ChartSettings from "../../ChartSettings";
+import TickerHelper from "../../util/TickerHelper";
 
 export class StockChart extends Component {
   context;
@@ -57,7 +58,9 @@ export class StockChart extends Component {
   prepareDrawChart = async () => {
     const stock = this.context.state.selectedStock;
 
-    const tickers = await this.tickerService.getTickerList(stock.code);
+    const tickersReturn = await this.tickerService.getTickerList(stock.code);
+
+    const tickers = TickerHelper.ConvertTickers(tickersReturn.data);
 
     this.chart.setTitle({ text: `${stock.code} - ${stock.company}` });
 

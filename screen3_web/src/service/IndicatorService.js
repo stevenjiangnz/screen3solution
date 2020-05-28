@@ -1,12 +1,10 @@
 import RequestHelper from "../util/RequestHelper";
 
-export class TickerService {
+export class IndictorService {
   getTickerList(code, type = "day", start = 0, end = 0) {
-    const tickers = [];
     const req = new RequestHelper().getIntance();
-
     return req.get(`ticker/${code}?type=${type}&start=${start}&end=${end}`);
   }
 }
 
-export default TickerService;
+export default IndictorService;
