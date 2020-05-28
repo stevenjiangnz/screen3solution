@@ -69,16 +69,16 @@ export class StockList extends Component {
                 placeholder="filter"
                 onChange={this.onFilterChanged}
               ></input>
-
-              <AgGridReact
-                defaultColDef={this.state.defaultColDef}
-                columnDefs={this.state.columnDefs}
-                rowData={this.state.stocks}
-                domLayout="autoHeight"
-                quickFilter={this.state.filterText}
-                ref={this.adRef}
-                onRowClicked={this.onRowClicked}
-              ></AgGridReact>
+              <div id="grid-container">
+                <AgGridReact
+                  defaultColDef={this.state.defaultColDef}
+                  columnDefs={this.state.columnDefs}
+                  rowData={this.state.stocks}
+                  quickFilter={this.state.filterText}
+                  ref={this.adRef}
+                  onRowClicked={this.onRowClicked}
+                ></AgGridReact>
+              </div>
             </div>
           );
         }}
