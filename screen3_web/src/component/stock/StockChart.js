@@ -3,6 +3,7 @@ import AppContext from "../../Context";
 import Highcharts from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
 import TickerServer from "../../service/TickerService";
+import ChartSettings from "../../ChartSettings";
 
 export class StockChart extends Component {
   context;
@@ -62,6 +63,9 @@ export class StockChart extends Component {
 
     this.chart.series[0].setData(tickers);
     this.chart.series[0].name = stock.code;
+
+    console.log("yAxis", this.chart.yAxis.length);
+    console.log("chart settings", ChartSettings);
   };
 
   render() {

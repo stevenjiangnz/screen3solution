@@ -4,7 +4,9 @@ export class TickerService {
   async getTickerList(code, type = "day", start = 0, end = 0) {
     const tickers = [];
     const req = new RequestHelper().getIntance();
-    const resp = await req.get(`ticker/${code}`);
+    const resp = await req.get(
+      `ticker/${code}?type=${type}&start=${start}&end=${end}`
+    );
 
     resp.data.forEach((t) => {
       tickers.push([t.p_Stamp, t.o, t.h, t.l, t.c]);
