@@ -67,12 +67,12 @@ export class StockChart extends Component {
 
     const getTickers = this.tickerService.getTickerList(
       stock.code,
-      this.currentChartSettings.period
+      this.currentChartSettings.type
     );
     const getSMA20 = this.indicatorService.getSMA(
       stock.code,
       20,
-      this.currentChartSettings.period
+      this.currentChartSettings.type
     );
 
     Promise.all([getTickers, getSMA20]).then((values) => {
@@ -81,7 +81,7 @@ export class StockChart extends Component {
 
       this.chart.setTitle({ text: `${stock.code} - ${stock.company}` });
       this.chart.series[0].setData(tickers);
-      this.chart.series[0].name = stock.code + "- price";
+      this.chart.series[0].name = `${stock.code} - ${this.currentChartSettings.type}`;
 
       this.drawIndicator("SMA20", sma20, { yAxis: 0 });
     });
