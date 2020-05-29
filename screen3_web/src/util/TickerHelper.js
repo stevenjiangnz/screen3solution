@@ -8,6 +8,16 @@ export class TickerHelper {
 
     return convertedTickers;
   }
+
+  static ConvertSingleValueIndicator(Indicator) {
+    const convertedIndicators = [];
+
+    Indicator.forEach((ind) => {
+      convertedIndicators.push([ind.p_Stamp, ind.v ? ind.v : 0]);
+    });
+
+    return convertedIndicators;
+  }
 }
 
 export default TickerHelper;

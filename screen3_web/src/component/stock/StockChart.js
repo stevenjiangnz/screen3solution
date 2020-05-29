@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import AppContext from "../../Context";
 import Highcharts from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
-import TickerServer from "../../service/TickerService";
+import TickerService from "../../service/TickerService";
+import IndicatorService from "../../service/IndicatorService";
 import ChartSettings from "../../ChartSettings";
 import TickerHelper from "../../util/TickerHelper";
 
@@ -11,12 +12,14 @@ export class StockChart extends Component {
   chartRef;
   chart;
   tickerService;
+  indicatorService;
   groupingUnits;
 
   constructor(props) {
     super(props);
 
-    this.tickerService = new TickerServer();
+    this.tickerService = new TickerService();
+    this.indicatorService = new IndicatorService();
     this.chartRef = React.createRef();
 
     this.groupingUnits = [
@@ -59,16 +62,47 @@ export class StockChart extends Component {
     const stock = this.context.state.selectedStock;
 
     const tickersReturn = await this.tickerService.getTickerList(stock.code);
-
     const tickers = TickerHelper.ConvertTickers(tickersReturn.data);
+    const sma20Return = await this.indicatorService.getSMA(stock.code, 50);
+    const sma20 = TickerHelper.ConvertSingleValueIndicator(sma20Return.data);
 
+    // display candlestick
     this.chart.setTitle({ text: `${stock.code} - ${stock.company}` });
-
     this.chart.series[0].setData(tickers);
-    this.chart.series[0].name = stock.code;
+    this.chart.series[0].name = stock.code + "- price";
 
-    console.log("yAxis", this.chart.yAxis.length);
-    console.log("chart settings", ChartSettings);
+    this.drawIndicator("SMA20", sma20);
+    // this.chart.addSeries({
+    //   type: "line",
+    //   data: sma20,
+    //   yAxis: 0,
+    // });
+  };
+
+  drawIndicator = (name, data, settings = {}) => {
+    var existingSeries = null;
+
+    this.chart.series.forEach((series) => {
+      if (series.name === name) {
+        existingSeries = series;
+      }
+    });
+
+    if (!existingSeries) {
+      console.log("about to add new serious");
+      this.chart.addSeries({
+        name,
+        type: settings.type ? settings.type : "line",
+        data,
+        yAxis: settings.yAxis ? settings.yAxis : 0,
+      });
+    } else {
+      console.log(
+        "about to set data to existing serious: ",
+        existingSeries.yAxis
+      );
+      existingSeries.setData(data);
+    }
   };
 
   render() {
