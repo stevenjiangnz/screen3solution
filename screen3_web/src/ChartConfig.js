@@ -1,4 +1,4 @@
-const ChartSettings = {
+const ChartConfig = {
   general: {
     stockWindow: 40000,
     zone: "current",
@@ -102,4 +102,4 @@ const ChartSettings = {
   },
 };
 
-export default ChartSettings;
+export default ChartConfig;

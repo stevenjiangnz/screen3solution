@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import AppContext from "../../Context";
-import Highcharts from "highcharts/highstock";
+import Highcharts, { objectEach } from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
 import TickerService from "../../service/TickerService";
 import IndicatorService from "../../service/IndicatorService";
-import ChartSettings from "../../ChartSettings";
+import ChartConfig from "../../ChartConfig";
 import TickerHelper from "../../util/TickerHelper";
 
 export class StockChart extends Component {
@@ -14,10 +14,16 @@ export class StockChart extends Component {
   tickerService;
   indicatorService;
   groupingUnits;
+  chartName;
+  currentChartSettings;
+
+  defaultChartSetting = {
+    type: "day",
+  };
 
   constructor(props) {
     super(props);
-
+    this.chartName = props.name;
     this.tickerService = new TickerService();
     this.indicatorService = new IndicatorService();
     this.chartRef = React.createRef();
@@ -44,8 +50,6 @@ export class StockChart extends Component {
       rangeSelector: {
         selected: 1,
       },
-
-      screen_setting: "",
     };
   }
 
@@ -61,18 +65,20 @@ export class StockChart extends Component {
   prepareDrawChart = async () => {
     const stock = this.context.state.selectedStock;
 
-    // const tickersReturn = await this.tickerService.getTickerList(stock.code);
-    // const tickers = TickerHelper.ConvertTickers(tickersReturn.data);
-    // const sma20Return = await this.indicatorService.getSMA(stock.code, 50);
-    // const sma20 = TickerHelper.ConvertSingleValueIndicator(sma20Return.data);
-
-    const getTickers = this.tickerService.getTickerList(stock.code);
-    const getSMA20 = this.indicatorService.getSMA(stock.code, 50);
+    const getTickers = this.tickerService.getTickerList(
+      stock.code,
+      this.currentChartSettings.period
+    );
+    const getSMA20 = this.indicatorService.getSMA(
+      stock.code,
+      20,
+      this.currentChartSettings.period
+    );
 
     Promise.all([getTickers, getSMA20]).then((values) => {
       const tickers = TickerHelper.ConvertTickers(values[0].data);
       const sma20 = TickerHelper.ConvertSingleValueIndicator(values[1].data);
-      // display candlestick
+
       this.chart.setTitle({ text: `${stock.code} - ${stock.company}` });
       this.chart.series[0].setData(tickers);
       this.chart.series[0].name = stock.code + "- price";
@@ -95,12 +101,27 @@ export class StockChart extends Component {
         name,
         type: settings.type ? settings.type : "line",
         data,
+        lineWidth: 1,
+        color: "red",
         yAxis: settings.yAxis ? settings.yAxis : 0,
       });
     } else {
-      console.log("about to set data to existing serious: ", existingSeries);
       existingSeries.setData(data);
     }
+  };
+
+  testClicked = () => {
+    this.chart.xAxis[0].setExtremes(
+      Date.UTC(2014, 0, 1),
+      Date.UTC(2014, 11, 31)
+    );
+  };
+
+  onTypeChange = (type) => {
+    const setting = Object.assign(this.currentChartSettings);
+
+    setting["type"] = type;
+    this.context.updateChartSettings(this.chartName, setting);
   };
 
   render() {
@@ -108,8 +129,38 @@ export class StockChart extends Component {
       <AppContext.Consumer>
         {(context) => {
           this.context = context;
+          this.currentChartSettings = context.state[this.chartName]
+            ? context.state[this.chartName]
+            : this.defaultChartSetting;
+
+          const state = this.currentChartSettings;
           return (
             <>
+              <div className="row">
+                <p>{JSON.stringify(this.context)}</p>
+                <button className="btn btn-primary" onClick={this.testClicked}>
+                  {this.chartName}
+                </button>
+
+                <label className="radio-inline">
+                  <input
+                    type="radio"
+                    name="optradio"
+                    checked={state.type === "day"}
+                    onChange={() => this.onTypeChange("day")}
+                  />
+                  Day
+                </label>
+                <label className="radio-inline">
+                  <input
+                    type="radio"
+                    name="optradio"
+                    checked={state.type === "week"}
+                    onChange={() => this.onTypeChange("week")}
+                  />
+                  Week
+                </label>
+              </div>
               <div className="chart-wrapper">
                 <div className="chart-inner">
                   <HighchartsReact

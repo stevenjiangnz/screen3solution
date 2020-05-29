@@ -100,6 +100,15 @@ body {
   width: 100%;
   height: 100%;
 }
+
+.radio-inline,
+.checkbox-inline {
+  margin: 0 8px 0 8px;
+  input {
+    margin: 0 8px 0 8px;
+  }
+}
+
 #grid-container {
   height: 880px;
 }

@@ -27,12 +27,19 @@ export class App extends Component {
     });
   };
 
+  onChartSettingsChanged = (name, settings) => {
+    this.setState({
+      [`${name}`]: settings,
+    });
+  };
+
   render() {
     return (
       <AppContext.Provider
         value={{
           state: this.state,
           updateSelectedStock: this.onSelectedStockChanged,
+          updateChartSettings: this.onChartSettingsChanged,
         }}
       >
         <Router>

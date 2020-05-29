@@ -7,7 +7,7 @@ function StockDetail() {
     <div className="detail-panel">
       <Title title="Stock"></Title>
       <div>
-        <StockChart></StockChart>
+        <StockChart name="stockChart"></StockChart>
       </div>
     </div>
   );
