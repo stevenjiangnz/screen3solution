@@ -4,23 +4,23 @@ const ChartConfig = {
     zone: "current",
   },
   indicatorSettings: {
-    sma5: {
-      parameter: "sma,5",
+    ema10: {
+      parameter: "ema,10",
       ownPane: false,
       color: "#aaa",
     },
-    sma10: {
-      parameter: "sma,10",
+    ema20: {
+      parameter: "ema,20",
       ownPane: false,
       color: "#FFD455",
     },
-    sma30: {
-      parameter: "sma,30",
+    ema50: {
+      parameter: "ema,50",
       ownPane: false,
       color: "#61B60C",
     },
-    sma50: {
-      parameter: "sma,50",
+    sma100: {
+      parameter: "sma,100",
       color: "#00FF00",
       ownPane: false,
     },
@@ -29,16 +29,16 @@ const ChartConfig = {
       ownPane: false,
       color: "#0FE4E4",
     },
-    ema10: {
-      parameter: "ema,10",
-      ownPane: false,
-      color: "#AE2EAE",
-    },
-    ema20: {
-      parameter: "ema,20",
-      ownPane: false,
-      color: "#FF0055",
-    },
+    // ema10: {
+    //   parameter: "ema,10",
+    //   ownPane: false,
+    //   color: "#AE2EAE",
+    // },
+    // ema20: {
+    //   parameter: "ema,20",
+    //   ownPane: false,
+    //   color: "#FF0055",
+    // },
     bb: {
       parameter: "bb,20,2.5",
       ownPane: false,

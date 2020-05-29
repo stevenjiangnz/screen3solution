@@ -19,6 +19,18 @@ export class StockChart extends Component {
 
   defaultChartSetting = {
     type: "day",
+    ema10: false,
+    ema20: false,
+    ema50: true,
+    sma100: false,
+    sma200: true,
+    bb: true,
+    macd: true,
+    adx: true,
+    heikin: false,
+    stochastic: false,
+    rsi: false,
+    william: true,
   };
 
   constructor(props) {
@@ -124,6 +136,13 @@ export class StockChart extends Component {
     this.context.updateChartSettings(this.chartName, setting);
   };
 
+  onIndicatorChange = (ind) => {
+    const setting = Object.assign(this.currentChartSettings);
+
+    setting[ind] = !setting[ind];
+    this.context.updateChartSettings(this.chartName, setting);
+  };
+
   render() {
     return (
       <AppContext.Consumer>
@@ -141,25 +160,162 @@ export class StockChart extends Component {
                 <button className="btn btn-primary" onClick={this.testClicked}>
                   {this.chartName}
                 </button>
-
-                <label className="radio-inline">
-                  <input
-                    type="radio"
-                    name="optradio"
-                    checked={state.type === "day"}
-                    onChange={() => this.onTypeChange("day")}
-                  />
-                  Day
-                </label>
-                <label className="radio-inline">
-                  <input
-                    type="radio"
-                    name="optradio"
-                    checked={state.type === "week"}
-                    onChange={() => this.onTypeChange("week")}
-                  />
-                  Week
-                </label>
+              </div>
+              <div className="row">
+                <span>
+                  <label className="radio-inline">
+                    <input
+                      type="radio"
+                      name="type"
+                      checked={state.type === "day"}
+                      onChange={() => this.onTypeChange("day")}
+                    />
+                    Day
+                  </label>
+                  <label className="radio-inline">
+                    <input
+                      type="radio"
+                      name="type"
+                      checked={state.type === "week"}
+                      onChange={() => this.onTypeChange("week")}
+                    />
+                    Week
+                  </label>
+                </span>
+                <span style={{ paddingLeft: 20 }}>
+                  <label className="checkbox-inline">
+                    <input
+                      type="checkbox"
+                      value="ema10"
+                      checked={state.ema10}
+                      onChange={() => {
+                        this.onIndicatorChange("ema10");
+                      }}
+                    />
+                    ema10
+                  </label>
+                  <label class="checkbox-inline">
+                    <input
+                      type="checkbox"
+                      value="ema20"
+                      checked={state.ema20}
+                      onChange={() => {
+                        this.onIndicatorChange("ema20");
+                      }}
+                    />
+                    ema20
+                  </label>
+                  <label class="checkbox-inline">
+                    <input
+                      type="checkbox"
+                      value="ema50"
+                      checked={state.ema50}
+                      onChange={() => {
+                        this.onIndicatorChange("ema50");
+                      }}
+                    />
+                    ema50
+                  </label>
+                  <label class="checkbox-inline">
+                    <input
+                      type="checkbox"
+                      value="sma100"
+                      checked={state.sma100}
+                      onChange={() => {
+                        this.onIndicatorChange("sma100");
+                      }}
+                    />
+                    sma100
+                  </label>
+                  <label class="checkbox-inline">
+                    <input
+                      type="checkbox"
+                      value="sma200"
+                      checked={state.sma200}
+                      onChange={() => {
+                        this.onIndicatorChange("sma200");
+                      }}
+                    />
+                    sma200
+                  </label>
+                  <label class="checkbox-inline">
+                    <input
+                      type="checkbox"
+                      value="bb"
+                      checked={state.bb}
+                      onChange={() => {
+                        this.onIndicatorChange("bb");
+                      }}
+                    />
+                    bb
+                  </label>
+                  <label class="checkbox-inline">
+                    <input
+                      type="checkbox"
+                      value="macd"
+                      checked={state.macd}
+                      onChange={() => {
+                        this.onIndicatorChange("macd");
+                      }}
+                    />
+                    macd
+                  </label>
+                  <label class="checkbox-inline">
+                    <input
+                      type="checkbox"
+                      value="adx"
+                      checked={state.adx}
+                      onChange={() => {
+                        this.onIndicatorChange("adx");
+                      }}
+                    />
+                    adx
+                  </label>
+                  <label class="checkbox-inline">
+                    <input
+                      type="checkbox"
+                      value="heikin"
+                      checked={state.heikin}
+                      onChange={() => {
+                        this.onIndicatorChange("heikin");
+                      }}
+                    />
+                    heikin
+                  </label>
+                  <label class="checkbox-inline">
+                    <input
+                      type="checkbox"
+                      value="stochastic"
+                      checked={state.stochastic}
+                      onChange={() => {
+                        this.onIndicatorChange("stochastic");
+                      }}
+                    />
+                    stochastic
+                  </label>
+                  <label class="checkbox-inline">
+                    <input
+                      type="checkbox"
+                      value="rsi"
+                      checked={state.rsi}
+                      onChange={() => {
+                        this.onIndicatorChange("rsi");
+                      }}
+                    />
+                    rsi
+                  </label>
+                  <label class="checkbox-inline">
+                    <input
+                      type="checkbox"
+                      value="william"
+                      checked={state.william}
+                      onChange={() => {
+                        this.onIndicatorChange("william");
+                      }}
+                    />
+                    wr
+                  </label>
+                </span>
               </div>
               <div className="chart-wrapper">
                 <div className="chart-inner">
