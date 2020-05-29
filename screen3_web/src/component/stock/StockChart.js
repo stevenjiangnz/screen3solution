@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import AppContext from "../../Context";
-import Highcharts, { objectEach } from "highcharts/highstock";
+import Highcharts from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
 import TickerService from "../../service/TickerService";
 import IndicatorService from "../../service/IndicatorService";
-import ChartConfig from "../../ChartConfig";
 import TickerHelper from "../../util/TickerHelper";
+import ChartHelper from "../../util/ChartHelper";
 
 export class StockChart extends Component {
   context;
@@ -17,21 +17,7 @@ export class StockChart extends Component {
   chartName;
   currentChartSettings;
 
-  defaultChartSetting = {
-    type: "day",
-    ema10: false,
-    ema20: false,
-    ema50: true,
-    sma100: false,
-    sma200: true,
-    bb: true,
-    macd: true,
-    adx: true,
-    heikin: false,
-    stochastic: false,
-    rsi: false,
-    william: true,
-  };
+  defaultChartSetting = ChartHelper.getChartDefaultSettins();
 
   constructor(props) {
     super(props);
@@ -40,13 +26,8 @@ export class StockChart extends Component {
     this.indicatorService = new IndicatorService();
     this.chartRef = React.createRef();
 
-    this.groupingUnits = [
-      [
-        "week", // unit name
-        [1], // allowed multiples
-      ],
-      ["month", [1, 2, 3, 4, 6]],
-    ];
+    this.groupingUnits = ChartHelper.getGroupUnit();
+
     this.state = {
       chart: {
         marginRight: 20,
@@ -76,20 +57,19 @@ export class StockChart extends Component {
 
   prepareDrawChart = async () => {
     const stock = this.context.state.selectedStock;
+    const indicators = ChartHelper.getOnIndicators(this.currentChartSettings);
 
-    const getTickers = this.tickerService.getTickerList(
-      stock.code,
-      this.currentChartSettings.type
-    );
-    const getSMA20 = this.indicatorService.getSMA(
-      stock.code,
-      20,
-      this.currentChartSettings.type
-    );
+    console.log("indicator: ", indicators);
+    const getTickers = this.tickerService
+      .getTickerList(stock.code, this.currentChartSettings.type)
+      .then((value) => TickerHelper.ConvertTickers(value.data));
+    const getSMA20 = this.indicatorService
+      .getSMA(stock.code, 20, this.currentChartSettings.type)
+      .then((value) => TickerHelper.ConvertSingleValueIndicator(value.data));
 
     Promise.all([getTickers, getSMA20]).then((values) => {
-      const tickers = TickerHelper.ConvertTickers(values[0].data);
-      const sma20 = TickerHelper.ConvertSingleValueIndicator(values[1].data);
+      const tickers = values[0];
+      const sma20 = values[1];
 
       this.chart.setTitle({ text: `${stock.code} - ${stock.company}` });
       this.chart.series[0].setData(tickers);
@@ -194,7 +174,7 @@ export class StockChart extends Component {
                     />
                     ema10
                   </label>
-                  <label class="checkbox-inline">
+                  <label className="checkbox-inline">
                     <input
                       type="checkbox"
                       value="ema20"
@@ -205,7 +185,7 @@ export class StockChart extends Component {
                     />
                     ema20
                   </label>
-                  <label class="checkbox-inline">
+                  <label className="checkbox-inline">
                     <input
                       type="checkbox"
                       value="ema50"
@@ -216,7 +196,7 @@ export class StockChart extends Component {
                     />
                     ema50
                   </label>
-                  <label class="checkbox-inline">
+                  <label className="checkbox-inline">
                     <input
                       type="checkbox"
                       value="sma100"
@@ -227,7 +207,7 @@ export class StockChart extends Component {
                     />
                     sma100
                   </label>
-                  <label class="checkbox-inline">
+                  <label className="checkbox-inline">
                     <input
                       type="checkbox"
                       value="sma200"
@@ -238,7 +218,7 @@ export class StockChart extends Component {
                     />
                     sma200
                   </label>
-                  <label class="checkbox-inline">
+                  <label className="checkbox-inline">
                     <input
                       type="checkbox"
                       value="bb"
@@ -249,7 +229,7 @@ export class StockChart extends Component {
                     />
                     bb
                   </label>
-                  <label class="checkbox-inline">
+                  <label className="checkbox-inline">
                     <input
                       type="checkbox"
                       value="macd"
@@ -260,7 +240,7 @@ export class StockChart extends Component {
                     />
                     macd
                   </label>
-                  <label class="checkbox-inline">
+                  <label className="checkbox-inline">
                     <input
                       type="checkbox"
                       value="adx"
@@ -271,7 +251,7 @@ export class StockChart extends Component {
                     />
                     adx
                   </label>
-                  <label class="checkbox-inline">
+                  <label className="checkbox-inline">
                     <input
                       type="checkbox"
                       value="heikin"
@@ -282,7 +262,7 @@ export class StockChart extends Component {
                     />
                     heikin
                   </label>
-                  <label class="checkbox-inline">
+                  <label className="checkbox-inline">
                     <input
                       type="checkbox"
                       value="stochastic"
@@ -291,9 +271,9 @@ export class StockChart extends Component {
                         this.onIndicatorChange("stochastic");
                       }}
                     />
-                    stochastic
+                    stoch
                   </label>
-                  <label class="checkbox-inline">
+                  <label className="checkbox-inline">
                     <input
                       type="checkbox"
                       value="rsi"
@@ -304,7 +284,7 @@ export class StockChart extends Component {
                     />
                     rsi
                   </label>
-                  <label class="checkbox-inline">
+                  <label className="checkbox-inline">
                     <input
                       type="checkbox"
                       value="william"
