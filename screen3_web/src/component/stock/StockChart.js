@@ -61,22 +61,24 @@ export class StockChart extends Component {
   prepareDrawChart = async () => {
     const stock = this.context.state.selectedStock;
 
-    const tickersReturn = await this.tickerService.getTickerList(stock.code);
-    const tickers = TickerHelper.ConvertTickers(tickersReturn.data);
-    const sma20Return = await this.indicatorService.getSMA(stock.code, 50);
-    const sma20 = TickerHelper.ConvertSingleValueIndicator(sma20Return.data);
+    // const tickersReturn = await this.tickerService.getTickerList(stock.code);
+    // const tickers = TickerHelper.ConvertTickers(tickersReturn.data);
+    // const sma20Return = await this.indicatorService.getSMA(stock.code, 50);
+    // const sma20 = TickerHelper.ConvertSingleValueIndicator(sma20Return.data);
 
-    // display candlestick
-    this.chart.setTitle({ text: `${stock.code} - ${stock.company}` });
-    this.chart.series[0].setData(tickers);
-    this.chart.series[0].name = stock.code + "- price";
+    const getTickers = this.tickerService.getTickerList(stock.code);
+    const getSMA20 = this.indicatorService.getSMA(stock.code, 50);
 
-    this.drawIndicator("SMA20", sma20);
-    // this.chart.addSeries({
-    //   type: "line",
-    //   data: sma20,
-    //   yAxis: 0,
-    // });
+    Promise.all([getTickers, getSMA20]).then((values) => {
+      const tickers = TickerHelper.ConvertTickers(values[0].data);
+      const sma20 = TickerHelper.ConvertSingleValueIndicator(values[1].data);
+      // display candlestick
+      this.chart.setTitle({ text: `${stock.code} - ${stock.company}` });
+      this.chart.series[0].setData(tickers);
+      this.chart.series[0].name = stock.code + "- price";
+
+      this.drawIndicator("SMA20", sma20, { yAxis: 0 });
+    });
   };
 
   drawIndicator = (name, data, settings = {}) => {
@@ -89,7 +91,6 @@ export class StockChart extends Component {
     });
 
     if (!existingSeries) {
-      console.log("about to add new serious");
       this.chart.addSeries({
         name,
         type: settings.type ? settings.type : "line",
@@ -97,10 +98,7 @@ export class StockChart extends Component {
         yAxis: settings.yAxis ? settings.yAxis : 0,
       });
     } else {
-      console.log(
-        "about to set data to existing serious: ",
-        existingSeries.yAxis
-      );
+      console.log("about to set data to existing serious: ", existingSeries);
       existingSeries.setData(data);
     }
   };
