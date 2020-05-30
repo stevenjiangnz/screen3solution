@@ -12,7 +12,7 @@ const ChartConfig = {
     ema20: {
       parameter: "ema,20",
       ownPane: false,
-      color: "#FFD455",
+      color: "#002d99",
     },
     ema50: {
       parameter: "ema,50",
@@ -42,7 +42,7 @@ const ChartConfig = {
     bb: {
       parameter: "bb,20,2.5",
       ownPane: false,
-      color: "#ffffff",
+      color: "#0000ff",
     },
     closemain: {
       parameter: "closemain",

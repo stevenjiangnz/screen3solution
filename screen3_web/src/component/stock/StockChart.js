@@ -115,19 +115,17 @@ export class StockChart extends Component {
 
       for (var i = 1; i < values.length; i++) {
         const indSetting = indicators[i - 1];
+
         this.drawIndicator(indSetting.name, values[i], indSetting);
       }
+    });
+  };
 
-      // Clear
-      const allInds = Object.keys(this.currentChartSettings);
-      const onIndicators = indicators.map((ind) => ind.name);
-      this.chart.series.forEach((s) => {
-        if (allInds.includes(s.name)) {
-          if (!onIndicators.includes(s.name)) {
-            s.remove();
-          }
-        }
-      });
+  removeSeries = (name) => {
+    this.chart.series.forEach((s) => {
+      if (s.name === name) {
+        s.remove();
+      }
     });
   };
 
@@ -175,6 +173,10 @@ export class StockChart extends Component {
     const setting = Object.assign(this.currentChartSettings);
 
     setting[ind] = !setting[ind];
+
+    if (!setting[ind]) {
+      this.removeSeries(ind);
+    }
     this.context.updateChartSettings(this.chartName, setting);
   };
 
@@ -190,12 +192,12 @@ export class StockChart extends Component {
           const state = this.currentChartSettings;
           return (
             <>
-              {/* <div className="row">
+              <div className="row">
                 <p>{JSON.stringify(this.context)}</p>
                 <button className="btn btn-primary" onClick={this.testClicked}>
                   {this.chartName}
                 </button>
-              </div> */}
+              </div>
               <div className="row">
                 <span>
                   <label className="radio-inline">
