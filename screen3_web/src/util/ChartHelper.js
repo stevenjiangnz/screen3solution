@@ -10,7 +10,7 @@ export class ChartHelper {
     return {
       type: "day",
       ema10: false,
-      ema20: false,
+      ema20: true,
       ema50: true,
       sma100: false,
       sma200: true,
@@ -31,7 +31,7 @@ export class ChartHelper {
       if (!exceptions.includes(k)) {
         if (settings[k]) {
           indicators.push({
-            type: k,
+            name: k,
             ...ChartHelper.getIndicatorSetting(k),
           });
         }

@@ -58,24 +58,76 @@ export class StockChart extends Component {
   prepareDrawChart = async () => {
     const stock = this.context.state.selectedStock;
     const indicators = ChartHelper.getOnIndicators(this.currentChartSettings);
+    const dataTasks = [];
 
-    console.log("indicator: ", indicators);
-    const getTickers = this.tickerService
-      .getTickerList(stock.code, this.currentChartSettings.type)
-      .then((value) => TickerHelper.ConvertTickers(value.data));
-    const getSMA20 = this.indicatorService
-      .getSMA(stock.code, 20, this.currentChartSettings.type)
-      .then((value) => TickerHelper.ConvertSingleValueIndicator(value.data));
+    dataTasks.push(
+      this.tickerService
+        .getTickerList(stock.code, this.currentChartSettings.type)
+        .then((value) => TickerHelper.ConvertTickers(value.data))
+    );
 
-    Promise.all([getTickers, getSMA20]).then((values) => {
+    indicators.forEach((ind) => {
+      const param = ind.parameter.split(",");
+      switch (param[0]) {
+        case "sma":
+          dataTasks.push(
+            this.indicatorService
+              .getSMA(stock.code, param[1], this.currentChartSettings.type)
+              .then((value) =>
+                TickerHelper.ConvertSingleValueIndicator(value.data)
+              )
+          );
+          break;
+        case "ema":
+          dataTasks.push(
+            this.indicatorService
+              .getEMA(stock.code, param[1], this.currentChartSettings.type)
+              .then((value) =>
+                TickerHelper.ConvertSingleValueIndicator(value.data)
+              )
+          );
+          break;
+        case "bb":
+          break;
+        case "macd":
+          break;
+        case "adx":
+          break;
+        case "heikin":
+          break;
+        case "stochastic":
+          break;
+        case "rsi":
+          break;
+        case "william":
+          break;
+        default:
+          console.error(`found unknown indicator parameter ${param[0]}`);
+      }
+    });
+
+    Promise.all([...dataTasks]).then((values) => {
       const tickers = values[0];
-      const sma20 = values[1];
 
       this.chart.setTitle({ text: `${stock.code} - ${stock.company}` });
       this.chart.series[0].setData(tickers);
       this.chart.series[0].name = `${stock.code} - ${this.currentChartSettings.type}`;
 
-      this.drawIndicator("SMA20", sma20, { yAxis: 0 });
+      for (var i = 1; i < values.length; i++) {
+        const indSetting = indicators[i - 1];
+        this.drawIndicator(indSetting.name, values[i], indSetting);
+      }
+
+      // Clear
+      const allInds = Object.keys(this.currentChartSettings);
+      const onIndicators = indicators.map((ind) => ind.name);
+      this.chart.series.forEach((s) => {
+        if (allInds.includes(s.name)) {
+          if (!onIndicators.includes(s.name)) {
+            s.remove();
+          }
+        }
+      });
     });
   };
 
@@ -89,14 +141,17 @@ export class StockChart extends Component {
     });
 
     if (!existingSeries) {
-      this.chart.addSeries({
-        name,
-        type: settings.type ? settings.type : "line",
-        data,
-        lineWidth: 1,
-        color: "red",
-        yAxis: settings.yAxis ? settings.yAxis : 0,
-      });
+      this.chart.addSeries(
+        {
+          name,
+          type: settings.chartType ? settings.chartType : "line",
+          data,
+          lineWidth: 1,
+          color: settings.color,
+          yAxis: settings.yAxis ? settings.yAxis : 0,
+        },
+        true
+      );
     } else {
       existingSeries.setData(data);
     }
@@ -135,12 +190,12 @@ export class StockChart extends Component {
           const state = this.currentChartSettings;
           return (
             <>
-              <div className="row">
+              {/* <div className="row">
                 <p>{JSON.stringify(this.context)}</p>
                 <button className="btn btn-primary" onClick={this.testClicked}>
                   {this.chartName}
                 </button>
-              </div>
+              </div> */}
               <div className="row">
                 <span>
                   <label className="radio-inline">
