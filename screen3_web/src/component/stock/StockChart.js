@@ -88,6 +88,12 @@ export class StockChart extends Component {
           );
           break;
         case "bb":
+          dataTasks.push(
+            this.indicatorService.getBB(
+              stock.code,
+              this.currentChartSettings.type
+            )
+          );
           break;
         case "macd":
           break;
@@ -115,17 +121,47 @@ export class StockChart extends Component {
 
       for (var i = 1; i < values.length; i++) {
         const indSetting = indicators[i - 1];
-
-        this.drawIndicator(indSetting.name, values[i], indSetting);
+        switch (indSetting.name) {
+          case "bb":
+            const bbData = TickerHelper.ConvertBBIndicator(values[i].data);
+            this.drawIndicator(
+              indSetting.name + "_high",
+              bbData.high,
+              indSetting
+            );
+            this.drawIndicator(
+              indSetting.name + "_mid",
+              bbData.mid,
+              indSetting
+            );
+            this.drawIndicator(
+              indSetting.name + "_low",
+              bbData.low,
+              indSetting
+            );
+            break;
+          default:
+            this.drawIndicator(indSetting.name, values[i], indSetting);
+        }
       }
     });
   };
 
   removeSeries = (name) => {
+    const removeSeries = [];
+
     this.chart.series.forEach((s) => {
-      if (s.name === name) {
-        s.remove();
+      if (s.name === name || s.name.indexOf(name) >= 0) {
+        removeSeries.push(s.name);
       }
+    });
+
+    removeSeries.forEach((nameDel) => {
+      this.chart.series.forEach((s) => {
+        if (s.name === nameDel) {
+          s.remove();
+        }
+      });
     });
   };
 

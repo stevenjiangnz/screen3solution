@@ -42,7 +42,7 @@ const ChartConfig = {
     bb: {
       parameter: "bb,20,2.5",
       ownPane: false,
-      color: "#0000ff",
+      color: "#000000",
     },
     closemain: {
       parameter: "closemain",

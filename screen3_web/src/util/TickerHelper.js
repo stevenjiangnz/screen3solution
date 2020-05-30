@@ -13,7 +13,23 @@ export class TickerHelper {
     const convertedIndicators = [];
 
     Indicator.forEach((ind) => {
-      convertedIndicators.push([ind.p_Stamp, ind.v ? ind.v : 0]);
+      convertedIndicators.push([ind.p_Stamp, ind.v]);
+    });
+
+    return convertedIndicators;
+  }
+
+  static ConvertBBIndicator(Indicator) {
+    const convertedIndicators = {
+      high: [],
+      mid: [],
+      low: [],
+    };
+
+    Indicator.forEach((ind) => {
+      convertedIndicators.high.push([ind.p_Stamp, ind.high]);
+      convertedIndicators.mid.push([ind.p_Stamp, ind.mid]);
+      convertedIndicators.low.push([ind.p_Stamp, ind.low]);
     });
 
     return convertedIndicators;

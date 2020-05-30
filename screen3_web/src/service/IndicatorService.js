@@ -14,6 +14,13 @@ export class IndictorService {
       `indicator/ema/${code}?period=${period}&type=${type}&start=${start}&end=${end}`
     );
   }
+
+  getBB(code, type = "day", start = 0, end = 0) {
+    const req = new RequestHelper().getIntance();
+    return req.get(
+      `indicator/bb/${code}?type=${type}&start=${start}&end=${end}`
+    );
+  }
 }
 
 export default IndictorService;
