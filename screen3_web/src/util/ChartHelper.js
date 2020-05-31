@@ -19,7 +19,7 @@ export class ChartHelper {
       adx: false,
       heikin: false,
       stochastic: false,
-      rsi: false,
+      rsi: true,
       william: true,
     };
   }

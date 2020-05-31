@@ -16,8 +16,14 @@ export class StockChart extends Component {
   groupingUnits;
   chartName;
   currentChartSettings;
-
   defaultChartSetting = ChartHelper.getChartDefaultSettins();
+
+  ChartPosition = {
+    base: 450,
+    gap: 10,
+    bottom: 20,
+    platColor: "#bbb",
+  };
 
   constructor(props) {
     super(props);
@@ -72,7 +78,6 @@ export class StockChart extends Component {
           crosshair: {
             label: {
               enabled: false,
-              // padding: 8
             },
           },
         },
@@ -156,6 +161,12 @@ export class StockChart extends Component {
         case "stochastic":
           break;
         case "rsi":
+          dataTasks.push(
+            this.indicatorService.getRSI(
+              stock.code,
+              this.currentChartSettings.type
+            )
+          );
           break;
         case "william":
           dataTasks.push(
@@ -204,7 +215,50 @@ export class StockChart extends Component {
               values[i].data
             );
 
-            console.log("adaya: ", indSetting);
+            console.log("indSetting: ", indSetting.yAxisName);
+            const wrAxis = this.chart.get(indSetting.yAxisName);
+            if (!wrAxis) {
+              this.chart.addAxis({
+                id: indSetting.yAxisName,
+                title: {
+                  text: "WILLIAM",
+                },
+                lineWidth: 1,
+                min: -100,
+                max: 0,
+                top: this.ChartPosition.base + this.ChartPosition.gap,
+                height: indSetting.height,
+                plotLines: [
+                  {
+                    value: indSetting.threshold1,
+                    color: this.ChartPosition.plotColor,
+                    dashStyle: "shortdash",
+                    width: 1,
+                  },
+                  {
+                    value: indSetting.threshold2,
+                    color: this.ChartPosition.plotColor,
+                    dashStyle: "shortdash",
+                    width: 1,
+                  },
+                ],
+                labels: {
+                  align: "right",
+                  x: -13,
+                },
+                opposite: true,
+              });
+
+              this.ChartPosition.base =
+                this.ChartPosition.base +
+                this.ChartPosition.gap +
+                indSetting.height;
+            }
+
+            this.drawIndicator(indSetting.name, wrData, {
+              yAxis: indSetting.yAxisName,
+              color: indSetting.color,
+            });
             break;
           default:
             this.drawIndicator(indSetting.name, values[i], indSetting);
@@ -216,8 +270,10 @@ export class StockChart extends Component {
   };
 
   postDrawSetup = () => {
-    this.chart.setSize(null, 470);
+    const newHeight = this.ChartPosition.base + this.ChartPosition.bottom;
+    this.chart.setSize(null, newHeight);
   };
+
   removeSeries = (name) => {
     const removeSeries = [];
 
@@ -263,10 +319,10 @@ export class StockChart extends Component {
   };
 
   testClicked = () => {
-    // this.chart.xAxis[0].setExtremes(
-    //   Date.UTC(2014, 0, 1),
-    //   Date.UTC(2014, 11, 31)
-    // );
+    this.chart.xAxis[0].setExtremes(
+      Date.UTC(2014, 0, 1),
+      Date.UTC(2014, 11, 31)
+    );
   };
 
   onTypeChange = (type) => {
@@ -283,7 +339,16 @@ export class StockChart extends Component {
 
     if (!setting[ind]) {
       this.removeSeries(ind);
+
+      const indSetting = ChartHelper.getIndicatorSetting(ind);
+
+      if (indSetting.ownPane) {
+        this.chart.get(indSetting.yAxisName).remove();
+        this.ChartPosition.base =
+          this.ChartPosition.base - indSetting.height - this.ChartPosition.gap;
+      }
     }
+
     this.context.updateChartSettings(this.chartName, setting);
   };
 

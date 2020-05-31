@@ -7,7 +7,7 @@ const ChartConfig = {
     ema10: {
       parameter: "ema,10",
       ownPane: false,
-      color: "#aaa",
+      color: "#555",
     },
     ema20: {
       parameter: "ema,20",
@@ -17,17 +17,17 @@ const ChartConfig = {
     ema50: {
       parameter: "ema,50",
       ownPane: false,
-      color: "#61B60C",
+      color: "#9d39f3",
     },
     sma100: {
       parameter: "sma,100",
-      color: "#00FF00",
+      color: "#ff00ff",
       ownPane: false,
     },
     sma200: {
       parameter: "sma,200",
       ownPane: false,
-      color: "#0FE4E4",
+      color: "#f02b2b",
     },
     // ema10: {
     //   parameter: "ema,10",
@@ -91,10 +91,10 @@ const ChartConfig = {
       threshold2: 70,
     },
     william: {
+      yAxisName: "willaim_yaxis",
       parameter: "william,14",
       ownPane: true,
-      color: "#AAFF2A",
-      colorWilliam: "#FFFF2A",
+      color: "#5500c5",
       height: 100,
       threshold1: -20,
       threshold2: -80,

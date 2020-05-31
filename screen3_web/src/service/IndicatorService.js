@@ -28,6 +28,13 @@ export class IndictorService {
       `indicator/williamr/${code}?type=${type}&start=${start}&end=${end}`
     );
   }
+
+  getRSI(code, type = "day", start = 0, end = 0) {
+    const req = new RequestHelper().getIntance();
+    return req.get(
+      `indicator/rsi/${code}?type=${type}&start=${start}&end=${end}`
+    );
+  }
 }
 
 export default IndictorService;
