@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import AppContext from "../../Context";
-import Highcharts from "highcharts/highstock";
+import Highcharts, { each } from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
 import TickerService from "../../service/TickerService";
 import IndicatorService from "../../service/IndicatorService";
@@ -51,7 +51,7 @@ export class StockChart extends Component {
         selected: 1,
       },
       tooltip: {
-        enabled: false,
+        enabled: true,
       },
       xAxis: {
         type: "datetime",
@@ -65,10 +65,6 @@ export class StockChart extends Component {
       },
       yAxis: [
         {
-          labels: {
-            align: "right",
-            x: -3,
-          },
           title: {
             text: "OHLC",
           },
@@ -82,10 +78,6 @@ export class StockChart extends Component {
           },
         },
         {
-          labels: {
-            align: "right",
-            x: -3,
-          },
           top: 340,
           height: 90,
           lineWidth: 1,
@@ -199,11 +191,11 @@ export class StockChart extends Component {
               bbData.high,
               indSetting
             );
-            this.drawIndicator(
-              indSetting.name + "_mid",
-              bbData.mid,
-              indSetting
-            );
+            // this.drawIndicator(
+            //   indSetting.name + "_mid",
+            //   bbData.mid,
+            //   indSetting
+            // );
             this.drawIndicator(
               indSetting.name + "_low",
               bbData.low,
@@ -242,10 +234,6 @@ export class StockChart extends Component {
                     width: 1,
                   },
                 ],
-                labels: {
-                  align: "right",
-                  x: -13,
-                },
                 opposite: true,
               });
 
@@ -292,11 +280,6 @@ export class StockChart extends Component {
                     width: 1,
                   },
                 ],
-                labels: {
-                  align: "right",
-                  x: -30,
-                },
-
                 opposite: true,
               });
 
@@ -394,17 +377,18 @@ export class StockChart extends Component {
       var indSetting = ChartHelper.getIndicatorSetting(ind);
 
       if (indSetting.ownPane) {
-        this.chart.get(indSetting.yAxisName).remove();
-        this.ChartPosition.base =
-          this.ChartPosition.base - indSetting.height - this.ChartPosition.gap;
-      }
+        const yAxisRemove = this.chart.get(indSetting.yAxisName);
+        const topRemove = yAxisRemove.top;
+        yAxisRemove.remove();
 
-      this.removeSeries("william");
+        this.chart.yAxis.forEach((yx) => {
+          if (yx.top > topRemove) {
+            yx.update({
+              top: yx.top - indSetting.height - this.ChartPosition.gap,
+            });
+          }
+        });
 
-      indSetting = ChartHelper.getIndicatorSetting("william");
-
-      if (indSetting.ownPane) {
-        this.chart.get(indSetting.yAxisName).remove();
         this.ChartPosition.base =
           this.ChartPosition.base - indSetting.height - this.ChartPosition.gap;
       }

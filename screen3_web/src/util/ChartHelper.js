@@ -10,7 +10,7 @@ export class ChartHelper {
     return {
       type: "day",
       ema10: false,
-      ema20: false,
+      ema20: true,
       ema50: true,
       sma100: false,
       sma200: true,
