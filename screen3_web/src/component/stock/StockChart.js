@@ -37,11 +37,63 @@ export class StockChart extends Component {
         {
           type: "candlestick",
           data: [],
+          cursor: "pointer",
           groupingUnits: this.groupingUnits,
         },
       ],
       rangeSelector: {
         selected: 1,
+      },
+      tooltip: {
+        enabled: false,
+      },
+      xAxis: {
+        type: "datetime",
+        crosshair: {
+          label: {
+            enabled: true,
+            padding: 8,
+          },
+        },
+        opposite: true,
+      },
+      yAxis: [
+        {
+          labels: {
+            align: "right",
+            x: -3,
+          },
+          title: {
+            text: "OHLC",
+          },
+          height: 300,
+          lineWidth: 1,
+          top: 120,
+          crosshair: {
+            label: {
+              enabled: false,
+              // padding: 8
+            },
+          },
+        },
+        {
+          labels: {
+            align: "right",
+            x: -3,
+          },
+          top: 340,
+          height: 90,
+          lineWidth: 1,
+          offset: -6,
+          opposite: false,
+        },
+      ],
+      navigator: {
+        height: 25,
+        top: 75,
+      },
+      credits: {
+        enabled: false,
       },
     };
   }
@@ -106,6 +158,12 @@ export class StockChart extends Component {
         case "rsi":
           break;
         case "william":
+          dataTasks.push(
+            this.indicatorService.getWilliamR(
+              stock.code,
+              this.currentChartSettings.type
+            )
+          );
           break;
         default:
           console.error(`found unknown indicator parameter ${param[0]}`);
@@ -121,6 +179,7 @@ export class StockChart extends Component {
 
       for (var i = 1; i < values.length; i++) {
         const indSetting = indicators[i - 1];
+
         switch (indSetting.name) {
           case "bb":
             const bbData = TickerHelper.ConvertBBIndicator(values[i].data);
@@ -140,13 +199,25 @@ export class StockChart extends Component {
               indSetting
             );
             break;
+          case "william":
+            const wrData = TickerHelper.ConvertSingleValueIndicator(
+              values[i].data
+            );
+
+            console.log("adaya: ", indSetting);
+            break;
           default:
             this.drawIndicator(indSetting.name, values[i], indSetting);
         }
       }
+
+      this.postDrawSetup();
     });
   };
 
+  postDrawSetup = () => {
+    this.chart.setSize(null, 470);
+  };
   removeSeries = (name) => {
     const removeSeries = [];
 
@@ -192,10 +263,12 @@ export class StockChart extends Component {
   };
 
   testClicked = () => {
-    this.chart.xAxis[0].setExtremes(
-      Date.UTC(2014, 0, 1),
-      Date.UTC(2014, 11, 31)
-    );
+    // this.chart.xAxis[0].setExtremes(
+    //   Date.UTC(2014, 0, 1),
+    //   Date.UTC(2014, 11, 31)
+    // );
+
+    this.chart.setSize(null, 500);
   };
 
   onTypeChange = (type) => {
