@@ -9,7 +9,7 @@ namespace Screen3.Indicator
     public class Delt
     {
 
-        public static Result Calculate(double?[] inputData, int offset, double?[] outData)
+        public static Result Calculate(double[] inputData, int offset, double?[] outData)
         {
             Result result = new Result();
             result.Status = ResultStatus.Success;
@@ -20,9 +20,9 @@ namespace Screen3.Indicator
             {
                 for (int i = offset; i < len; i++)
                 {
-                    if (inputData[i - offset].HasValue && inputData[i].HasValue && inputData[i].Value != 0)
+                    if (inputData[i] != 0)
                     {
-                        outData[i] = Math.Round(100 * (inputData[i].Value - inputData[i - offset].Value) / inputData[i].Value, 4);
+                        outData[i] = Math.Round(100 * (inputData[i] - inputData[i - offset]) / inputData[i], 4);
                     }
                 }
             }

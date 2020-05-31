@@ -37,8 +37,8 @@ namespace Screen3.Indicator
                     outHigh[i] = Math.Round((outMiddle[i] + factor * sd[i]).Value, 4);
 
                     outLow[i] = Math.Round((outMiddle[i] - factor * sd[i]).Value, 4);
-
-                } }
+                }
+            }
             catch (Exception ex)
             {
                 res.Status = ResultStatus.Fail;

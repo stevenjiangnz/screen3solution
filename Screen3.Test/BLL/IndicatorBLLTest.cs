@@ -19,7 +19,17 @@ namespace Screen3.Test.BLL
         {
             IndicatorBLL indBll = new IndicatorBLL(this.s3_bucket_name, this.tempTickerFolder);
 
-            var smaResult = await indBll.GetDaySMA("CCL", 20, 20100101);
+            var smaResult = await indBll.GetSMA("CCL", 20, 20100101);
+
+            Console.WriteLine(ObjectHelper.ToJson(smaResult));
+        }
+
+        [Fact]
+        public async void TestGetEMA()
+        {
+            IndicatorBLL indBll = new IndicatorBLL(this.s3_bucket_name, this.tempTickerFolder);
+
+            var smaResult = await indBll.GetEMA("CCL", 20, 2, 20100101);
 
             Console.WriteLine(ObjectHelper.ToJson(smaResult));
         }

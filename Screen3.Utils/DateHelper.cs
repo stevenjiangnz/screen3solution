@@ -16,6 +16,15 @@ namespace Screen3.Utils
             return dt;
         }
 
+        public static long ToTimeStamp(int period)
+        {
+            DateTime dt = DateHelper.ToDate(period);
+
+            var epoch = dt - new DateTime(1970, 1, 1, 0, 0, 0);
+
+            return (long)epoch.TotalSeconds * 1000;
+        }
+
         public static int ToInt(DateTime dt)
         {
             int year = dt.Year;
@@ -24,18 +33,6 @@ namespace Screen3.Utils
 
             return year * 10000 + month * 100 + day;
         }
-
-        // public static int EndOfWeek(int intDate, DayOfWeek endOfWeek = DayOfWeek.Friday)
-        // {
-        //     DateTime dt = ToDate(intDate);
-
-        //     while (dt.DayOfWeek != endOfWeek)
-        //     {
-        //         dt = dt.AddDays(1);
-        //     }
-
-        //     return ToInt(dt);
-        // }
 
         public static int BeginOfWeek(int intDate, DayOfWeek beginOfWeek = DayOfWeek.Monday)
         {
