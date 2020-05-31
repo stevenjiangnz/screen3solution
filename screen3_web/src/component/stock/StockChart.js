@@ -267,8 +267,6 @@ export class StockChart extends Component {
     //   Date.UTC(2014, 0, 1),
     //   Date.UTC(2014, 11, 31)
     // );
-
-    this.chart.setSize(null, 500);
   };
 
   onTypeChange = (type) => {
@@ -301,12 +299,12 @@ export class StockChart extends Component {
           const state = this.currentChartSettings;
           return (
             <>
-              <div className="row">
+              {/* <div className="row">
                 <p>{JSON.stringify(this.context)}</p>
                 <button className="btn btn-primary" onClick={this.testClicked}>
                   {this.chartName}
                 </button>
-              </div>
+              </div> */}
               <div className="row">
                 <span>
                   <label className="radio-inline">
