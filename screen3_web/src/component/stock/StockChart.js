@@ -19,7 +19,7 @@ export class StockChart extends Component {
   defaultChartSetting = ChartHelper.getChartDefaultSettins();
 
   ChartPosition = {
-    base: 450,
+    base: 430,
     gap: 10,
     bottom: 20,
     platColor: "#bbb",
@@ -210,12 +210,62 @@ export class StockChart extends Component {
               indSetting
             );
             break;
+          case "rsi":
+            const rsiData = TickerHelper.ConvertSingleValueIndicator(
+              values[i].data
+            );
+
+            const rsiAxis = this.chart.get(indSetting.yAxisName);
+
+            if (!rsiAxis) {
+              this.chart.addAxis({
+                id: indSetting.yAxisName,
+                title: {
+                  text: "RSI",
+                },
+                lineWidth: 1,
+                min: 0,
+                max: 100,
+                top: this.ChartPosition.base + this.ChartPosition.gap,
+                height: indSetting.height,
+                plotLines: [
+                  {
+                    value: 30,
+                    color: this.ChartPosition.plotColor,
+                    dashStyle: "shortdash",
+                    width: 1,
+                  },
+                  {
+                    value: 70,
+                    color: this.ChartPosition.plotColor,
+                    dashStyle: "shortdash",
+                    width: 1,
+                  },
+                ],
+                labels: {
+                  align: "right",
+                  x: -13,
+                },
+                opposite: true,
+              });
+
+              this.ChartPosition.base =
+                this.ChartPosition.base +
+                this.ChartPosition.gap +
+                indSetting.height;
+            }
+
+            this.drawIndicator(indSetting.name, rsiData, {
+              yAxis: indSetting.yAxisName,
+              color: indSetting.color,
+            });
+
+            break;
           case "william":
             const wrData = TickerHelper.ConvertSingleValueIndicator(
               values[i].data
             );
 
-            console.log("indSetting: ", indSetting.yAxisName);
             const wrAxis = this.chart.get(indSetting.yAxisName);
             if (!wrAxis) {
               this.chart.addAxis({
@@ -244,8 +294,9 @@ export class StockChart extends Component {
                 ],
                 labels: {
                   align: "right",
-                  x: -13,
+                  x: -30,
                 },
+
                 opposite: true,
               });
 
@@ -340,7 +391,17 @@ export class StockChart extends Component {
     if (!setting[ind]) {
       this.removeSeries(ind);
 
-      const indSetting = ChartHelper.getIndicatorSetting(ind);
+      var indSetting = ChartHelper.getIndicatorSetting(ind);
+
+      if (indSetting.ownPane) {
+        this.chart.get(indSetting.yAxisName).remove();
+        this.ChartPosition.base =
+          this.ChartPosition.base - indSetting.height - this.ChartPosition.gap;
+      }
+
+      this.removeSeries("william");
+
+      indSetting = ChartHelper.getIndicatorSetting("william");
 
       if (indSetting.ownPane) {
         this.chart.get(indSetting.yAxisName).remove();

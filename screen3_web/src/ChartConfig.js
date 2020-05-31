@@ -49,13 +49,6 @@ const ChartConfig = {
       color: "#FFFF55",
       ownPane: false,
     },
-    rsi: {
-      parameter: "rsi,6",
-      ownPane: true,
-      color: "#7F2AFF",
-      colorRsi: "#AAFFFF",
-      height: 100,
-    },
     adx: {
       parameter: "adx",
       ownPane: true,
@@ -89,6 +82,14 @@ const ChartConfig = {
       height: 120,
       threshold1: 30,
       threshold2: 70,
+    },
+    rsi: {
+      yAxisName: "rsi_yaxis",
+      parameter: "rsi,6",
+      ownPane: true,
+      color: "#7F2AFF",
+      colorRsi: "#AAFFFF",
+      height: 100,
     },
     william: {
       yAxisName: "willaim_yaxis",
