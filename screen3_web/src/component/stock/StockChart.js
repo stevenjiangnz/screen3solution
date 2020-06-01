@@ -151,9 +151,15 @@ export class StockChart extends Component {
               this.currentChartSettings.type
             )
           );
-
           break;
         case "adx":
+          dataTasks.push(
+            this.indicatorService.getADX(
+              stock.code,
+              this.currentChartSettings.type
+            )
+          );
+
           break;
         case "heikin":
           break;
@@ -256,6 +262,44 @@ export class StockChart extends Component {
               yAxis: indSetting.yAxisName,
               color: indSetting.colorHist,
               chartType: "column",
+            });
+            break;
+          case "adx":
+            const adxData = TickerHelper.ConvertADXIndicator(values[i].data);
+            const adxAxis = this.chart.get(indSetting.yAxisName);
+            if (!adxAxis) {
+              this.chart.addAxis({
+                id: indSetting.yAxisName,
+                title: {
+                  text: "ADX",
+                },
+                lineWidth: 1,
+                top: this.ChartPosition.base + this.ChartPosition.gap,
+                height: indSetting.height,
+                labels: {
+                  enabled: false,
+                },
+                opposite: true,
+              });
+
+              this.ChartPosition.base =
+                this.ChartPosition.base +
+                this.ChartPosition.gap +
+                indSetting.height;
+            }
+
+            this.drawIndicator(indSetting.name + "_adx", adxData.adx, {
+              yAxis: indSetting.yAxisName,
+              color: indSetting.colorAdx,
+            });
+
+            this.drawIndicator(indSetting.name + "_diplus", adxData.di_plus, {
+              yAxis: indSetting.yAxisName,
+              color: indSetting.colorDiPlus,
+            });
+            this.drawIndicator(indSetting.name + "_diminus", adxData.di_minus, {
+              yAxis: indSetting.yAxisName,
+              color: indSetting.colorDiMinus,
             });
 
             break;

@@ -64,6 +64,22 @@ export class TickerHelper {
 
     return convertedIndicators;
   }
+
+  static ConvertADXIndicator(Indicator) {
+    const convertedIndicators = {
+      adx: [],
+      di_plus: [],
+      di_minus: [],
+    };
+
+    Indicator.forEach((ind) => {
+      convertedIndicators.adx.push([ind.p_Stamp, ind.adx]);
+      convertedIndicators.di_plus.push([ind.p_Stamp, ind.di_plus]);
+      convertedIndicators.di_minus.push([ind.p_Stamp, ind.di_minus]);
+    });
+
+    return convertedIndicators;
+  }
 }
 
 export default TickerHelper;

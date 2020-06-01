@@ -54,7 +54,7 @@ const ChartConfig = {
       parameter: "adx",
       ownPane: true,
       color: "#FF55AA",
-      colorAdx: "#FFFFFF",
+      colorAdx: "#111111",
       colorDiPlus: "#2AFF2A",
       colorDiMinus: "#FF55D4",
       height: 180,
