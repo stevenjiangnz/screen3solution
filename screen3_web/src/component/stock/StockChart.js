@@ -145,6 +145,13 @@ export class StockChart extends Component {
           );
           break;
         case "macd":
+          dataTasks.push(
+            this.indicatorService.getMACD(
+              stock.code,
+              this.currentChartSettings.type
+            )
+          );
+
           break;
         case "adx":
           break;
@@ -207,6 +214,50 @@ export class StockChart extends Component {
               bbData.low,
               indSetting
             );
+            break;
+          case "macd":
+            const macdData = TickerHelper.ConvertMACDIndicator(values[i].data);
+            const macdAxis = this.chart.get(indSetting.yAxisName);
+            if (!macdAxis) {
+              this.chart.addAxis({
+                id: indSetting.yAxisName,
+                title: {
+                  text: "MACD",
+                },
+                lineWidth: 1,
+                top: this.ChartPosition.base + this.ChartPosition.gap,
+                height: indSetting.height,
+                plotLines: [
+                  {
+                    value: 0,
+                    color: this.ChartPosition.plotColor,
+                    dashStyle: "shortdash",
+                    width: 1,
+                  },
+                ],
+                opposite: true,
+              });
+
+              this.ChartPosition.base =
+                this.ChartPosition.base +
+                this.ChartPosition.gap +
+                indSetting.height;
+            }
+
+            this.drawIndicator(indSetting.name + "_macd", macdData.macd, {
+              yAxis: indSetting.yAxisName,
+              color: indSetting.colorMacd,
+            });
+            this.drawIndicator(indSetting.name + "_Signal", macdData.signal, {
+              yAxis: indSetting.yAxisName,
+              color: indSetting.colorSignal,
+            });
+            this.drawIndicator(indSetting.name + "_Hist", macdData.hist, {
+              yAxis: indSetting.yAxisName,
+              color: indSetting.colorHist,
+              chartType: "column",
+            });
+
             break;
           case "stochastic":
             const stochData = TickerHelper.ConvertStochasticIndicator(

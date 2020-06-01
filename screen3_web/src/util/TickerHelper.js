@@ -48,6 +48,22 @@ export class TickerHelper {
 
     return convertedIndicators;
   }
+
+  static ConvertMACDIndicator(Indicator) {
+    const convertedIndicators = {
+      macd: [],
+      signal: [],
+      hist: [],
+    };
+
+    Indicator.forEach((ind) => {
+      convertedIndicators.macd.push([ind.p_Stamp, ind.macd]);
+      convertedIndicators.signal.push([ind.p_Stamp, ind.signal]);
+      convertedIndicators.hist.push([ind.p_Stamp, ind.hist]);
+    });
+
+    return convertedIndicators;
+  }
 }
 
 export default TickerHelper;

@@ -15,7 +15,7 @@ export class ChartHelper {
       sma100: false,
       sma200: true,
       bb: true,
-      macd: false,
+      macd: true,
       adx: false,
       heikin: false,
       stochastic: true,

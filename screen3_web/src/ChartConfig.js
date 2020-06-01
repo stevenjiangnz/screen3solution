@@ -27,7 +27,7 @@ const ChartConfig = {
     sma200: {
       parameter: "sma,200",
       ownPane: false,
-      color: "#f02b2b",
+      color: "#78465e",
     },
     // ema10: {
     //   parameter: "ema,10",
@@ -50,6 +50,7 @@ const ChartConfig = {
       ownPane: false,
     },
     adx: {
+      yAxisName: "adx_yaxis",
       parameter: "adx",
       ownPane: true,
       color: "#FF55AA",
@@ -59,12 +60,13 @@ const ChartConfig = {
       height: 180,
     },
     macd: {
+      yAxisName: "macd_yaxis",
       parameter: "macd,26,12,9",
       ownPane: true,
       color: "#FF55AA",
-      colorMacd: "#2AFF2A",
-      colorSignal: "#FF55D4",
-      colorHist: "#E1E1E1",
+      colorMacd: "#002d99",
+      colorSignal: "#9d39f3",
+      colorHist: "#3256a8",
       height: 150,
     },
     heikin: {
@@ -78,8 +80,8 @@ const ChartConfig = {
       parameter: "stochastic,14,3",
       ownPane: true,
       color: "#FFAA00",
-      colorK: "#d500d5",
-      colorD: "#00aa2b",
+      colorK: "#002d99",
+      colorD: "#9d39f3",
       height: 120,
       threshold1: 30,
       threshold2: 70,
