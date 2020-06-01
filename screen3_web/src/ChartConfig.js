@@ -70,6 +70,7 @@ const ChartConfig = {
       height: 150,
     },
     heikin: {
+      yAxisName: "heikin_yaxis",
       parameter: "heikin",
       ownPane: true,
       color: "#AAAAFF",

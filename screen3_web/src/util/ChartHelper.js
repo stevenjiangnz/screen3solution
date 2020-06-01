@@ -17,7 +17,7 @@ export class ChartHelper {
       bb: true,
       macd: true,
       adx: true,
-      heikin: false,
+      heikin: true,
       stochastic: true,
       rsi: false,
       william: true,

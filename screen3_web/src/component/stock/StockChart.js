@@ -159,9 +159,14 @@ export class StockChart extends Component {
               this.currentChartSettings.type
             )
           );
-
           break;
         case "heikin":
+          dataTasks.push(
+            this.indicatorService.getHeikin(
+              stock.code,
+              this.currentChartSettings.type
+            )
+          );
           break;
         case "stochastic":
           dataTasks.push(
@@ -300,6 +305,38 @@ export class StockChart extends Component {
             this.drawIndicator(indSetting.name + "_diminus", adxData.di_minus, {
               yAxis: indSetting.yAxisName,
               color: indSetting.colorDiMinus,
+            });
+
+            break;
+          case "heikin":
+            const heikinData = TickerHelper.ConvertHeikinIndicator(
+              values[i].data
+            );
+            const heikinAxis = this.chart.get(indSetting.yAxisName);
+            if (!heikinAxis) {
+              this.chart.addAxis({
+                id: indSetting.yAxisName,
+                title: {
+                  text: "HEIKIN",
+                },
+                lineWidth: 1,
+                top: this.ChartPosition.base + this.ChartPosition.gap,
+                height: indSetting.height,
+                labels: {
+                  enabled: false,
+                },
+                opposite: true,
+              });
+
+              this.ChartPosition.base =
+                this.ChartPosition.base +
+                this.ChartPosition.gap +
+                indSetting.height;
+            }
+
+            this.drawIndicator(indSetting.name + "_k", heikinData, {
+              yAxis: indSetting.yAxisName,
+              chartType: "candlestick",
             });
 
             break;

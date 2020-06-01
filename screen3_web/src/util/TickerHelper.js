@@ -80,6 +80,16 @@ export class TickerHelper {
 
     return convertedIndicators;
   }
+
+  static ConvertHeikinIndicator(Indicator) {
+    const convertedTickers = [];
+
+    Indicator.forEach((t) => {
+      convertedTickers.push([t.p_Stamp, t.open, t.high, t.low, t.close]);
+    });
+
+    return convertedTickers;
+  }
 }
 
 export default TickerHelper;

@@ -56,6 +56,13 @@ export class IndictorService {
       `indicator/adx/${code}?type=${type}&start=${start}&end=${end}`
     );
   }
+
+  getHeikin(code, type = "day", start = 0, end = 0) {
+    const req = new RequestHelper().getIntance();
+    return req.get(
+      `indicator/heikin/${code}?type=${type}&start=${start}&end=${end}`
+    );
+  }
 }
 
 export default IndictorService;
