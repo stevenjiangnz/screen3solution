@@ -34,6 +34,20 @@ export class TickerHelper {
 
     return convertedIndicators;
   }
+
+  static ConvertStochasticIndicator(Indicator) {
+    const convertedIndicators = {
+      k: [],
+      d: [],
+    };
+
+    Indicator.forEach((ind) => {
+      convertedIndicators.k.push([ind.p_Stamp, ind.k]);
+      convertedIndicators.d.push([ind.p_Stamp, ind.d]);
+    });
+
+    return convertedIndicators;
+  }
 }
 
 export default TickerHelper;

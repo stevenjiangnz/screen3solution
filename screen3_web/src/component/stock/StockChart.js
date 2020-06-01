@@ -151,6 +151,12 @@ export class StockChart extends Component {
         case "heikin":
           break;
         case "stochastic":
+          dataTasks.push(
+            this.indicatorService.getStochastic(
+              stock.code,
+              this.currentChartSettings.type
+            )
+          );
           break;
         case "rsi":
           dataTasks.push(
@@ -202,6 +208,58 @@ export class StockChart extends Component {
               indSetting
             );
             break;
+          case "stochastic":
+            const stochData = TickerHelper.ConvertStochasticIndicator(
+              values[i].data
+            );
+            const stochAxis = this.chart.get(indSetting.yAxisName);
+            if (!stochAxis) {
+              this.chart.addAxis({
+                id: indSetting.yAxisName,
+                title: {
+                  text: "STOCHASTIC",
+                },
+                lineWidth: 1,
+                min: 0,
+                max: 100,
+                top: this.ChartPosition.base + this.ChartPosition.gap,
+                height: indSetting.height,
+                plotLines: [
+                  {
+                    value: indSetting.threshold1,
+                    color: this.ChartPosition.plotColor,
+                    dashStyle: "shortdash",
+                    width: 1,
+                  },
+                  {
+                    value: indSetting.threshold2,
+                    color: this.ChartPosition.plotColor,
+                    dashStyle: "shortdash",
+                    width: 1,
+                  },
+                ],
+                labels: {
+                  enabled: false,
+                },
+                opposite: true,
+              });
+
+              this.ChartPosition.base =
+                this.ChartPosition.base +
+                this.ChartPosition.gap +
+                indSetting.height;
+            }
+
+            this.drawIndicator(indSetting.name + "_k", stochData.k, {
+              yAxis: indSetting.yAxisName,
+              color: indSetting.colorK,
+            });
+            this.drawIndicator(indSetting.name + "_d", stochData.d, {
+              yAxis: indSetting.yAxisName,
+              color: indSetting.colorD,
+            });
+
+            break;
           case "rsi":
             const rsiData = TickerHelper.ConvertSingleValueIndicator(
               values[i].data
@@ -234,6 +292,9 @@ export class StockChart extends Component {
                     width: 1,
                   },
                 ],
+                labels: {
+                  enabled: false,
+                },
                 opposite: true,
               });
 
@@ -280,6 +341,10 @@ export class StockChart extends Component {
                     width: 1,
                   },
                 ],
+                labels: {
+                  enabled: false,
+                },
+
                 opposite: true,
               });
 

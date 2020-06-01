@@ -18,8 +18,8 @@ export class ChartHelper {
       macd: false,
       adx: false,
       heikin: false,
-      stochastic: false,
-      rsi: true,
+      stochastic: true,
+      rsi: false,
       william: true,
     };
   }

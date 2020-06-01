@@ -35,6 +35,13 @@ export class IndictorService {
       `indicator/rsi/${code}?type=${type}&start=${start}&end=${end}`
     );
   }
+
+  getStochastic(code, type = "day", start = 0, end = 0) {
+    const req = new RequestHelper().getIntance();
+    return req.get(
+      `indicator/stochastic/${code}?type=${type}&start=${start}&end=${end}`
+    );
+  }
 }
 
 export default IndictorService;
