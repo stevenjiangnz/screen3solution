@@ -105,7 +105,8 @@ export class StockChart extends Component {
   }
 
   prepareDrawChart = async () => {
-    const stock = this.context.state.selectedStock;
+    console.log("selected", this.props.stock);
+    const stock = this.props.stock;
     const indicators = ChartHelper.getOnIndicators(this.currentChartSettings);
     const dataTasks = [];
 
@@ -574,14 +575,12 @@ export class StockChart extends Component {
     //   Date.UTC(2014, 0, 1),
     //   Date.UTC(2014, 11, 31)
     // );
-
-    const ax = this.chart.xAxis[0];
-    console.log("ax", ax);
-    ax.plotLinesAndBands.forEach((l) => {
-      console.log("line: ", l);
-      ax.removePlotLine(l.id);
-    });
-
+    // const ax = this.chart.xAxis[0];
+    // console.log("ax", ax);
+    // ax.plotLinesAndBands.forEach((l) => {
+    //   console.log("line: ", l);
+    //   ax.removePlotLine(l.id);
+    // });
     // this.chart.redraw();
   };
 
