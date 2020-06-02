@@ -8,8 +8,11 @@ function StockDetail() {
     <AppContext.Consumer>
       {(context) => {
         return (
-          <div className="detail-panel">
-            <Title title="Stock"></Title>
+          <div
+            className="detail-panel"
+            style={{ marginTop: 10, marginBottom: 10 }}
+          >
+            {/* <Title title="Stock"></Title> */}
             <div>
               <StockChart
                 name="stockChart"

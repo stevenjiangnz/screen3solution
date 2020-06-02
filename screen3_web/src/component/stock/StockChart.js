@@ -19,7 +19,7 @@ export class StockChart extends Component {
   defaultChartSetting = ChartHelper.getChartDefaultSettins();
 
   ChartPosition = {
-    base: 430,
+    base: 420,
     gap: 10,
     bottom: 20,
     platColor: "#bbb",

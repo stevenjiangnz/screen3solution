@@ -57,7 +57,7 @@ const ChartConfig = {
       colorAdx: "#111111",
       colorDiPlus: "#2AFF2A",
       colorDiMinus: "#FF55D4",
-      height: 180,
+      height: 150,
     },
     macd: {
       yAxisName: "macd_yaxis",
@@ -67,7 +67,7 @@ const ChartConfig = {
       colorMacd: "#002d99",
       colorSignal: "#9d39f3",
       colorHist: "#3256a8",
-      height: 150,
+      height: 140,
     },
     heikin: {
       yAxisName: "heikin_yaxis",
@@ -100,7 +100,7 @@ const ChartConfig = {
       parameter: "william,14",
       ownPane: true,
       color: "#5500c5",
-      height: 100,
+      height: 110,
       threshold1: -20,
       threshold2: -80,
     },
