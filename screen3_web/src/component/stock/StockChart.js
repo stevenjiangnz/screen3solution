@@ -51,7 +51,7 @@ export class StockChart extends Component {
         selected: 1,
       },
       tooltip: {
-        enabled: true,
+        enabled: false,
       },
       xAxis: {
         type: "datetime",
@@ -503,6 +503,26 @@ export class StockChart extends Component {
   postDrawSetup = () => {
     const newHeight = this.ChartPosition.base + this.ChartPosition.bottom;
     this.chart.setSize(null, newHeight);
+
+    const xis = this.chart.xAxis[0];
+
+    // xis.addPlotLine({
+    //   value: Date.UTC(2019, 12, 2),
+    //   color: "#" + ((Math.random() * 0xeeeeee) << 0).toString(16),
+    //   width: 1,
+    //   label: {
+    //     text: "label",
+    //   },
+    // });
+
+    // xis.addPlotBand({
+    //   from: Date.UTC(2019, 12, 2),
+    //   to: Date.UTC(2019, 12, 10),
+    //   color: "#" + ((Math.random() * 0xeeeeee) << 0).toString(16),
+    //   label: {
+    //     text: "label",
+    //   },
+    // });
   };
 
   removeSeries = (name) => {
@@ -550,10 +570,19 @@ export class StockChart extends Component {
   };
 
   testClicked = () => {
-    this.chart.xAxis[0].setExtremes(
-      Date.UTC(2014, 0, 1),
-      Date.UTC(2014, 11, 31)
-    );
+    // this.chart.xAxis[0].setExtremes(
+    //   Date.UTC(2014, 0, 1),
+    //   Date.UTC(2014, 11, 31)
+    // );
+
+    const ax = this.chart.xAxis[0];
+    console.log("ax", ax);
+    ax.plotLinesAndBands.forEach((l) => {
+      console.log("line: ", l);
+      ax.removePlotLine(l.id);
+    });
+
+    // this.chart.redraw();
   };
 
   onTypeChange = (type) => {
