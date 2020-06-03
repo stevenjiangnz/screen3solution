@@ -26,17 +26,33 @@ namespace Screen3.Test.BLL
         }
 
 
-
         [Fact]
         public async void TestGetEntryMatchTickers()
         {
             await this.bll.RetrieveData("SUN", 20180101, 0);
             var result = this.bll.GetEntryMatchTickers(new Dictionary<string, object>{
-                {"WILLIAM_BUY_LEVEL", -70},
-                {"DECLUSTER", 2}
+                {"WILLIAM_BUY_LEVEL", -80},
+                {"WILLIAM_SELL_LEVEL", -20},
+                {"DECLUSTER", 2},
+                {"DIRECTION", "SELL"}
             });
 
-            Console.WriteLine("result: " + result.Count);
+            Console.WriteLine("result: " + ObjectHelper.ToJson(result));
+        }
+
+        [Fact]
+        public async void TestGetEntryMatchTickersFromFactory()
+        {
+            var screenObj = ScreenFactory.GetScreenFunction("Screen_MACD_William", this.s3_bucket_name, this.tempTickerFolder);
+            await screenObj.RetrieveData("SUN", 20180101, 0);
+            var result = screenObj.GetEntryMatchTickers(new Dictionary<string, object>{
+                {"WILLIAM_BUY_LEVEL", -80},
+                {"WILLIAM_SELL_LEVEL", -20},
+                {"DECLUSTER", 2},
+                {"DIRECTION", "SELL"}
+            });
+
+            Console.WriteLine("result: " + ObjectHelper.ToJson(result));
         }
 
     }

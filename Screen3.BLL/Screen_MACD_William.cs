@@ -16,6 +16,7 @@ namespace Screen3.BLL
         private double MACD_SELL_LEVEL = 0;
 
         private int DECLUSTER = 2;  // greate than 0, mean will decluster, 
+        private string DIRECTION = "BUY";
 
         private TickerEntity[] priceTickerList;
         private TickerEntity[] indexTickerList;
@@ -60,6 +61,10 @@ namespace Screen3.BLL
                     this.DECLUSTER = int.Parse(options["DECLUSTER"].ToString());
                 }
 
+                if (options.Keys.Contains("DIRECTION"))
+                {
+                    this.DIRECTION = options["DIRECTION"].ToString().ToUpper();
+                }
             }
 
             List<TickerEntity> matchedList = new List<TickerEntity>();
@@ -69,20 +74,42 @@ namespace Screen3.BLL
             {
                 if (this.macdList[i].MACD != null && this.williamList[i].V.HasValue)
                 {
-                    if ((this.macdList[i].MACD >= 0 && this.macdList[i].Signal >= 0) &&
-                    this.williamList[i].V <= this.WILLIAM_BUY_LEVEL)
+                    if (this.DIRECTION == "BUY")
                     {
-
-                        if (matchedList.Count > 0)
+                        if ((this.macdList[i].MACD >= this.MACD_BUY_LEVEL || this.macdList[i].Signal >= this.MACD_BUY_LEVEL) &&
+                        this.williamList[i].V <= this.WILLIAM_BUY_LEVEL)
                         {
-                            if ((this.priceTickerList[i].P - matchedList[matchedList.Count - 1].P) > this.DECLUSTER)
+
+                            if (matchedList.Count > 0)
+                            {
+                                if ((this.priceTickerList[i].P - matchedList[matchedList.Count - 1].P) > this.DECLUSTER)
+                                {
+                                    matchedList.Add(this.priceTickerList[i]);
+                                }
+                            }
+                            else
                             {
                                 matchedList.Add(this.priceTickerList[i]);
                             }
                         }
-                        else
+                    }
+                    else
+                    {
+                        if ((this.macdList[i].MACD <= this.MACD_SELL_LEVEL || this.macdList[i].Signal <= this.MACD_SELL_LEVEL) &&
+                        this.williamList[i].V >= this.WILLIAM_SELL_LEVEL)
                         {
-                            matchedList.Add(this.priceTickerList[i]);
+
+                            if (matchedList.Count > 0)
+                            {
+                                if ((this.priceTickerList[i].P - matchedList[matchedList.Count - 1].P) > this.DECLUSTER)
+                                {
+                                    matchedList.Add(this.priceTickerList[i]);
+                                }
+                            }
+                            else
+                            {
+                                matchedList.Add(this.priceTickerList[i]);
+                            }
                         }
                     }
                 }
