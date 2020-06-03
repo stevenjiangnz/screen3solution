@@ -1,0 +1,104 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Screen3.Entity;
+using Screen3.Utils;
+
+namespace Screen3.BLL
+{
+    public class Screen_MACD_William : IScreenInterface
+    {
+        private string INDEX_CODE = "XAO";
+        private double WILLIAM_BUY_LEVEL = -80;
+        private double WILLIAM_SELL_LEVEL = -20;
+
+        private double MACD_BUY_LEVEL = 0;
+        private double MACD_SELL_LEVEL = 0;
+
+        private int DECLUSTER = 2;  // greate than 0, mean will decluster, 
+
+        private TickerEntity[] priceTickerList;
+        private TickerEntity[] indexTickerList;
+        private IndMACDEntity[] macdList;
+        private IndSingleValueEntity[] williamList;
+
+        private TickerBLL tickerBLL;
+        private IndicatorBLL indicatorBLL;
+
+        public Screen_MACD_William(string bucketName, string localFolder)
+        {
+            this.tickerBLL = new TickerBLL(bucketName, localFolder);
+            this.indicatorBLL = new IndicatorBLL(bucketName, localFolder);
+        }
+
+        public List<TickerEntity> GetEntryMatchTickers(IDictionary<string, object> options)
+        {
+            if (options != null)
+            {
+                if (options.Keys.Contains("WILLIAM_BUY_LEVEL"))
+                {
+                    this.WILLIAM_BUY_LEVEL = double.Parse(options["WILLIAM_BUY_LEVEL"].ToString());
+                }
+
+                if (options.Keys.Contains("WILLIAM_SELL_LEVEL"))
+                {
+                    this.WILLIAM_SELL_LEVEL = double.Parse(options["WILLIAM_SELL_LEVEL"].ToString());
+                }
+
+                if (options.Keys.Contains("MACD_BUY_LEVEL"))
+                {
+                    this.MACD_BUY_LEVEL = double.Parse(options["MACD_BUY_LEVEL"].ToString());
+                }
+
+                if (options.Keys.Contains("MACD_SELL_LEVEL"))
+                {
+                    this.MACD_SELL_LEVEL = double.Parse(options["MACD_SELL_LEVEL"].ToString());
+                }
+
+                if (options.Keys.Contains("DECLUSTER"))
+                {
+                    this.DECLUSTER = int.Parse(options["DECLUSTER"].ToString());
+                }
+
+            }
+
+            List<TickerEntity> matchedList = new List<TickerEntity>();
+            int len = this.priceTickerList.Length;
+
+            for (int i = 0; i < len; i++)
+            {
+                if (this.macdList[i].MACD != null && this.williamList[i].V.HasValue)
+                {
+                    if ((this.macdList[i].MACD >= 0 && this.macdList[i].Signal >= 0) &&
+                    this.williamList[i].V <= this.WILLIAM_BUY_LEVEL)
+                    {
+
+                        if (matchedList.Count > 0)
+                        {
+                            if ((this.priceTickerList[i].P - matchedList[matchedList.Count - 1].P) > this.DECLUSTER)
+                            {
+                                matchedList.Add(this.priceTickerList[i]);
+                            }
+                        }
+                        else
+                        {
+                            matchedList.Add(this.priceTickerList[i]);
+                        }
+                    }
+                }
+            }
+
+            return matchedList;
+        }
+
+        public async Task RetrieveData(string code, int start = 0, int end = 0)
+        {
+            this.priceTickerList = (await this.tickerBLL.GetDailyTickerEntityList(code, start, end)).ToArray();
+            this.indexTickerList = (await this.tickerBLL.GetDailyTickerEntityList(INDEX_CODE, start, end)).ToArray();
+            this.macdList = await this.indicatorBLL.GetMACD(code: code, start: start, end: end);
+            this.williamList = await this.indicatorBLL.GetWilliamR(code: code, start: start, end: end);
+
+            return;
+        }
+    }
+}
