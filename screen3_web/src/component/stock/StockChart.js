@@ -48,7 +48,7 @@ export class StockChart extends Component {
         },
       ],
       rangeSelector: {
-        selected: 1,
+        selected: 2,
       },
       tooltip: {
         enabled: false,
