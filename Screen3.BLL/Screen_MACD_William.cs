@@ -118,14 +118,19 @@ namespace Screen3.BLL
             return matchedList;
         }
 
-        public async Task RetrieveData(string code, int start = 0, int end = 0)
+        public async Task<List<TickerEntity>> RetrieveData(string code, string type = "day", int start = 0, int end = 0, IDictionary<string, object> options = null)
         {
-            this.priceTickerList = (await this.tickerBLL.GetDailyTickerEntityList(code, start, end)).ToArray();
-            this.indexTickerList = (await this.tickerBLL.GetDailyTickerEntityList(INDEX_CODE, start, end)).ToArray();
-            this.macdList = await this.indicatorBLL.GetMACD(code: code, start: start, end: end);
-            this.williamList = await this.indicatorBLL.GetWilliamR(code: code, start: start, end: end);
+            Console.WriteLine($"{code}, {start}, {end}");
+            if (type == "day")
+            {
+                this.priceTickerList = (await this.tickerBLL.GetDailyTickerEntityList(code, start, end)).ToArray();
+                this.indexTickerList = (await this.tickerBLL.GetDailyTickerEntityList(INDEX_CODE, start, end)).ToArray();
+            }
+            this.macdList = await this.indicatorBLL.GetMACD(code: code, start: start, end: end, type: type);
+            this.williamList = await this.indicatorBLL.GetWilliamR(code: code, start: start, end: end, type: type);
 
-            return;
+            List<TickerEntity> matchResult = this.GetEntryMatchTickers(options);
+            return matchResult;
         }
     }
 }

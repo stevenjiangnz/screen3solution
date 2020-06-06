@@ -1,3 +1,3 @@
 export default {
-  name: "Screen - MACD and Willaims",
+  name: "Screen_MACD_William",
 };

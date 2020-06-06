@@ -16,6 +16,7 @@ namespace Screen3.Webapi.Controllers
         private IConfiguration configuration;
         private string s3_bucket_name;
         private string local_temp_folder;
+        private IScreenInterface screenBLL;
         public ScreenController(IConfiguration iConfig)
         {
             this.configuration = iConfig;
@@ -24,12 +25,17 @@ namespace Screen3.Webapi.Controllers
         }
 
 
-        [HttpPost("{code}")]
+        [HttpPost("macd_william/{code}")]
         public async Task<ActionResult> PostScreenRequest(string code, [FromBody] dynamic requestBody, string type = "day", int start = 0, int end = 0)
         {
-            JsonElement ele = requestBody;
+            JsonElement rootElement = requestBody;
 
-            return Ok("revceid 123: " + start + ele.GetRawText());
+            string name = rootElement.GetProperty("name").GetString();
+            this.screenBLL = ScreenFactory.GetScreenFunction(name, this.s3_bucket_name, this.local_temp_folder);
+
+            List<TickerEntity> matchedResult = await this.screenBLL.RetrieveData(code, type, start, end, null);
+
+            return Ok(matchedResult);
         }
 
 
