@@ -24,10 +24,19 @@ namespace Screen3.Webapi.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult> PostScreenRequest([FromBody] string requestBody)
+        public async Task<ActionResult> PostScreenRequest([FromBody] dynamic requestBody)
         {
-            Console.WriteLine("receveid body: " + requestBody);
-            return Ok(requestBody);
+            requestBody.response = "klsdjs";
+            Console.WriteLine("receveid body: " + requestBody.name);
+            return Ok("revceid 123: " + requestBody.name + " " + requestBody.response);
         }
+
+
+    }
+
+    public class ScreenRequest
+    {
+        public string name { get; set; }
+        public string payload { get; set; }
     }
 }
