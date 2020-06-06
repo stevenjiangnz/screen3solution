@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -23,20 +24,14 @@ namespace Screen3.Webapi.Controllers
         }
 
 
-        [HttpPost]
-        public async Task<ActionResult> PostScreenRequest([FromBody] dynamic requestBody)
+        [HttpPost("{code}")]
+        public async Task<ActionResult> PostScreenRequest(string code, [FromBody] dynamic requestBody, string type = "day", int start = 0, int end = 0)
         {
-            requestBody.response = "klsdjs";
-            Console.WriteLine("receveid body: " + requestBody.name);
-            return Ok("revceid 123: " + requestBody.name + " " + requestBody.response);
+            JsonElement ele = requestBody;
+
+            return Ok("revceid 123: " + start + ele.GetRawText());
         }
 
 
-    }
-
-    public class ScreenRequest
-    {
-        public string name { get; set; }
-        public string payload { get; set; }
     }
 }
