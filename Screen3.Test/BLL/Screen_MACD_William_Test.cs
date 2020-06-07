@@ -20,9 +20,11 @@ namespace Screen3.Test.BLL
         }
 
         [Fact]
-        public async void TestRetrieveData()
+        public async void TestDoScreen()
         {
-            await this.bll.DoScreen("SUN");
+            var result = await this.bll.DoScreen("RIO", "day", 20100101, 20200101);
+
+            Console.WriteLine($"result {result.Count}");
         }
 
 

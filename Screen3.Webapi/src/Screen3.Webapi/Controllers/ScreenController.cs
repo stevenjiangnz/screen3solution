@@ -33,7 +33,7 @@ namespace Screen3.Webapi.Controllers
             string name = rootElement.GetProperty("name").GetString();
             this.screenBLL = ScreenFactory.GetScreenFunction(name, this.s3_bucket_name, this.local_temp_folder);
 
-            List<TickerEntity> matchedResult = await this.screenBLL.DoScreen(code, type, start, end, null);
+            List<TickerEntity> matchedResult = await this.screenBLL.DoScreen(code.ToUpper(), type, start, end, null);
 
             return Ok(matchedResult);
         }

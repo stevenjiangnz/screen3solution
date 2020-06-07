@@ -68,7 +68,9 @@ namespace Screen3.BLL
                 this.SaveTickerlistToLocal(localTickerFilePath, tickerList);
             }
             
-            return tickerList.Where(t => (start == 0 || t.P >= start) && (end ==0 || t.P <= end)).ToList();
+            var filteredList =  tickerList.Where(t => (start == 0 || t.P >= start) && (end ==0 || t.P <= end)).ToList();
+
+            return filteredList;
         }
 
         public void SaveTickerlistToLocal(string path, List<TickerEntity> tickerList) {

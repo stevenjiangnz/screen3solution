@@ -120,7 +120,6 @@ namespace Screen3.BLL
 
         public async Task<List<TickerEntity>> DoScreen(string code, string type = "day", int start = 0, int end = 0, IDictionary<string, object> options = null)
         {
-            Console.WriteLine($"{code}, {start}, {end}");
             if (type == "day")
             {
                 this.priceTickerList = (await this.tickerBLL.GetDailyTickerEntityList(code, start, end)).ToArray();
