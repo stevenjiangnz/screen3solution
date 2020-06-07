@@ -36,6 +36,7 @@ export class ScreenInput extends Component {
       );
     });
 
+    console.log(`about to send ${requestTasks.length} request in one go...`);
     Promise.all(requestTasks).then((resps) => {
       console.log(resps);
     });
