@@ -22,16 +22,29 @@ export class ScreenInput extends Component {
   };
 
   submitScreenRequest = () => {
-    this.screenService
-      .SubmitScreen_MACD_William(screenMACDWilliam)
-      .then((resp) => {
-        console.log("response: ", resp);
-      });
-    console.log("about to submit request");
+    const screenRequest = JSON.parse(this.state.screenRequest);
+    const requestTasks = [];
+
+    screenRequest.stocks.forEach((stock) => {
+      requestTasks.push(
+        this.screenService.SubmitScreen_MACD_William(
+          stock,
+          screenRequest.options,
+          screenRequest.start,
+          screenRequest.end
+        )
+      );
+    });
+
+    Promise.all(requestTasks).then((resps) => {
+      console.log(resps);
+    });
   };
 
   resetScreenInput = () => {
-    console.log("about to clear the input");
+    this.setState({
+      screenRequest: JSON.stringify(screenMACDWilliam, undefined, 4),
+    });
   };
 
   render() {

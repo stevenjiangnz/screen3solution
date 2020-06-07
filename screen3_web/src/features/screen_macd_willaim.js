@@ -10,5 +10,5 @@ export default {
     DECLUSTER: 2,
     DIRECTION: "BUY,SELL",
   },
-  stocks: ["xao", "sun", "rio", "amp"],
+  stocks: ["xao", "sun", "rio", "amp", "z1p"],
 };
