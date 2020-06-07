@@ -105,7 +105,6 @@ export class StockChart extends Component {
   }
 
   prepareDrawChart = async () => {
-    console.log("selected", this.props.stock);
     const stock = this.props.stock;
     const indicators = ChartHelper.getOnIndicators(this.currentChartSettings);
     const dataTasks = [];

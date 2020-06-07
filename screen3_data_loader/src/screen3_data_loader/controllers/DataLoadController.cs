@@ -38,7 +38,6 @@ namespace screen3_data_loader.controllers
         {
             this.stockList = await this.dal.GetAll();
 
-            // retrieve all stock list.
             this.stockList = await this.dal.GetAll();
 
             List<S3Object> fileList = await this.GetSourceFileListAsync(this.S3_Bucket_Name, "source");
