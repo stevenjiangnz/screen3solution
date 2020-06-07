@@ -33,7 +33,40 @@ namespace Screen3.Webapi.Controllers
             string name = rootElement.GetProperty("name").GetString();
             this.screenBLL = ScreenFactory.GetScreenFunction(name, this.s3_bucket_name, this.local_temp_folder);
 
-            List<TickerEntity> matchedResult = await this.screenBLL.DoScreen(code.ToUpper(), type, start, end, null);
+            Dictionary<string, object> options = new Dictionary<string, object>();
+
+            JsonElement el;
+            if (rootElement.TryGetProperty("WILLIAM_BUY_LEVEL", out el))
+            {
+                options.Add("WILLIAM_BUY_LEVEL", el.GetDouble());
+            }
+
+            if (rootElement.TryGetProperty("WILLIAM_SELL_LEVEL", out el))
+            {
+                options.Add("WILLIAM_SELL_LEVEL", el.GetDouble());
+            }
+
+            if (rootElement.TryGetProperty("MACD_BUY_LEVEL", out el))
+            {
+                options.Add("MACD_BUY_LEVEL", el.GetDouble());
+            }
+
+            if (rootElement.TryGetProperty("MACD_SELL_LEVEL", out el))
+            {
+                options.Add("MACD_SELL_LEVEL", el.GetDouble());
+            }
+
+            if (rootElement.TryGetProperty("DECLUSTER", out el))
+            {
+                options.Add("DECLUSTER", el.GetInt16());
+            }
+
+            if (rootElement.TryGetProperty("DIRECTION", out el))
+            {
+                options.Add("DIRECTION", el.GetString());
+            }
+
+            List<TickerEntity> matchedResult = await this.screenBLL.DoScreen(code.ToUpper(), type, start, end, options);
 
             return Ok(matchedResult);
         }

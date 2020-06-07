@@ -1,8 +1,8 @@
 export default {
-  name: "Screen_MACD_William",
   start: 20020101,
   end: 20200201,
   options: {
+    name: "Screen_MACD_William",
     WILLIAM_BUY_LEVEL: -80,
     WILLIAM_SELL_LEVEL: -20,
     MACD_BUY_LEVEL: 0,
