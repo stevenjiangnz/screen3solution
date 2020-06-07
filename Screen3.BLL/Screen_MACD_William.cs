@@ -120,7 +120,7 @@ namespace Screen3.BLL
             return matchedList;
         }
 
-        public async Task<List<TickerEntity>> DoScreen(string code, string type = "day", int start = 0, int end = 0, IDictionary<string, object> options = null)
+        public async Task<List<ScreenResultEntity>> DoScreen(string code, string type = "day", int start = 0, int end = 0, IDictionary<string, object> options = null)
         {
             if (type == "day")
             {
@@ -131,7 +131,13 @@ namespace Screen3.BLL
             this.williamList = await this.indicatorBLL.GetWilliamR(code: code, start: start, end: end, type: type);
 
             List<TickerEntity> matchResult = this.GetEntryMatchTickers(options);
-            return matchResult;
+            List<ScreenResultEntity> resultList = new List<ScreenResultEntity>();
+
+            foreach (TickerEntity t in matchResult)
+            {
+                resultList.Add(new ScreenResultEntity { Code = t.T, P = t.P });
+            }
+            return resultList;
         }
     }
 }
