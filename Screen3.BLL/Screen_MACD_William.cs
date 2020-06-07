@@ -74,7 +74,7 @@ namespace Screen3.BLL
             {
                 if (this.macdList[i].MACD != null && this.williamList[i].V.HasValue)
                 {
-                    if (this.DIRECTION == "BUY")
+                    if (this.DIRECTION.ToUpper().IndexOf("BUY") >= 0)
                     {
                         if ((this.macdList[i].MACD >= this.MACD_BUY_LEVEL || this.macdList[i].Signal >= this.MACD_BUY_LEVEL) &&
                         this.williamList[i].V <= this.WILLIAM_BUY_LEVEL)
@@ -93,28 +93,30 @@ namespace Screen3.BLL
                             }
                         }
                     }
-                    else
-                    {
-                        if ((this.macdList[i].MACD <= this.MACD_SELL_LEVEL || this.macdList[i].Signal <= this.MACD_SELL_LEVEL) &&
-                        this.williamList[i].V >= this.WILLIAM_SELL_LEVEL)
-                        {
 
-                            if (matchedList.Count > 0)
+                    if (this.DIRECTION.ToUpper().IndexOf("SELL") >= 0)
+                    {
+                        {
+                            if ((this.macdList[i].MACD <= this.MACD_SELL_LEVEL || this.macdList[i].Signal <= this.MACD_SELL_LEVEL) &&
+                            this.williamList[i].V >= this.WILLIAM_SELL_LEVEL)
                             {
-                                if ((this.priceTickerList[i].P - matchedList[matchedList.Count - 1].P) > this.DECLUSTER)
+
+                                if (matchedList.Count > 0)
+                                {
+                                    if ((this.priceTickerList[i].P - matchedList[matchedList.Count - 1].P) > this.DECLUSTER)
+                                    {
+                                        matchedList.Add(this.priceTickerList[i]);
+                                    }
+                                }
+                                else
                                 {
                                     matchedList.Add(this.priceTickerList[i]);
                                 }
-                            }
-                            else
-                            {
-                                matchedList.Add(this.priceTickerList[i]);
                             }
                         }
                     }
                 }
             }
-
             return matchedList;
         }
 

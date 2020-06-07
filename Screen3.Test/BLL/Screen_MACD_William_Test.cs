@@ -22,7 +22,14 @@ namespace Screen3.Test.BLL
         [Fact]
         public async void TestDoScreen()
         {
-            var result = await this.bll.DoScreen("RIO", "day", 20100101, 20200101);
+            var result = await this.bll.DoScreen("RIO", "day", 20100101, 20200101, new Dictionary<string, object>{
+                {"WILLIAM_BUY_LEVEL", -80},
+                {"WILLIAM_SELL_LEVEL", -20},
+                {"DECLUSTER", 2},
+                {"MACD_BUY_LEVEL", 0},
+                {"MACD_SELL_LEVEL", 0},
+                {"DIRECTION", "BUY,SELL"}
+            });
 
             Console.WriteLine($"result {result.Count}");
         }

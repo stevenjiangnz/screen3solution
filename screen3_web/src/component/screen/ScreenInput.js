@@ -22,9 +22,11 @@ export class ScreenInput extends Component {
   };
 
   submitScreenRequest = () => {
-    this.screenService.SubmitScreen(screenMACDWilliam).then((resp) => {
-      console.log("response: ", resp);
-    });
+    this.screenService
+      .SubmitScreen_MACD_William(screenMACDWilliam)
+      .then((resp) => {
+        console.log("response: ", resp);
+      });
     console.log("about to submit request");
   };
 
