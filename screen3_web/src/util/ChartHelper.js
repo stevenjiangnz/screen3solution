@@ -10,16 +10,16 @@ export class ChartHelper {
     return {
       type: "day",
       ema10: false,
-      ema20: false,
+      ema20: true,
       ema50: true,
       sma100: false,
       sma200: true,
       bb: true,
-      macd: false,
-      adx: false,
+      macd: true,
+      adx: true,
       heikin: false,
       stochastic: false,
-      rsi: true,
+      rsi: false,
       william: true,
     };
   }

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import AppContext from "../../Context";
-import Highcharts from "highcharts/highstock";
+import Highcharts, { each } from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
 import TickerService from "../../service/TickerService";
 import IndicatorService from "../../service/IndicatorService";
@@ -19,7 +19,7 @@ export class StockChart extends Component {
   defaultChartSetting = ChartHelper.getChartDefaultSettins();
 
   ChartPosition = {
-    base: 450,
+    base: 420,
     gap: 10,
     bottom: 20,
     platColor: "#bbb",
@@ -48,7 +48,7 @@ export class StockChart extends Component {
         },
       ],
       rangeSelector: {
-        selected: 1,
+        selected: 2,
       },
       tooltip: {
         enabled: false,
@@ -65,10 +65,6 @@ export class StockChart extends Component {
       },
       yAxis: [
         {
-          labels: {
-            align: "right",
-            x: -3,
-          },
           title: {
             text: "OHLC",
           },
@@ -82,10 +78,6 @@ export class StockChart extends Component {
           },
         },
         {
-          labels: {
-            align: "right",
-            x: -3,
-          },
           top: 340,
           height: 90,
           lineWidth: 1,
@@ -113,7 +105,8 @@ export class StockChart extends Component {
   }
 
   prepareDrawChart = async () => {
-    const stock = this.context.state.selectedStock;
+    console.log("selected", this.props.stock);
+    const stock = this.props.stock;
     const indicators = ChartHelper.getOnIndicators(this.currentChartSettings);
     const dataTasks = [];
 
@@ -153,12 +146,36 @@ export class StockChart extends Component {
           );
           break;
         case "macd":
+          dataTasks.push(
+            this.indicatorService.getMACD(
+              stock.code,
+              this.currentChartSettings.type
+            )
+          );
           break;
         case "adx":
+          dataTasks.push(
+            this.indicatorService.getADX(
+              stock.code,
+              this.currentChartSettings.type
+            )
+          );
           break;
         case "heikin":
+          dataTasks.push(
+            this.indicatorService.getHeikin(
+              stock.code,
+              this.currentChartSettings.type
+            )
+          );
           break;
         case "stochastic":
+          dataTasks.push(
+            this.indicatorService.getStochastic(
+              stock.code,
+              this.currentChartSettings.type
+            )
+          );
           break;
         case "rsi":
           dataTasks.push(
@@ -199,23 +216,238 @@ export class StockChart extends Component {
               bbData.high,
               indSetting
             );
-            this.drawIndicator(
-              indSetting.name + "_mid",
-              bbData.mid,
-              indSetting
-            );
+            // this.drawIndicator(
+            //   indSetting.name + "_mid",
+            //   bbData.mid,
+            //   indSetting
+            // );
             this.drawIndicator(
               indSetting.name + "_low",
               bbData.low,
               indSetting
             );
             break;
+          case "macd":
+            const macdData = TickerHelper.ConvertMACDIndicator(values[i].data);
+            const macdAxis = this.chart.get(indSetting.yAxisName);
+            if (!macdAxis) {
+              this.chart.addAxis({
+                id: indSetting.yAxisName,
+                title: {
+                  text: "MACD",
+                },
+                lineWidth: 1,
+                top: this.ChartPosition.base + this.ChartPosition.gap,
+                height: indSetting.height,
+                plotLines: [
+                  {
+                    value: 0,
+                    color: this.ChartPosition.plotColor,
+                    dashStyle: "shortdash",
+                    width: 1,
+                  },
+                ],
+                opposite: true,
+              });
+
+              this.ChartPosition.base =
+                this.ChartPosition.base +
+                this.ChartPosition.gap +
+                indSetting.height;
+            }
+
+            this.drawIndicator(indSetting.name + "_macd", macdData.macd, {
+              yAxis: indSetting.yAxisName,
+              color: indSetting.colorMacd,
+            });
+            this.drawIndicator(indSetting.name + "_Signal", macdData.signal, {
+              yAxis: indSetting.yAxisName,
+              color: indSetting.colorSignal,
+            });
+            this.drawIndicator(indSetting.name + "_Hist", macdData.hist, {
+              yAxis: indSetting.yAxisName,
+              color: indSetting.colorHist,
+              chartType: "column",
+            });
+            break;
+          case "adx":
+            const adxData = TickerHelper.ConvertADXIndicator(values[i].data);
+            const adxAxis = this.chart.get(indSetting.yAxisName);
+            if (!adxAxis) {
+              this.chart.addAxis({
+                id: indSetting.yAxisName,
+                title: {
+                  text: "ADX",
+                },
+                lineWidth: 1,
+                top: this.ChartPosition.base + this.ChartPosition.gap,
+                height: indSetting.height,
+                labels: {
+                  enabled: false,
+                },
+                opposite: true,
+              });
+
+              this.ChartPosition.base =
+                this.ChartPosition.base +
+                this.ChartPosition.gap +
+                indSetting.height;
+            }
+
+            this.drawIndicator(indSetting.name + "_adx", adxData.adx, {
+              yAxis: indSetting.yAxisName,
+              color: indSetting.colorAdx,
+            });
+
+            this.drawIndicator(indSetting.name + "_diplus", adxData.di_plus, {
+              yAxis: indSetting.yAxisName,
+              color: indSetting.colorDiPlus,
+            });
+            this.drawIndicator(indSetting.name + "_diminus", adxData.di_minus, {
+              yAxis: indSetting.yAxisName,
+              color: indSetting.colorDiMinus,
+            });
+
+            break;
+          case "heikin":
+            const heikinData = TickerHelper.ConvertHeikinIndicator(
+              values[i].data
+            );
+            const heikinAxis = this.chart.get(indSetting.yAxisName);
+            if (!heikinAxis) {
+              this.chart.addAxis({
+                id: indSetting.yAxisName,
+                title: {
+                  text: "HEIKIN",
+                },
+                lineWidth: 1,
+                top: this.ChartPosition.base + this.ChartPosition.gap,
+                height: indSetting.height,
+                labels: {
+                  enabled: false,
+                },
+                opposite: true,
+              });
+
+              this.ChartPosition.base =
+                this.ChartPosition.base +
+                this.ChartPosition.gap +
+                indSetting.height;
+            }
+
+            this.drawIndicator(indSetting.name + "_k", heikinData, {
+              yAxis: indSetting.yAxisName,
+              chartType: "candlestick",
+            });
+
+            break;
+          case "stochastic":
+            const stochData = TickerHelper.ConvertStochasticIndicator(
+              values[i].data
+            );
+            const stochAxis = this.chart.get(indSetting.yAxisName);
+            if (!stochAxis) {
+              this.chart.addAxis({
+                id: indSetting.yAxisName,
+                title: {
+                  text: "STOCHASTIC",
+                },
+                lineWidth: 1,
+                min: 0,
+                max: 100,
+                top: this.ChartPosition.base + this.ChartPosition.gap,
+                height: indSetting.height,
+                plotLines: [
+                  {
+                    value: indSetting.threshold1,
+                    color: this.ChartPosition.plotColor,
+                    dashStyle: "shortdash",
+                    width: 1,
+                  },
+                  {
+                    value: indSetting.threshold2,
+                    color: this.ChartPosition.plotColor,
+                    dashStyle: "shortdash",
+                    width: 1,
+                  },
+                ],
+                labels: {
+                  enabled: false,
+                },
+                opposite: true,
+              });
+
+              this.ChartPosition.base =
+                this.ChartPosition.base +
+                this.ChartPosition.gap +
+                indSetting.height;
+            }
+
+            this.drawIndicator(indSetting.name + "_k", stochData.k, {
+              yAxis: indSetting.yAxisName,
+              color: indSetting.colorK,
+            });
+            this.drawIndicator(indSetting.name + "_d", stochData.d, {
+              yAxis: indSetting.yAxisName,
+              color: indSetting.colorD,
+            });
+
+            break;
+          case "rsi":
+            const rsiData = TickerHelper.ConvertSingleValueIndicator(
+              values[i].data
+            );
+
+            const rsiAxis = this.chart.get(indSetting.yAxisName);
+
+            if (!rsiAxis) {
+              this.chart.addAxis({
+                id: indSetting.yAxisName,
+                title: {
+                  text: "RSI",
+                },
+                lineWidth: 1,
+                min: 0,
+                max: 100,
+                top: this.ChartPosition.base + this.ChartPosition.gap,
+                height: indSetting.height,
+                plotLines: [
+                  {
+                    value: 30,
+                    color: this.ChartPosition.plotColor,
+                    dashStyle: "shortdash",
+                    width: 1,
+                  },
+                  {
+                    value: 70,
+                    color: this.ChartPosition.plotColor,
+                    dashStyle: "shortdash",
+                    width: 1,
+                  },
+                ],
+                labels: {
+                  enabled: false,
+                },
+                opposite: true,
+              });
+
+              this.ChartPosition.base =
+                this.ChartPosition.base +
+                this.ChartPosition.gap +
+                indSetting.height;
+            }
+
+            this.drawIndicator(indSetting.name, rsiData, {
+              yAxis: indSetting.yAxisName,
+              color: indSetting.color,
+            });
+
+            break;
           case "william":
             const wrData = TickerHelper.ConvertSingleValueIndicator(
               values[i].data
             );
 
-            console.log("indSetting: ", indSetting.yAxisName);
             const wrAxis = this.chart.get(indSetting.yAxisName);
             if (!wrAxis) {
               this.chart.addAxis({
@@ -243,9 +475,9 @@ export class StockChart extends Component {
                   },
                 ],
                 labels: {
-                  align: "right",
-                  x: -13,
+                  enabled: false,
                 },
+
                 opposite: true,
               });
 
@@ -272,6 +504,26 @@ export class StockChart extends Component {
   postDrawSetup = () => {
     const newHeight = this.ChartPosition.base + this.ChartPosition.bottom;
     this.chart.setSize(null, newHeight);
+
+    const xis = this.chart.xAxis[0];
+
+    // xis.addPlotLine({
+    //   value: Date.UTC(2019, 12, 2),
+    //   color: "#" + ((Math.random() * 0xeeeeee) << 0).toString(16),
+    //   width: 1,
+    //   label: {
+    //     text: "label",
+    //   },
+    // });
+
+    // xis.addPlotBand({
+    //   from: Date.UTC(2019, 12, 2),
+    //   to: Date.UTC(2019, 12, 10),
+    //   color: "#" + ((Math.random() * 0xeeeeee) << 0).toString(16),
+    //   label: {
+    //     text: "label",
+    //   },
+    // });
   };
 
   removeSeries = (name) => {
@@ -319,10 +571,17 @@ export class StockChart extends Component {
   };
 
   testClicked = () => {
-    this.chart.xAxis[0].setExtremes(
-      Date.UTC(2014, 0, 1),
-      Date.UTC(2014, 11, 31)
-    );
+    // this.chart.xAxis[0].setExtremes(
+    //   Date.UTC(2014, 0, 1),
+    //   Date.UTC(2014, 11, 31)
+    // );
+    // const ax = this.chart.xAxis[0];
+    // console.log("ax", ax);
+    // ax.plotLinesAndBands.forEach((l) => {
+    //   console.log("line: ", l);
+    //   ax.removePlotLine(l.id);
+    // });
+    // this.chart.redraw();
   };
 
   onTypeChange = (type) => {
@@ -340,10 +599,21 @@ export class StockChart extends Component {
     if (!setting[ind]) {
       this.removeSeries(ind);
 
-      const indSetting = ChartHelper.getIndicatorSetting(ind);
+      var indSetting = ChartHelper.getIndicatorSetting(ind);
 
       if (indSetting.ownPane) {
-        this.chart.get(indSetting.yAxisName).remove();
+        const yAxisRemove = this.chart.get(indSetting.yAxisName);
+        const topRemove = yAxisRemove.top;
+        yAxisRemove.remove();
+
+        this.chart.yAxis.forEach((yx) => {
+          if (yx.top > topRemove) {
+            yx.update({
+              top: yx.top - indSetting.height - this.ChartPosition.gap,
+            });
+          }
+        });
+
         this.ChartPosition.base =
           this.ChartPosition.base - indSetting.height - this.ChartPosition.gap;
       }

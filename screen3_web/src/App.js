@@ -47,7 +47,7 @@ export class App extends Component {
             <TopNav />
             <Switch>
               <Route exact path="/">
-                <Redirect to="/stock" />
+                <Redirect to="/screen" />
               </Route>
               <Route path="/stock">
                 <Stock />
