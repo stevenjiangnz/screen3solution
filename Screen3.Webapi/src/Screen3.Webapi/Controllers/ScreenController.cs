@@ -66,7 +66,15 @@ namespace Screen3.Webapi.Controllers
                 options.Add("DIRECTION", el.GetString());
             }
 
-            List<TickerEntity> matchedResult = await this.screenBLL.DoScreen(code.ToUpper(), type, start, end, options);
+            List<TickerEntity> matchedResult = new List<TickerEntity>();
+            try
+            {
+                matchedResult = await this.screenBLL.DoScreen(code.ToUpper(), type, start, end, options);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"error occurs {code} {type} {start} {end} \n {rootElement.GetRawText()} \n {ex.ToString()}");
+            }
 
             return Ok(matchedResult);
         }
