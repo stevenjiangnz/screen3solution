@@ -13,5 +13,7 @@ namespace Screen3.Entity
                 return DateHelper.ToTimeStamp(P);
             }
         }
+
+        public string Direction { get; set; }
     }
 }

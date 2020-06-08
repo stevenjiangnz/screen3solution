@@ -32,7 +32,7 @@ namespace Screen3.BLL
             this.indicatorBLL = new IndicatorBLL(bucketName, localFolder);
         }
 
-        public List<TickerEntity> GetEntryMatchTickers(IDictionary<string, object> options)
+        public List<ScreenResultEntity> GetEntryMatchTickers(IDictionary<string, object> options)
         {
             if (options != null)
             {
@@ -68,6 +68,8 @@ namespace Screen3.BLL
             }
 
             List<TickerEntity> matchedList = new List<TickerEntity>();
+            List<ScreenResultEntity> resultList = new List<ScreenResultEntity>();
+
             int len = this.priceTickerList.Length;
 
             for (int i = 0; i < len; i++)
@@ -85,11 +87,13 @@ namespace Screen3.BLL
                                 if ((this.priceTickerList[i].P - matchedList[matchedList.Count - 1].P) > this.DECLUSTER)
                                 {
                                     matchedList.Add(this.priceTickerList[i]);
+                                    resultList.Add(new ScreenResultEntity { Code = this.priceTickerList[i].T, P = this.priceTickerList[i].P, Direction = "BUY" });
                                 }
                             }
                             else
                             {
                                 matchedList.Add(this.priceTickerList[i]);
+                                resultList.Add(new ScreenResultEntity { Code = this.priceTickerList[i].T, P = this.priceTickerList[i].P, Direction = "BUY" });
                             }
                         }
                     }
@@ -106,18 +110,20 @@ namespace Screen3.BLL
                                     if ((this.priceTickerList[i].P - matchedList[matchedList.Count - 1].P) > this.DECLUSTER)
                                     {
                                         matchedList.Add(this.priceTickerList[i]);
+                                        resultList.Add(new ScreenResultEntity { Code = this.priceTickerList[i].T, P = this.priceTickerList[i].P, Direction = "SELL" });
                                     }
                                 }
                                 else
                                 {
                                     matchedList.Add(this.priceTickerList[i]);
+                                    resultList.Add(new ScreenResultEntity { Code = this.priceTickerList[i].T, P = this.priceTickerList[i].P, Direction = "SELL" });
                                 }
                             }
                         }
                     }
                 }
             }
-            return matchedList;
+            return resultList;
         }
 
         public async Task<List<ScreenResultEntity>> DoScreen(string code, string type = "day", int start = 0, int end = 0, IDictionary<string, object> options = null)
@@ -130,13 +136,8 @@ namespace Screen3.BLL
             this.macdList = await this.indicatorBLL.GetMACD(code: code, start: start, end: end, type: type);
             this.williamList = await this.indicatorBLL.GetWilliamR(code: code, start: start, end: end, type: type);
 
-            List<TickerEntity> matchResult = this.GetEntryMatchTickers(options);
-            List<ScreenResultEntity> resultList = new List<ScreenResultEntity>();
+            List<ScreenResultEntity> resultList = this.GetEntryMatchTickers(options);
 
-            foreach (TickerEntity t in matchResult)
-            {
-                resultList.Add(new ScreenResultEntity { Code = t.T, P = t.P });
-            }
             return resultList;
         }
     }

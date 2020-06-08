@@ -4,5 +4,5 @@ using Screen3.Entity;
 public interface IScreenInterface
 {
     Task<List<ScreenResultEntity>> DoScreen(string code, string type = "day", int start = 0, int end = 0, IDictionary<string, object> options = null);
-    List<TickerEntity> GetEntryMatchTickers(IDictionary<string, object> options);
+    List<ScreenResultEntity> GetEntryMatchTickers(IDictionary<string, object> options);
 }
