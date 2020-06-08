@@ -101,7 +101,9 @@ export class StockChart extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    this.prepareDrawChart();
+    if (this.props.stock !== prevProps.stock) {
+      this.prepareDrawChart();
+    }
   }
 
   prepareDrawChart = async () => {

@@ -10,6 +10,7 @@ import AppContext from "../../Context";
 import StockChart from "../stock/StockChart";
 
 export class Screen extends Component {
+  context;
   state = {
     selectedTab: "inputTab",
   };
@@ -24,10 +25,13 @@ export class Screen extends Component {
     return (
       <AppContext.Consumer>
         {(context) => {
+          this.context = context;
           return (
             <div className="row">
               <div className="col-sm-2">
-                <ScreenResultList></ScreenResultList>
+                {context.state.screenResult.length > 0 && (
+                  <ScreenResultList></ScreenResultList>
+                )}
               </div>
               <div className="col-sm-8">
                 <div style={{ marginTop: 10 }}>
@@ -43,7 +47,7 @@ export class Screen extends Component {
                       <div>
                         <StockChart
                           name="stockScreen"
-                          stock={context.state.selectedStock}
+                          stock={context.state.currentScreenStock}
                         ></StockChart>
                       </div>
                     </Tab>

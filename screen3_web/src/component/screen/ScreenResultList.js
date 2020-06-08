@@ -32,9 +32,13 @@ export class ScreenResultList extends Component {
     grid.api.setQuickFilter(e.target.value);
   };
 
-  componentDidUpdate() {
-    console.log("in component did update...", this.context.state.screenResult);
-  }
+  // componentDidUpdate() {
+  //   console.log("in component did update...", this.context.state.screenResult);
+  // }
+
+  onRowClicked = (e) => {
+    this.context.updateCurrentScreenStock(e.data.code);
+  };
 
   render() {
     return (
@@ -59,6 +63,7 @@ export class ScreenResultList extends Component {
                   rowData={this.context.state.screenResult}
                   quickFilter={this.state.filterText}
                   ref={this.adRef}
+                  onRowClicked={this.onRowClicked}
                 ></AgGridReact>
               </div>
             </div>

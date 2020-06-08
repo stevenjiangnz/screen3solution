@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import TopNav from "./component/TopNav";
 import Stock from "./component/stock/Stock";
 import Screen from "./component/screen/Screen";
+import StockService from "./service/StockService";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
 
@@ -14,15 +15,18 @@ import {
 import AppContext from "./Context";
 
 export class App extends Component {
+  indexDefault = {
+    code: "XAO",
+    company: "All Index",
+    sector: "Index",
+    cap: 0,
+    weight: 0,
+  };
   state = {
-    selectedStock: {
-      code: "XAO",
-      company: "All Index",
-      sector: "Index",
-      cap: 0,
-      weight: 0,
-    },
+    selectedStock: this.indexDefault,
     screenResult: [],
+    stockList: [],
+    currentScreenStock: this.indexDefault,
   };
 
   onSelectedStockChanged = (stock) => {
@@ -43,6 +47,28 @@ export class App extends Component {
     });
   };
 
+  onCurrentScreenStockChanged = (code) => {
+    const stock = this.state.stockList.find((stock) => stock.code === code);
+
+    this.setState({
+      currentScreenStock: stock,
+    });
+  };
+
+  componentDidMount() {
+    const service = new StockService();
+    service
+      .getStockList()
+      .then((resp) => {
+        this.setState({
+          stockList: resp.data,
+        });
+      })
+      .catch((error) => {
+        console.error("error", error);
+      });
+  }
+
   render() {
     return (
       <AppContext.Provider
@@ -51,6 +77,7 @@ export class App extends Component {
           updateSelectedStock: this.onSelectedStockChanged,
           updateChartSettings: this.onChartSettingsChanged,
           setScreenResult: this.onScreenResultChanged,
+          updateCurrentScreenStock: this.onCurrentScreenStockChanged,
         }}
       >
         <Router>
