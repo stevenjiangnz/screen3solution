@@ -5,6 +5,9 @@ import Tabs from "react-bootstrap/Tabs";
 import ScreenInput from "./ScreenInput";
 import ScreenResultList from "./ScreenResultList";
 import ScreenResultDetail from "./ScreenResultDetail";
+
+import AppContext from "../../Context";
+
 export class Screen extends Component {
   state = {
     selectedTab: "inputTab",
@@ -18,30 +21,36 @@ export class Screen extends Component {
 
   render() {
     return (
-      <div className="row">
-        <div className="col-sm-3">
-          <ScreenResultList></ScreenResultList>
-        </div>
-        <div className="col-sm-7">
-          <div style={{ marginTop: 10 }}>
-            <Tabs
-              activeKey={this.state.selectedTab}
-              id="screen-tab"
-              onSelect={(k) => this.setTab(k)}
-            >
-              <Tab eventKey="inputTab" title="Input">
-                <ScreenInput></ScreenInput>
-              </Tab>
-              <Tab eventKey="chartTab" title="Chart">
-                <div>chart tab place holder</div>
-              </Tab>
-            </Tabs>
-          </div>
-        </div>
-        <div className="col-sm-2">
-          <ScreenResultDetail></ScreenResultDetail>
-        </div>
-      </div>
+      <AppContext.Consumer>
+        {(context) => {
+          return (
+            <div className="row">
+              <div className="col-sm-3">
+                <ScreenResultList></ScreenResultList>
+              </div>
+              <div className="col-sm-7">
+                <div style={{ marginTop: 10 }}>
+                  <Tabs
+                    activeKey={this.state.selectedTab}
+                    id="screen-tab"
+                    onSelect={(k) => this.setTab(k)}
+                  >
+                    <Tab eventKey="inputTab" title="Input">
+                      <ScreenInput></ScreenInput>
+                    </Tab>
+                    <Tab eventKey="chartTab" title="Chart">
+                      <div>chart tab place holder</div>
+                    </Tab>
+                  </Tabs>
+                </div>
+              </div>
+              <div className="col-sm-2">
+                <ScreenResultDetail></ScreenResultDetail>
+              </div>
+            </div>
+          );
+        }}
+      </AppContext.Consumer>
     );
   }
 }
