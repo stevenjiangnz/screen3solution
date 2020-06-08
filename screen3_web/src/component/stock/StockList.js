@@ -43,13 +43,6 @@ export class StockList extends Component {
     service
       .getStockList()
       .then((resp) => {
-        // var codes = "";
-
-        // resp.data.forEach((element) => {
-        //   codes += `"${element.code}", `;
-        // });
-        // console.log("stock list: ", codes);
-
         this.setState({
           stocks: resp.data,
         });

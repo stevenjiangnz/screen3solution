@@ -19,6 +19,7 @@ export class App extends Component {
       cap: 0,
       weight: 0,
     },
+    screenResult: [],
   };
 
   onSelectedStockChanged = (stock) => {
@@ -33,6 +34,12 @@ export class App extends Component {
     });
   };
 
+  onScreenResultChanged = (screenResult) => {
+    this.setState({
+      screenResult: screenResult,
+    });
+  };
+
   render() {
     return (
       <AppContext.Provider
@@ -40,6 +47,7 @@ export class App extends Component {
           state: this.state,
           updateSelectedStock: this.onSelectedStockChanged,
           updateChartSettings: this.onChartSettingsChanged,
+          setScreenResult: this.onScreenResultChanged,
         }}
       >
         <Router>

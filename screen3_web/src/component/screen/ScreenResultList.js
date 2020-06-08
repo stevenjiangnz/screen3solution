@@ -1,8 +1,22 @@
 import React, { Component } from "react";
+import AppContext from "../../Context";
 
 export class ScreenResultList extends Component {
+  context;
+
+  componentDidUpdate() {
+    console.log("in component did update...");
+  }
+
   render() {
-    return <div>result list</div>;
+    return (
+      <AppContext.Consumer>
+        {(context) => {
+          this.context = context;
+          return <div>{context.state.screenResult.length}</div>;
+        }}
+      </AppContext.Consumer>
+    );
   }
 }
 
