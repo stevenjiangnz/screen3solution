@@ -1,8 +1,6 @@
 import React, { Component } from "react";
-import { AgGridReact } from "ag-grid-react";
 import StockService from "../../service/StockService";
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-balham.css";
+import { AgGridReact } from "ag-grid-react";
 import AppContext from "../../Context";
 
 export class StockList extends Component {

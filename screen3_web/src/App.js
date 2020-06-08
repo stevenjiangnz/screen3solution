@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import TopNav from "./component/TopNav";
 import Stock from "./component/stock/Stock";
 import Screen from "./component/screen/Screen";
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-balham.css";
+
 import {
   BrowserRouter as Router,
   Switch,

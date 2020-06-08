@@ -7,6 +7,7 @@ import ScreenResultList from "./ScreenResultList";
 import ScreenResultDetail from "./ScreenResultDetail";
 
 import AppContext from "../../Context";
+import StockChart from "../stock/StockChart";
 
 export class Screen extends Component {
   state = {
@@ -25,10 +26,10 @@ export class Screen extends Component {
         {(context) => {
           return (
             <div className="row">
-              <div className="col-sm-3">
+              <div className="col-sm-2">
                 <ScreenResultList></ScreenResultList>
               </div>
-              <div className="col-sm-7">
+              <div className="col-sm-8">
                 <div style={{ marginTop: 10 }}>
                   <Tabs
                     activeKey={this.state.selectedTab}
@@ -39,7 +40,12 @@ export class Screen extends Component {
                       <ScreenInput></ScreenInput>
                     </Tab>
                     <Tab eventKey="chartTab" title="Chart">
-                      <div>chart tab place holder</div>
+                      <div>
+                        <StockChart
+                          name="stockScreen"
+                          stock={context.state.selectedStock}
+                        ></StockChart>
+                      </div>
                     </Tab>
                   </Tabs>
                 </div>
