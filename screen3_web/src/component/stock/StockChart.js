@@ -17,9 +17,7 @@ export class StockChart extends Component {
   chartName;
   tickers;
   currentChartSettings;
-  previousChartSettings;
   defaultChartSetting = ChartHelper.getChartDefaultSettins();
-  previousChartSettings = ChartHelper.getChartDefaultSettins();
   redrawLines = false;
   resetRange = false;
 
@@ -666,7 +664,6 @@ export class StockChart extends Component {
       }
     }
     this.prepareDrawChart();
-    this.previousChartSettings = Object.assign(this.currentChartSettings);
 
     this.context.updateChartSettings(this.chartName, setting);
   };
