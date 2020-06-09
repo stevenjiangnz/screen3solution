@@ -116,12 +116,32 @@ export class StockChart extends Component {
       this.context.state.selectedScreenPoint &&
       this.context.state.selectedScreenPoint.p_Stamp
     ) {
-      console.log(
-        "about to reset range: ",
-        this.context.state.selectedScreenPoint
-      );
+      this.setScreenRange(this.context.state.selectedScreenPoint);
     }
   }
+
+  setScreenRange = (screenPoint) => {
+    const foundIndex = this.tickers.findIndex(
+      (ticker) => ticker[0] === screenPoint.p_Stamp
+    );
+    try {
+      var min =
+        foundIndex > 20 ? this.tickers[foundIndex - 20][0] : this.tickers[0][0];
+      var max =
+        foundIndex + 100 >= this.tickers.length
+          ? this.tickers[this.tickers.length - 1][0]
+          : this.tickers[foundIndex + 100][0];
+
+      console.log(
+        "before set extremeL: ",
+        this.chart.xAxis[0].min,
+        this.chart.xAxis[0].max
+      );
+      this.chart.xAxis[0].setExtremes(min, max);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   prepareDrawChart = async () => {
     const stock = this.props.stock;
@@ -657,12 +677,12 @@ export class StockChart extends Component {
           const state = this.currentChartSettings;
           return (
             <>
-              <div className="row">
+              {/* <div className="row">
                 <p>{JSON.stringify(this.context.state.selectedScreenPoint)}</p>
                 <button className="btn btn-primary" onClick={this.testClicked}>
                   {this.chartName}
                 </button>
-              </div>
+              </div> */}
               <div className="row">
                 <span>
                   <label className="radio-inline">
