@@ -17,7 +17,9 @@ export class StockChart extends Component {
   chartName;
   tickers;
   currentChartSettings;
+  previousChartSettings;
   defaultChartSetting = ChartHelper.getChartDefaultSettins();
+  previousChartSettings = ChartHelper.getChartDefaultSettins();
   redrawLines = false;
   resetRange = false;
 
@@ -641,16 +643,18 @@ export class StockChart extends Component {
 
     if (!setting[ind]) {
       this.removeSeries(ind);
-
       var indSetting = ChartHelper.getIndicatorSetting(ind);
 
       if (indSetting.ownPane) {
         const yAxisRemove = this.chart.get(indSetting.yAxisName);
         const topRemove = yAxisRemove.top;
+
         yAxisRemove.remove();
 
+        var isLast = true;
         this.chart.yAxis.forEach((yx) => {
           if (yx.top > topRemove) {
+            isLast = false;
             yx.update({
               top: yx.top - indSetting.height - this.ChartPosition.gap,
             });
@@ -661,6 +665,8 @@ export class StockChart extends Component {
           this.ChartPosition.base - indSetting.height - this.ChartPosition.gap;
       }
     }
+    this.prepareDrawChart();
+    this.previousChartSettings = Object.assign(this.currentChartSettings);
 
     this.context.updateChartSettings(this.chartName, setting);
   };
