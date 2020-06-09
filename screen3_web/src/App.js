@@ -28,6 +28,7 @@ export class App extends Component {
     stockList: [],
     currentScreenStock: this.indexDefault,
     currentScreenResult: [],
+    selectedScreenPoint: {},
   };
 
   onSelectedStockChanged = (stock) => {
@@ -48,14 +49,17 @@ export class App extends Component {
     });
   };
 
-  onCurrentScreenStockChanged = (code) => {
-    const stock = this.state.stockList.find((stock) => stock.code === code);
+  onCurrentScreenStockChanged = (screenPoint) => {
+    const stock = this.state.stockList.find(
+      (stock) => stock.code === screenPoint.code
+    );
     const currentScreenResult = this.state.screenResult.filter(
-      (result) => result.code === code
+      (result) => result.code === screenPoint.code
     );
     this.setState({
       currentScreenStock: stock,
       currentScreenResult,
+      selectedScreenPoint: screenPoint,
     });
   };
 

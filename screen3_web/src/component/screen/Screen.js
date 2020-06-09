@@ -21,12 +21,11 @@ export class Screen extends Component {
     });
   };
 
-  // componentDidUpdate() {
-  //   console.log(
-  //     "about to see the current match: ",
-  //     this.context.state.currentScreenResult
-  //   );
-  // }
+  switcchToChartPane = () => {
+    this.setState({
+      selectedTab: "chartTab",
+    });
+  };
 
   render() {
     return (
@@ -37,7 +36,9 @@ export class Screen extends Component {
             <div className="row">
               <div className="col-sm-2">
                 {context.state.screenResult.length > 0 && (
-                  <ScreenResultList></ScreenResultList>
+                  <ScreenResultList
+                    onItemClicked={this.switcchToChartPane}
+                  ></ScreenResultList>
                 )}
               </div>
               <div className="col-sm-8">

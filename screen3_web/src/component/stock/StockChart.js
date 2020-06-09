@@ -15,9 +15,11 @@ export class StockChart extends Component {
   indicatorService;
   groupingUnits;
   chartName;
+  tickers;
   currentChartSettings;
   defaultChartSetting = ChartHelper.getChartDefaultSettins();
   redrawLines = false;
+  resetRange = false;
 
   ChartPosition = {
     base: 420,
@@ -110,15 +112,15 @@ export class StockChart extends Component {
       JSON.stringify(this.props.screenResult) !==
       JSON.stringify(prevProps.screenResult);
 
-    // if (
-    //   JSON.stringify(this.props.screenResult) !==
-    //   JSON.stringify(prevProps.screenResult)
-    // ) {
-
-    //   this.removeLines();
-    //   this.markScreenResult(this.props.screenResult);
-    //   console.log("about to set screen match result: ");
-    // }
+    if (
+      this.context.state.selectedScreenPoint &&
+      this.context.state.selectedScreenPoint.p_Stamp
+    ) {
+      console.log(
+        "about to reset range: ",
+        this.context.state.selectedScreenPoint
+      );
+    }
   }
 
   prepareDrawChart = async () => {
@@ -215,10 +217,10 @@ export class StockChart extends Component {
     });
 
     Promise.all([...dataTasks]).then((values) => {
-      const tickers = values[0];
+      this.tickers = values[0];
 
       this.chart.setTitle({ text: `${stock.code} - ${stock.company}` });
-      this.chart.series[0].setData(tickers);
+      this.chart.series[0].setData(this.tickers);
       this.chart.series[0].name = `${stock.code} - ${this.currentChartSettings.type}`;
 
       for (var i = 1; i < values.length; i++) {
@@ -595,7 +597,6 @@ export class StockChart extends Component {
     const ax = this.chart.xAxis[0];
     const plotlines = [];
     ax.plotLinesAndBands.forEach((l) => {
-      console.log("line: ", l);
       plotlines.push(l.id);
     });
 
@@ -604,9 +605,7 @@ export class StockChart extends Component {
     });
   };
 
-  testClicked = () => {
-    console.log("data list : ", this.chart);
-  };
+  testClicked = () => {};
 
   onTypeChange = (type) => {
     const setting = Object.assign(this.currentChartSettings);
@@ -659,6 +658,7 @@ export class StockChart extends Component {
           return (
             <>
               <div className="row">
+                <p>{JSON.stringify(this.context.state.selectedScreenPoint)}</p>
                 <button className="btn btn-primary" onClick={this.testClicked}>
                   {this.chartName}
                 </button>

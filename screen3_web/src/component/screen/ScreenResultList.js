@@ -23,6 +23,7 @@ export class ScreenResultList extends Component {
         },
         { headerName: "Direction", field: "direction", width: 90 },
         { headerName: "Date", field: "p", width: 120 },
+        { headerName: "Stamp", field: "p_Stamp", hide: true },
       ],
     };
   }
@@ -32,12 +33,9 @@ export class ScreenResultList extends Component {
     grid.api.setQuickFilter(e.target.value);
   };
 
-  // componentDidUpdate() {
-  //   console.log("in component did update...", this.context.state.screenResult);
-  // }
-
   onRowClicked = (e) => {
-    this.context.updateCurrentScreenStock(e.data.code);
+    this.context.updateCurrentScreenStock(e.data);
+    // this.props.onItemClicked();
   };
 
   render() {
