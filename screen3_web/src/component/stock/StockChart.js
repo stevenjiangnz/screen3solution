@@ -17,6 +17,7 @@ export class StockChart extends Component {
   chartName;
   currentChartSettings;
   defaultChartSetting = ChartHelper.getChartDefaultSettins();
+  redrawLines = false;
 
   ChartPosition = {
     base: 420,
@@ -104,6 +105,20 @@ export class StockChart extends Component {
     if (this.props.stock !== prevProps.stock) {
       this.prepareDrawChart();
     }
+
+    this.redrawLines =
+      JSON.stringify(this.props.screenResult) !==
+      JSON.stringify(prevProps.screenResult);
+
+    // if (
+    //   JSON.stringify(this.props.screenResult) !==
+    //   JSON.stringify(prevProps.screenResult)
+    // ) {
+
+    //   this.removeLines();
+    //   this.markScreenResult(this.props.screenResult);
+    //   console.log("about to set screen match result: ");
+    // }
   }
 
   prepareDrawChart = async () => {
@@ -506,17 +521,10 @@ export class StockChart extends Component {
     const newHeight = this.ChartPosition.base + this.ChartPosition.bottom;
     this.chart.setSize(null, newHeight);
 
-    const xis = this.chart.xAxis[0];
-
-    // xis.addPlotLine({
-    //   value: Date.UTC(2019, 12, 2),
-    //   color: "#" + ((Math.random() * 0xeeeeee) << 0).toString(16),
-    //   width: 1,
-    //   label: {
-    //     text: "label",
-    //   },
-    // });
-
+    if (this.redrawLines) {
+      this.removeLines();
+      this.markScreenResult(this.props.screenResult);
+    }
     // xis.addPlotBand({
     //   from: Date.UTC(2019, 12, 2),
     //   to: Date.UTC(2019, 12, 10),
@@ -571,18 +579,33 @@ export class StockChart extends Component {
     }
   };
 
+  markScreenResult = (screenResult) => {
+    const ax = this.chart.xAxis[0];
+    screenResult.forEach((match) => {
+      ax.addPlotLine({
+        value: match.p_Stamp,
+        color: match.direction === "BUY" ? "blue" : "red",
+        width: 1,
+        id: match.p_Stamp,
+      });
+    });
+  };
+
+  removeLines = () => {
+    const ax = this.chart.xAxis[0];
+    const plotlines = [];
+    ax.plotLinesAndBands.forEach((l) => {
+      console.log("line: ", l);
+      plotlines.push(l.id);
+    });
+
+    plotlines.forEach((id) => {
+      ax.removePlotLine(id);
+    });
+  };
+
   testClicked = () => {
-    // this.chart.xAxis[0].setExtremes(
-    //   Date.UTC(2014, 0, 1),
-    //   Date.UTC(2014, 11, 31)
-    // );
-    // const ax = this.chart.xAxis[0];
-    // console.log("ax", ax);
-    // ax.plotLinesAndBands.forEach((l) => {
-    //   console.log("line: ", l);
-    //   ax.removePlotLine(l.id);
-    // });
-    // this.chart.redraw();
+    console.log("data list : ", this.chart);
   };
 
   onTypeChange = (type) => {
@@ -635,12 +658,11 @@ export class StockChart extends Component {
           const state = this.currentChartSettings;
           return (
             <>
-              {/* <div className="row">
-                <p>{JSON.stringify(this.context)}</p>
+              <div className="row">
                 <button className="btn btn-primary" onClick={this.testClicked}>
                   {this.chartName}
                 </button>
-              </div> */}
+              </div>
               <div className="row">
                 <span>
                   <label className="radio-inline">

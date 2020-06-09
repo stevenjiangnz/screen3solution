@@ -27,6 +27,7 @@ export class App extends Component {
     screenResult: [],
     stockList: [],
     currentScreenStock: this.indexDefault,
+    currentScreenResult: [],
   };
 
   onSelectedStockChanged = (stock) => {
@@ -49,9 +50,12 @@ export class App extends Component {
 
   onCurrentScreenStockChanged = (code) => {
     const stock = this.state.stockList.find((stock) => stock.code === code);
-
+    const currentScreenResult = this.state.screenResult.filter(
+      (result) => result.code === code
+    );
     this.setState({
       currentScreenStock: stock,
+      currentScreenResult,
     });
   };
 

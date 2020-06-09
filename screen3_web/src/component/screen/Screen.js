@@ -21,6 +21,13 @@ export class Screen extends Component {
     });
   };
 
+  // componentDidUpdate() {
+  //   console.log(
+  //     "about to see the current match: ",
+  //     this.context.state.currentScreenResult
+  //   );
+  // }
+
   render() {
     return (
       <AppContext.Consumer>
@@ -48,6 +55,7 @@ export class Screen extends Component {
                         <StockChart
                           name="stockScreen"
                           stock={context.state.currentScreenStock}
+                          screenResult={this.context.state.currentScreenResult}
                         ></StockChart>
                       </div>
                     </Tab>
