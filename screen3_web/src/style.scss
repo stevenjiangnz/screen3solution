@@ -118,3 +118,8 @@ body {
 .screen-request-input {
   font-size: 1.1em;
 }
+
+.list-group,
+.list-group-item {
+  background-color: $highlight-background-color;
+}

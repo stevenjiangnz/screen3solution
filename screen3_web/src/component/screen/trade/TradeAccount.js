@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 export class TradeAccount extends Component {
   constructor(props) {
@@ -6,29 +7,39 @@ export class TradeAccount extends Component {
 
     this.state = {
       newAccountValue: "",
+      accounts: [],
     };
   }
 
   onAddNewAccount = () => {
-    console.log("about to add new account");
     this.setState({
       newAccountValue: "",
+      accounts: [
+        ...this.state.accounts,
+        { id: uuidv4(), account: this.state.newAccountValue },
+      ],
     });
   };
 
   onAccountNameChanged = (e) => {
     this.setState({
       newAccountValue: e.target.value,
-      accounts: [],
+    });
+  };
+
+  onAccountDelete = (id) => {
+    const newAccounts = this.state.accounts.filter((acc) => acc.id !== id);
+    this.setState({
+      accounts: newAccounts,
     });
   };
 
   render() {
     return (
-      <div>
-        <div className="row">
-          <p>{this.state.newAccountValue}</p>
-        </div>
+      <div style={{ padding: 2 }}>
+        {/* <div className="row">
+          <p>{JSON.stringify(this.state.accounts)}</p>
+        </div> */}
         <div className="input-group mb-3" style={{ marginTop: 10 }}>
           <input
             type="text"
@@ -48,6 +59,26 @@ export class TradeAccount extends Component {
               New
             </button>
           </div>
+        </div>
+        <div>
+          <ui className="list-group">
+            {this.state.accounts.map((acc) => {
+              return (
+                <li
+                  className="list-group-item d-flex justify-content-between align-items-center"
+                  key={acc.id}
+                >
+                  (0) {acc.account}
+                  <span
+                    style={{ cursor: "pointer" }}
+                    onClick={() => this.onAccountDelete(acc.id)}
+                  >
+                    X
+                  </span>
+                </li>
+              );
+            })}
+          </ui>
         </div>
       </div>
     );
