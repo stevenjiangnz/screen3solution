@@ -680,12 +680,6 @@ export class StockChart extends Component {
           const state = this.currentChartSettings;
           return (
             <>
-              {/* <div className="row">
-                <p>{JSON.stringify(this.context.state.selectedScreenPoint)}</p>
-                <button className="btn btn-primary" onClick={this.testClicked}>
-                  {this.chartName}
-                </button>
-              </div> */}
               <div className="row">
                 <span>
                   <label className="radio-inline">
@@ -839,6 +833,13 @@ export class StockChart extends Component {
                       }}
                     />
                     wr
+                  </label>
+                </span>
+                <span>
+                  <label className="checkbox-inline" style={{ marginLeft: 20 }}>
+                    <button type="button" className="btn btn-primary btn-sm">
+                      Next
+                    </button>
                   </label>
                 </span>
               </div>
