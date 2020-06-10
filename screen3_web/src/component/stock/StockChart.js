@@ -131,12 +131,6 @@ export class StockChart extends Component {
           ? this.tickers[foundIndex - 100][0]
           : this.tickers[0][0];
 
-      console.log(
-        "before set extremeL: ",
-        this.chart.xAxis[0].min,
-        this.chart.xAxis[0].max
-      );
-
       this.chart.xAxis[0].setExtremes(min, max);
     } catch (err) {
       console.log(err);
