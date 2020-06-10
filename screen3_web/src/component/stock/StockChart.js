@@ -125,18 +125,18 @@ export class StockChart extends Component {
       (ticker) => ticker[0] === screenPoint.p_Stamp
     );
     try {
+      var max = this.tickers[foundIndex][0];
       var min =
-        foundIndex > 20 ? this.tickers[foundIndex - 20][0] : this.tickers[0][0];
-      var max =
-        foundIndex + 100 >= this.tickers.length
-          ? this.tickers[this.tickers.length - 1][0]
-          : this.tickers[foundIndex + 100][0];
+        foundIndex >= 100
+          ? this.tickers[foundIndex - 100][0]
+          : this.tickers[0][0];
 
       console.log(
         "before set extremeL: ",
         this.chart.xAxis[0].min,
         this.chart.xAxis[0].max
       );
+
       this.chart.xAxis[0].setExtremes(min, max);
     } catch (err) {
       console.log(err);
@@ -547,16 +547,27 @@ export class StockChart extends Component {
       this.removeLines();
       this.markScreenResult(this.props.screenResult);
     }
-    // xis.addPlotBand({
-    //   from: Date.UTC(2019, 12, 2),
-    //   to: Date.UTC(2019, 12, 10),
-    //   color: "#" + ((Math.random() * 0xeeeeee) << 0).toString(16),
-    //   label: {
-    //     text: "label",
-    //   },
-    // });
   };
 
+  moveNextDay = () => {
+    const foundIndex = this.tickers.findIndex(
+      (ticker) => ticker[0] === this.chart.xAxis[0].max
+    );
+    try {
+      var max =
+        foundIndex + 1 >= this.tickers.length
+          ? this.tickers[foundIndex][0]
+          : this.tickers[foundIndex + 1][0];
+      var min =
+        foundIndex >= 99
+          ? this.tickers[foundIndex - 99][0]
+          : this.tickers[0][0];
+
+      this.chart.xAxis[0].setExtremes(min, max);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   removeSeries = (name) => {
     const removeSeries = [];
 
@@ -837,7 +848,11 @@ export class StockChart extends Component {
                 </span>
                 <span>
                   <label className="checkbox-inline" style={{ marginLeft: 20 }}>
-                    <button type="button" className="btn btn-primary btn-sm">
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm"
+                      onClick={this.moveNextDay}
+                    >
                       Next
                     </button>
                   </label>
