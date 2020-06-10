@@ -4,7 +4,7 @@ import Tabs from "react-bootstrap/Tabs";
 
 import ScreenInput from "./ScreenInput";
 import ScreenResultList from "./ScreenResultList";
-import ScreenResultDetail from "./ScreenResultDetail";
+import TradeContainer from "./TradeContainer";
 
 import AppContext from "../../Context";
 import StockChart from "../stock/StockChart";
@@ -41,7 +41,7 @@ export class Screen extends Component {
                   ></ScreenResultList>
                 )}
               </div>
-              <div className="col-sm-8">
+              <div className="col-sm-7">
                 <div style={{ marginTop: 10 }}>
                   <Tabs
                     activeKey={this.state.selectedTab}
@@ -63,8 +63,8 @@ export class Screen extends Component {
                   </Tabs>
                 </div>
               </div>
-              <div className="col-sm-2">
-                <ScreenResultDetail></ScreenResultDetail>
+              <div className="col-sm-3">
+                <TradeContainer></TradeContainer>
               </div>
             </div>
           );
