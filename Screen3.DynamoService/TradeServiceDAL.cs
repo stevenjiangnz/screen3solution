@@ -61,12 +61,12 @@ namespace Screen3.DynamoService
             AccountEntity account = null;
 
             var doc = await this.table.GetItemAsync(id);
-            account = this.toAccountEntity(doc, true );
+            account = this.toAccountEntity(doc, true);
 
             return account;
         }
 
-       public async Task<AccountEntity> Update(AccountEntity account)
+        public async Task<AccountEntity> Update(AccountEntity account)
         {
             Document updatredAccountDoc = null;
             Document accountDoc = this.toAccountDocument(account);
@@ -77,20 +77,25 @@ namespace Screen3.DynamoService
         }
 
 
-        private Document toAccountDocument(AccountEntity account) {
-             var doc = new Document();
+        private Document toAccountDocument(AccountEntity account)
+        {
+            var doc = new Document();
 
             doc["id"] = account.Id;
             doc["name"] = account.Name;
 
             List<Document> trades = new List<Document>();
 
-            foreach (TradeEntity tr in account.Trades)
+            if (account.Trades != null && account.Trades.Count > 0)
             {
-                trades.Add(this.toTradeDocument(tr));
-            }
+                foreach (TradeEntity tr in account.Trades)
+                {
+                    trades.Add(this.toTradeDocument(tr));
+                }
 
-            doc["trades"] = trades;
+                doc["trades"] = trades;
+
+            }
 
             return doc;
         }
@@ -109,32 +114,38 @@ namespace Screen3.DynamoService
                 {
                     en.Trades = new List<TradeEntity>();
 
-                    var tradesDoc = doc["trades"] as DynamoDBList;
-
-                    foreach (var item in tradesDoc.Entries)
+                    if (doc.ContainsKey("trades"))
                     {
-                        Document tradeDoc = item as Document;
-                        TradeEntity trade = new TradeEntity();
+                        var tradesDoc = doc["trades"] as DynamoDBList;
 
-                        trade.Code = tradeDoc["code"].AsString();
-                        trade.EntryDate = tradeDoc["entryDate"].AsInt();
-                        trade.EntryPrice = tradeDoc["entryPrice"].AsDouble();
-
-                        if (tradeDoc.ContainsKey("exitDate"))
+                        foreach (var item in tradesDoc.Entries)
                         {
-                            trade.ExitDate = tradeDoc["exitDate"].AsInt();
+                            Document tradeDoc = item as Document;
+                            TradeEntity trade = new TradeEntity();
+
+                            trade.Id = tradeDoc["id"].AsString();
+                            trade.Code = tradeDoc["code"].AsString();
+                            trade.Direction = tradeDoc["direction"].AsInt();
+                            trade.EntryDate = tradeDoc["entryDate"].AsInt();
+                            trade.EntryPrice = tradeDoc["entryPrice"].AsDouble();
+
+                            if (tradeDoc.ContainsKey("exitDate"))
+                            {
+                                trade.ExitDate = tradeDoc["exitDate"].AsInt();
+                            }
+
+                            if (tradeDoc.ContainsKey("exitPrice"))
+                            {
+                                trade.ExitPrice = tradeDoc["exitPrice"].AsDouble();
+                            }
+
+                            if (tradeDoc.ContainsKey("pl"))
+                            {
+                                trade.PL = tradeDoc["pl"].AsDouble();
+                            }
+                            en.Trades.Add(trade);
                         }
 
-                        if (tradeDoc.ContainsKey("exitPrice"))
-                        {
-                            trade.ExitPrice = tradeDoc["exitPrice"].AsDouble();
-                        }
-
-                        if (tradeDoc.ContainsKey("pl"))
-                        {
-                            trade.PL = tradeDoc["pl"].AsDouble();
-                        }
-                        en.Trades.Add(trade);
                     }
                 }
             }
@@ -145,7 +156,9 @@ namespace Screen3.DynamoService
         {
             Document doc = new Document();
 
+            doc["id"] = trade.Id;
             doc["code"] = trade.Code;
+            doc["direction"] = trade.Direction;
             doc["entryDate"] = trade.EntryDate;
             doc["entryPrice"] = trade.EntryPrice;
             doc["exitDate"] = trade.ExitDate;
