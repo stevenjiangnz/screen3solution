@@ -65,7 +65,18 @@ namespace Screen3.DynamoService
 
             return account;
         }
-      
+
+       public async Task<AccountEntity> Update(AccountEntity account)
+        {
+            Document updatredAccountDoc = null;
+            Document accountDoc = this.toAccountDocument(account);
+
+            updatredAccountDoc = await this.table.UpdateItemAsync(accountDoc);
+
+            return this.toAccountEntity(updatredAccountDoc);
+        }
+
+
         private Document toAccountDocument(AccountEntity account) {
              var doc = new Document();
 

@@ -37,7 +37,7 @@ namespace Screen3.Test.DynamoService
             Console.WriteLine("list count: " + accountlist.Count + ObjectHelper.ToJson(accountlist));
         }
 
-                [Fact]
+        [Fact]
         public async void TestGetItem_Account()
         {
             TradeServiceDAL service = new TradeServiceDAL(this.tableName);
@@ -45,6 +45,32 @@ namespace Screen3.Test.DynamoService
             var accountlist = await service.GetItem(this.id);
 
             Console.WriteLine("list item details: " + ObjectHelper.ToJson(accountlist));
+        }
+
+        [Fact]
+        public async void TestDelete_Account()
+        {
+            TradeServiceDAL service = new TradeServiceDAL(this.tableName);
+
+            await service.Delete(this.id);
+
+        }
+
+
+        [Fact]
+        public async void TestUpdate_Account()
+        {
+            TradeServiceDAL service = new TradeServiceDAL(this.tableName);
+
+            AccountEntity account= await service.GetItem(this.id);
+
+            account.Trades[0].ExitDate = 12345;
+            account.Trades[0].ExitPrice = 12.345;
+            account.Trades[0].PL = 1.2;
+
+            AccountEntity updateAccount = await service.Update(account);
+
+
         }
 
     }
