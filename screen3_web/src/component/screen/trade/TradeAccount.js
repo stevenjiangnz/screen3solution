@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { v4 as uuidv4 } from "uuid";
 import TradeService from "../../../service/TradeService";
-import TickerService from "../../../service/TickerService";
 
 export class TradeAccount extends Component {
   tradeService;
