@@ -26,7 +26,7 @@ export class App extends Component {
     selectedStock: this.indexDefault,
     screenResult: [],
     stockList: [],
-    currentScreenStock: this.indexDefault,
+    currentScreenStock: {},
     currentScreenResult: [],
     selectedScreenPoint: {},
   };

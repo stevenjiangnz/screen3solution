@@ -104,7 +104,9 @@ export class StockChart extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    var changeStock = false;
     if (this.props.stock !== prevProps.stock) {
+      changeStock = true;
       this.prepareDrawChart();
     }
 
@@ -116,7 +118,9 @@ export class StockChart extends Component {
       this.context.state.selectedScreenPoint &&
       this.context.state.selectedScreenPoint.p_Stamp
     ) {
-      this.setScreenRange(this.context.state.selectedScreenPoint);
+      if (!changeStock) {
+        this.setScreenRange(this.context.state.selectedScreenPoint);
+      }
     }
   }
 
@@ -142,6 +146,9 @@ export class StockChart extends Component {
     const indicators = ChartHelper.getOnIndicators(this.currentChartSettings);
     const dataTasks = [];
 
+    if (!stock || !stock.code) {
+      return;
+    }
     dataTasks.push(
       this.tickerService
         .getTickerList(stock.code, this.currentChartSettings.type)
@@ -534,6 +541,14 @@ export class StockChart extends Component {
   };
 
   postDrawSetup = () => {
+    // set date range
+    if (
+      this.context.state.selectedScreenPoint &&
+      this.context.state.selectedScreenPoint
+    ) {
+      this.setScreenRange(this.context.state.selectedScreenPoint);
+    }
+
     const newHeight = this.ChartPosition.base + this.ChartPosition.bottom;
     this.chart.setSize(null, newHeight);
 
