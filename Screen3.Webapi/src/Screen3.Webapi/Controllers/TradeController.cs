@@ -28,7 +28,7 @@ namespace Screen3.Webapi.Controllers
         [HttpGet("account")]
         public async Task<ActionResult> Get()
         {
-            var result = await this.bLL.GetAll();
+            var result = (await this.bLL.GetAll()).OrderBy((a) => a.Name);
 
             return Ok(result);
         }

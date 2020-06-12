@@ -1,10 +1,15 @@
 import React, { Component } from "react";
 import { v4 as uuidv4 } from "uuid";
+import TradeService from "../../../service/TradeService";
+import TickerService from "../../../service/TickerService";
 
 export class TradeAccount extends Component {
+  tradeService;
+
   constructor(props) {
     super(props);
 
+    this.tradeService = new TradeService();
     this.state = {
       newAccountValue: "",
       accounts: [],
@@ -12,13 +17,15 @@ export class TradeAccount extends Component {
   }
 
   onAddNewAccount = () => {
-    this.setState({
-      newAccountValue: "",
-      accounts: [
-        ...this.state.accounts,
-        { id: uuidv4(), account: this.state.newAccountValue },
-      ],
-    });
+    const newAccount = { id: uuidv4(), name: this.state.newAccountValue };
+    this.tradeService
+      .createNewAccount(newAccount.id, newAccount.name)
+      .then(() => {
+        this.setState({
+          newAccountValue: "",
+          accounts: [...this.state.accounts, newAccount],
+        });
+      });
   };
 
   onAccountNameChanged = (e) => {
@@ -28,11 +35,21 @@ export class TradeAccount extends Component {
   };
 
   onAccountDelete = (id) => {
-    const newAccounts = this.state.accounts.filter((acc) => acc.id !== id);
-    this.setState({
-      accounts: newAccounts,
+    this.tradeService.deleteAccount(id).then(() => {
+      const newAccounts = this.state.accounts.filter((acc) => acc.id !== id);
+      this.setState({
+        accounts: newAccounts,
+      });
     });
   };
+
+  componentDidMount() {
+    this.tradeService.getAllAccount().then((resp) => {
+      this.setState({
+        accounts: resp.data,
+      });
+    });
+  }
 
   render() {
     return (
@@ -68,7 +85,7 @@ export class TradeAccount extends Component {
                   className="list-group-item d-flex justify-content-between align-items-center"
                   key={acc.id}
                 >
-                  (0) {acc.account}
+                  {acc.name}
                   <span
                     style={{ cursor: "pointer" }}
                     onClick={() => this.onAccountDelete(acc.id)}
