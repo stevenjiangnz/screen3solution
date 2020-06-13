@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import TradeService from "../../../service/TradeService";
 import AppContext from "../../../Context";
+import TradeCurrentTicker from "./TradeCurrentTicker";
 export class TradingPanel extends Component {
   tradeService;
   context;
@@ -63,7 +64,11 @@ export class TradingPanel extends Component {
                   Short
                 </button>
               </div>
-              {JSON.stringify(this.context.state.currentTradeTicker)}
+              <div>
+                <TradeCurrentTicker
+                  ticker={this.context.state.currentTradeTicker}
+                ></TradeCurrentTicker>
+              </div>
             </div>
           );
         }}
