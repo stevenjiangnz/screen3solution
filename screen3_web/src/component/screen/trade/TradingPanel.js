@@ -31,17 +31,20 @@ export class TradingPanel extends Component {
     const ticker = this.context.state.currentTradeTicker;
     const entryPrice = TickerHelper.formatNum((ticker.h + ticker.l) / 2, 4);
 
+    const newTrade = {
+      operation: "open",
+      id: new Date().getTime().toString(),
+      code: ticker.t,
+      direction,
+      entryDate: ticker.p,
+      entryPrice: parseFloat(entryPrice),
+    };
     this.tradeService
-      .openPositionAccount(this.state.selectedAccountId, {
-        operation: "open",
-        id: new Date().getTime().toString(),
-        code: ticker.t,
-        direction,
-        entryDate: ticker.p,
-        entryPrice: parseFloat(entryPrice),
-      })
+      .openPositionAccount(this.state.selectedAccountId, newTrade)
       .then(() => {
-        console.log("open position done");
+        this.setState({
+          openPositions: [newTrade, ...this.state.openPositions],
+        });
       });
   };
 
