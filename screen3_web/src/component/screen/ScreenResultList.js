@@ -35,7 +35,6 @@ export class ScreenResultList extends Component {
 
   onRowClicked = (e) => {
     this.context.updateCurrentScreenStock(e.data);
-    // this.props.onItemClicked();
   };
 
   render() {

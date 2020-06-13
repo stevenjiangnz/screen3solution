@@ -29,6 +29,7 @@ export class App extends Component {
     currentScreenStock: {},
     currentScreenResult: [],
     selectedScreenPoint: {},
+    currentTradeTicker: {},
   };
 
   onSelectedStockChanged = (stock) => {
@@ -63,6 +64,12 @@ export class App extends Component {
     });
   };
 
+  onCurrentTradeTickerChanged = (ticker) => {
+    this.setState({
+      currentTradeTicker: ticker,
+    });
+  };
+
   componentDidMount() {
     const service = new StockService();
     service
@@ -86,6 +93,7 @@ export class App extends Component {
           updateChartSettings: this.onChartSettingsChanged,
           setScreenResult: this.onScreenResultChanged,
           updateCurrentScreenStock: this.onCurrentScreenStockChanged,
+          setCurrentTradeTicker: this.onCurrentTradeTickerChanged,
         }}
       >
         <Router>

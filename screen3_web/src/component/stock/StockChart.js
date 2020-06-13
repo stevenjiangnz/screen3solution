@@ -21,6 +21,7 @@ export class StockChart extends Component {
   defaultChartSetting = ChartHelper.getChartDefaultSettins();
   redrawLines = false;
   resetRange = false;
+  previousTradeTicker = {};
 
   ChartPosition = {
     base: 420,
@@ -109,16 +110,21 @@ export class StockChart extends Component {
     if (this.props.stock !== prevProps.stock) {
       changeStock = true;
       this.prepareDrawChart();
-    }
 
-    this.redrawLines =
-      JSON.stringify(this.props.screenResult) !==
-      JSON.stringify(prevProps.screenResult);
+      this.redrawLines =
+        JSON.stringify(this.props.screenResult) !==
+        JSON.stringify(prevProps.screenResult);
+    }
 
     if (
       this.context.state.selectedScreenPoint &&
-      this.context.state.selectedScreenPoint.p_Stamp
+      this.context.state.selectedScreenPoint.p_Stamp &&
+      JSON.stringify(this.previousTradeTicker) !==
+        JSON.stringify(this.context.state.selectedScreenPoint)
     ) {
+      this.previousTradeTicker = Object.assign(
+        this.context.state.selectedScreenPoint
+      );
       if (!changeStock) {
         this.setScreenRange(this.context.state.selectedScreenPoint);
       }
@@ -137,6 +143,7 @@ export class StockChart extends Component {
           : this.tickers[0][0];
 
       this.chart.xAxis[0].setExtremes(min, max);
+      this.setTradeTicker(max);
     } catch (err) {
       console.log(err);
     }
@@ -577,6 +584,8 @@ export class StockChart extends Component {
           : this.tickers[0][0];
 
       this.chart.xAxis[0].setExtremes(min, max);
+
+      this.setTradeTicker(max);
     } catch (err) {
       console.log(err);
     }
@@ -584,6 +593,7 @@ export class StockChart extends Component {
 
   setTradeTicker = (p_Stamp) => {
     const ticker = this.tickersOrigin.find((t) => t.p_Stamp === p_Stamp);
+    this.context.setCurrentTradeTicker(ticker);
   };
 
   removeSeries = (name) => {
