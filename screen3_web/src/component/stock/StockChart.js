@@ -16,6 +16,7 @@ export class StockChart extends Component {
   groupingUnits;
   chartName;
   tickers;
+  tickersOrigin;
   currentChartSettings;
   defaultChartSetting = ChartHelper.getChartDefaultSettins();
   redrawLines = false;
@@ -152,7 +153,10 @@ export class StockChart extends Component {
     dataTasks.push(
       this.tickerService
         .getTickerList(stock.code, this.currentChartSettings.type)
-        .then((value) => TickerHelper.ConvertTickers(value.data))
+        .then((value) => {
+          this.tickersOrigin = value.data;
+          return TickerHelper.ConvertTickers(value.data);
+        })
     );
 
     indicators.forEach((ind) => {
@@ -577,6 +581,11 @@ export class StockChart extends Component {
       console.log(err);
     }
   };
+
+  setTradeTicker = (p_Stamp) => {
+    const ticker = this.tickersOrigin.find((t) => t.p_Stamp === p_Stamp);
+  };
+
   removeSeries = (name) => {
     const removeSeries = [];
 

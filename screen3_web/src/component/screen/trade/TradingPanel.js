@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import TradeService from "../../../service/TradeService";
-
+import AppContext from "../../../Context";
 export class TradingPanel extends Component {
   tradeService;
+  context;
   constructor(props) {
     super(props);
 
@@ -29,33 +30,40 @@ export class TradingPanel extends Component {
 
   render() {
     return (
-      <div style={{ paddingTop: 10, paddingLeft: 2, paddingRight: 2 }}>
-        <div class="form-group">
-          <select
-            class="form-control"
-            id="accountSelector"
-            value={this.state.selectedAccountId}
-            onChange={this.handleAccountChange}
-          >
-            {this.state.accounts.map((account) => {
-              return <option value={account.id}>{account.name}</option>;
-            })}
-          </select>
-        </div>
-        <div>
-          <button type="button" class="btn btn-success btn-sm">
-            Long
-          </button>
-          <button
-            type="button"
-            class="btn btn-danger btn-sm"
-            style={{ marginLeft: 10 }}
-          >
-            Short
-          </button>
-        </div>
-        {/* {JSON.stringify(this.state.selectedAccountId)} */}
-      </div>
+      <AppContext.Consumer>
+        {(context) => {
+          this.context = context;
+          return (
+            <div style={{ paddingTop: 10, paddingLeft: 2, paddingRight: 2 }}>
+              <div className="form-group">
+                <select
+                  className="form-control"
+                  id="accountSelector"
+                  value={this.state.selectedAccountId}
+                  onChange={this.handleAccountChange}
+                >
+                  {this.state.accounts.map((account) => {
+                    return <option value={account.id}>{account.name}</option>;
+                  })}
+                </select>
+              </div>
+              <div>
+                <button type="button" className="btn btn-success btn-sm">
+                  Long
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-danger btn-sm"
+                  style={{ marginLeft: 10 }}
+                >
+                  Short
+                </button>
+              </div>
+              {JSON.stringify(this.context.state.currentTradeTicker)}
+            </div>
+          );
+        }}
+      </AppContext.Consumer>
     );
   }
 }

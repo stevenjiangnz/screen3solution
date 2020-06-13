@@ -53,9 +53,6 @@ export class TradeAccount extends Component {
   render() {
     return (
       <div style={{ padding: 2 }}>
-        {/* <div className="row">
-          <p>{JSON.stringify(this.state.accounts)}</p>
-        </div> */}
         <div className="input-group mb-3" style={{ marginTop: 10 }}>
           <input
             type="text"
