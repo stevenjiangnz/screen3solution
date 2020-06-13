@@ -1,8 +1,6 @@
 import React, { Component } from "react";
-import { AgGridReact } from "ag-grid-react";
 import StockService from "../../service/StockService";
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-balham.css";
+import { AgGridReact } from "ag-grid-react";
 import AppContext from "../../Context";
 
 export class StockList extends Component {
@@ -25,7 +23,6 @@ export class StockList extends Component {
         { headerName: "Sector", field: "sector", width: 120 },
         { headerName: "Weight", field: "weight", width: 70 },
       ],
-      stocks: [],
     };
   }
 
@@ -37,27 +34,6 @@ export class StockList extends Component {
   onRowClicked = (e) => {
     this.context.updateSelectedStock(e.data);
   };
-
-  componentDidMount() {
-    const service = new StockService();
-    service
-      .getStockList()
-      .then((resp) => {
-        // var codes = "";
-
-        // resp.data.forEach((element) => {
-        //   codes += `"${element.code}", `;
-        // });
-        // console.log("stock list: ", codes);
-
-        this.setState({
-          stocks: resp.data,
-        });
-      })
-      .catch((error) => {
-        console.error("error", error);
-      });
-  }
 
   render() {
     return (
@@ -80,7 +56,7 @@ export class StockList extends Component {
                 <AgGridReact
                   defaultColDef={this.state.defaultColDef}
                   columnDefs={this.state.columnDefs}
-                  rowData={this.state.stocks}
+                  rowData={this.context.state.stockList}
                   quickFilter={this.state.filterText}
                   ref={this.adRef}
                   onRowClicked={this.onRowClicked}

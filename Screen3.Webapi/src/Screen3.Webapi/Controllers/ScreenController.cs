@@ -66,7 +66,7 @@ namespace Screen3.Webapi.Controllers
                 options.Add("DIRECTION", el.GetString());
             }
 
-            List<TickerEntity> matchedResult = new List<TickerEntity>();
+            List<ScreenResultEntity> matchedResult = new List<ScreenResultEntity>();
             try
             {
                 matchedResult = await this.screenBLL.DoScreen(code.ToUpper(), type, start, end, options);

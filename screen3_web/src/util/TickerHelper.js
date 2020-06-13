@@ -90,6 +90,10 @@ export class TickerHelper {
 
     return convertedTickers;
   }
+
+  static formatNum(num, dp) {
+    return (Math.round(num * 100) / 100).toFixed(dp);
+  }
 }
 
 export default TickerHelper;

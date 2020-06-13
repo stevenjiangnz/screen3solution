@@ -15,8 +15,13 @@ export class StockChart extends Component {
   indicatorService;
   groupingUnits;
   chartName;
+  tickers;
+  tickersOrigin;
   currentChartSettings;
   defaultChartSetting = ChartHelper.getChartDefaultSettins();
+  redrawLines = false;
+  resetRange = false;
+  previousTradeTicker = {};
 
   ChartPosition = {
     base: 420,
@@ -101,18 +106,64 @@ export class StockChart extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    this.prepareDrawChart();
+    var changeStock = false;
+    if (this.props.stock !== prevProps.stock) {
+      changeStock = true;
+      this.prepareDrawChart();
+
+      this.redrawLines =
+        JSON.stringify(this.props.screenResult) !==
+        JSON.stringify(prevProps.screenResult);
+    }
+
+    if (
+      this.context.state.selectedScreenPoint &&
+      this.context.state.selectedScreenPoint.p_Stamp &&
+      JSON.stringify(this.previousTradeTicker) !==
+        JSON.stringify(this.context.state.selectedScreenPoint)
+    ) {
+      this.previousTradeTicker = Object.assign(
+        this.context.state.selectedScreenPoint
+      );
+      if (!changeStock) {
+        this.setScreenRange(this.context.state.selectedScreenPoint);
+      }
+    }
   }
+
+  setScreenRange = (screenPoint) => {
+    const foundIndex = this.tickers.findIndex(
+      (ticker) => ticker[0] === screenPoint.p_Stamp
+    );
+    try {
+      var max = this.tickers[foundIndex][0];
+      var min =
+        foundIndex >= 100
+          ? this.tickers[foundIndex - 100][0]
+          : this.tickers[0][0];
+
+      this.chart.xAxis[0].setExtremes(min, max);
+      this.setTradeTicker(max);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   prepareDrawChart = async () => {
     const stock = this.props.stock;
     const indicators = ChartHelper.getOnIndicators(this.currentChartSettings);
     const dataTasks = [];
 
+    if (!stock || !stock.code) {
+      return;
+    }
     dataTasks.push(
       this.tickerService
         .getTickerList(stock.code, this.currentChartSettings.type)
-        .then((value) => TickerHelper.ConvertTickers(value.data))
+        .then((value) => {
+          this.tickersOrigin = value.data;
+          return TickerHelper.ConvertTickers(value.data);
+        })
     );
 
     indicators.forEach((ind) => {
@@ -198,10 +249,10 @@ export class StockChart extends Component {
     });
 
     Promise.all([...dataTasks]).then((values) => {
-      const tickers = values[0];
+      this.tickers = values[0];
 
       this.chart.setTitle({ text: `${stock.code} - ${stock.company}` });
-      this.chart.series[0].setData(tickers);
+      this.chart.series[0].setData(this.tickers);
       this.chart.series[0].name = `${stock.code} - ${this.currentChartSettings.type}`;
 
       for (var i = 1; i < values.length; i++) {
@@ -501,28 +552,48 @@ export class StockChart extends Component {
   };
 
   postDrawSetup = () => {
+    // set date range
+    if (
+      this.context.state.selectedScreenPoint &&
+      this.context.state.selectedScreenPoint
+    ) {
+      this.setScreenRange(this.context.state.selectedScreenPoint);
+    }
+
     const newHeight = this.ChartPosition.base + this.ChartPosition.bottom;
     this.chart.setSize(null, newHeight);
 
-    const xis = this.chart.xAxis[0];
+    if (this.redrawLines) {
+      this.removeLines();
+      this.markScreenResult(this.props.screenResult);
+    }
+  };
 
-    // xis.addPlotLine({
-    //   value: Date.UTC(2019, 12, 2),
-    //   color: "#" + ((Math.random() * 0xeeeeee) << 0).toString(16),
-    //   width: 1,
-    //   label: {
-    //     text: "label",
-    //   },
-    // });
+  moveNextDay = () => {
+    const foundIndex = this.tickers.findIndex(
+      (ticker) => ticker[0] === this.chart.xAxis[0].max
+    );
+    try {
+      var max =
+        foundIndex + 1 >= this.tickers.length
+          ? this.tickers[foundIndex][0]
+          : this.tickers[foundIndex + 1][0];
+      var min =
+        foundIndex >= 99
+          ? this.tickers[foundIndex - 99][0]
+          : this.tickers[0][0];
 
-    // xis.addPlotBand({
-    //   from: Date.UTC(2019, 12, 2),
-    //   to: Date.UTC(2019, 12, 10),
-    //   color: "#" + ((Math.random() * 0xeeeeee) << 0).toString(16),
-    //   label: {
-    //     text: "label",
-    //   },
-    // });
+      this.chart.xAxis[0].setExtremes(min, max);
+
+      this.setTradeTicker(max);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  setTradeTicker = (p_Stamp) => {
+    const ticker = this.tickersOrigin.find((t) => t.p_Stamp === p_Stamp);
+    this.context.setCurrentTradeTicker(ticker);
   };
 
   removeSeries = (name) => {
@@ -569,19 +640,31 @@ export class StockChart extends Component {
     }
   };
 
-  testClicked = () => {
-    // this.chart.xAxis[0].setExtremes(
-    //   Date.UTC(2014, 0, 1),
-    //   Date.UTC(2014, 11, 31)
-    // );
-    // const ax = this.chart.xAxis[0];
-    // console.log("ax", ax);
-    // ax.plotLinesAndBands.forEach((l) => {
-    //   console.log("line: ", l);
-    //   ax.removePlotLine(l.id);
-    // });
-    // this.chart.redraw();
+  markScreenResult = (screenResult) => {
+    const ax = this.chart.xAxis[0];
+    screenResult.forEach((match) => {
+      ax.addPlotLine({
+        value: match.p_Stamp,
+        color: match.direction === "BUY" ? "blue" : "red",
+        width: 1,
+        id: match.p_Stamp,
+      });
+    });
   };
+
+  removeLines = () => {
+    const ax = this.chart.xAxis[0];
+    const plotlines = [];
+    ax.plotLinesAndBands.forEach((l) => {
+      plotlines.push(l.id);
+    });
+
+    plotlines.forEach((id) => {
+      ax.removePlotLine(id);
+    });
+  };
+
+  testClicked = () => {};
 
   onTypeChange = (type) => {
     const setting = Object.assign(this.currentChartSettings);
@@ -597,16 +680,18 @@ export class StockChart extends Component {
 
     if (!setting[ind]) {
       this.removeSeries(ind);
-
       var indSetting = ChartHelper.getIndicatorSetting(ind);
 
       if (indSetting.ownPane) {
         const yAxisRemove = this.chart.get(indSetting.yAxisName);
         const topRemove = yAxisRemove.top;
+
         yAxisRemove.remove();
 
+        var isLast = true;
         this.chart.yAxis.forEach((yx) => {
           if (yx.top > topRemove) {
+            isLast = false;
             yx.update({
               top: yx.top - indSetting.height - this.ChartPosition.gap,
             });
@@ -617,6 +702,7 @@ export class StockChart extends Component {
           this.ChartPosition.base - indSetting.height - this.ChartPosition.gap;
       }
     }
+    this.prepareDrawChart();
 
     this.context.updateChartSettings(this.chartName, setting);
   };
@@ -633,12 +719,6 @@ export class StockChart extends Component {
           const state = this.currentChartSettings;
           return (
             <>
-              {/* <div className="row">
-                <p>{JSON.stringify(this.context)}</p>
-                <button className="btn btn-primary" onClick={this.testClicked}>
-                  {this.chartName}
-                </button>
-              </div> */}
               <div className="row">
                 <span>
                   <label className="radio-inline">
@@ -792,6 +872,17 @@ export class StockChart extends Component {
                       }}
                     />
                     wr
+                  </label>
+                </span>
+                <span>
+                  <label className="checkbox-inline" style={{ marginLeft: 20 }}>
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm"
+                      onClick={this.moveNextDay}
+                    >
+                      Next
+                    </button>
                   </label>
                 </span>
               </div>

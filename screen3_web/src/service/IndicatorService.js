@@ -60,7 +60,7 @@ export class IndictorService {
   getHeikin(code, type = "day", start = 0, end = 0) {
     const req = new RequestHelper().getIntance();
     return req.get(
-      `indicator/heikinasync/${code}?type=${type}&start=${start}&end=${end}`
+      `indicator/heikin/${code}?type=${type}&start=${start}&end=${end}`
     );
   }
 }
