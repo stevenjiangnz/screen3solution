@@ -3,9 +3,12 @@ import TradeService from "../../../service/TradeService";
 import AppContext from "../../../Context";
 import TradeCurrentTicker from "./TradeCurrentTicker";
 import TickerHelper from "../../../util/TickerHelper";
+import TradeOpenPositions from "./TradeOpenPositions";
+
 export class TradingPanel extends Component {
   tradeService;
   context;
+  allTrades;
   constructor(props) {
     super(props);
 
@@ -13,6 +16,8 @@ export class TradingPanel extends Component {
     this.state = {
       accounts: [],
       selectedAccountId: {},
+      openPositions: [],
+      closedPositions: [],
     };
   }
 
@@ -40,12 +45,39 @@ export class TradingPanel extends Component {
       });
   };
 
+  onClosePosition = (trade, ticker) => {
+    console.log("about to close position: ", trade, ticker);
+  };
+
+  loadAccountDetails = (accountId) => {
+    this.tradeService.getAccountDetails(accountId).then((resp) => {
+      this.allTrades = resp.data.trades;
+
+      const openPositions = [];
+      const closedPositions = [];
+
+      for (var i = 0; i < this.allTrades.length; i++) {
+        if (this.allTrades[i].exitPrice && this.allTrades[i].exitDate) {
+          closedPositions.push(this.allTrades[i]);
+        } else {
+          openPositions.push(this.allTrades[i]);
+        }
+      }
+
+      this.setState({
+        openPositions,
+        closedPositions,
+      });
+    });
+  };
+
   componentDidMount() {
     this.tradeService.getAllAccount().then((resp) => {
       this.setState({
         accounts: resp.data,
         selectedAccountId: resp.data[0]?.id,
       });
+      this.loadAccountDetails(this.state.selectedAccountId);
     });
   }
 
@@ -105,6 +137,13 @@ export class TradingPanel extends Component {
                 <TradeCurrentTicker
                   ticker={this.context.state.currentTradeTicker}
                 ></TradeCurrentTicker>
+              </div>
+              <div>
+                <TradeOpenPositions
+                  trades={this.state.openPositions}
+                  ticker={this.context.state.currentTradeTicker}
+                  onTradeClose={this.onClosePosition}
+                ></TradeOpenPositions>
               </div>
             </div>
           );

@@ -23,6 +23,11 @@ export class TradeService {
     const req = new RequestHelper().getIntance();
     return req.post(`trade/trade/${accountId}`, request);
   }
+
+  getAccountDetails(accountId) {
+    const req = new RequestHelper().getIntance();
+    return req.get(`trade/trade/${accountId}`);
+  }
 }
 
 export default TradeService;

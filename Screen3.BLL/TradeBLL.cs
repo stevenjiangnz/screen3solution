@@ -35,6 +35,11 @@ namespace Screen3.BLL
             return this.dal.Delete(id);
         }
 
+        public Task<AccountEntity> GetAccountDetail(string id)
+        {
+            return this.dal.GetItem(id);
+        }
+
         public async Task OpenPosition(string accountId, string tradeId, string code, int direction, double entryPrice, int entryDate)
         {
             AccountEntity account = await this.dal.GetItem(accountId);
@@ -67,11 +72,13 @@ namespace Screen3.BLL
                 account.Trades = new List<TradeEntity>();
             }
 
-            foreach(TradeEntity trade in account.Trades) {
-                if (trade.Id == tradeId) {
+            foreach (TradeEntity trade in account.Trades)
+            {
+                if (trade.Id == tradeId)
+                {
                     trade.ExitPrice = exitPrice;
                     trade.ExitDate = exitDate;
-                    trade.PL =  (trade.ExitPrice - trade.EntryPrice) * 100 * trade.Direction;
+                    trade.PL = (trade.ExitPrice - trade.EntryPrice) * 100 * trade.Direction;
                 }
             }
             await this.dal.Update(account);

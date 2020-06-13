@@ -76,12 +76,16 @@ namespace Screen3.Webapi.Controllers
                 string id = rootElement.GetProperty("id").GetString();
                 double exitPrice = rootElement.GetProperty("exitPrice").GetDouble();
                 int exitDate = rootElement.GetProperty("exitDate").GetInt32();
-
             }
 
             return Ok();
         }
 
-
+        [HttpGet("trade/{accountId}")]
+        public async Task<ActionResult> GetTrade(string accountId)
+        {
+            AccountEntity account = await this.bLL.GetAccountDetail(accountId);
+            return Ok(account);
+        }
     }
 }
