@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import TradeService from "../../../service/TradeService";
 import AppContext from "../../../Context";
 import TradeCurrentTicker from "./TradeCurrentTicker";
+import TickerHelper from "../../../util/TickerHelper";
 export class TradingPanel extends Component {
   tradeService;
   context;
@@ -21,10 +22,29 @@ export class TradingPanel extends Component {
     });
   };
 
+  onOpenPosition = (direction) => {
+    const ticker = this.context.state.currentTradeTicker;
+    const entryPrice = TickerHelper.formatNum((ticker.h + ticker.l) / 2, 4);
+
+    this.tradeService
+      .openPositionAccount(this.state.selectedAccountId, {
+        operation: "open",
+        id: new Date().getTime().toString(),
+        code: ticker.t,
+        direction,
+        entryDate: ticker.p,
+        entryPrice: parseFloat(entryPrice),
+      })
+      .then(() => {
+        console.log("open position done");
+      });
+  };
+
   componentDidMount() {
     this.tradeService.getAllAccount().then((resp) => {
       this.setState({
         accounts: resp.data,
+        selectedAccountId: resp.data[0]?.id,
       });
     });
   }
@@ -53,13 +73,30 @@ export class TradingPanel extends Component {
                 </select>
               </div>
               <div>
-                <button type="button" className="btn btn-success btn-sm">
+                <button
+                  type="button"
+                  className="btn btn-success btn-sm"
+                  disabled={
+                    !(
+                      this.context.state.currentTradeTicker &&
+                      this.context.state.currentTradeTicker.t
+                    )
+                  }
+                  onClick={() => this.onOpenPosition(1)}
+                >
                   Long
                 </button>
                 <button
                   type="button"
                   className="btn btn-danger btn-sm"
+                  disabled={
+                    !(
+                      this.context.state.currentTradeTicker &&
+                      this.context.state.currentTradeTicker.t
+                    )
+                  }
                   style={{ marginLeft: 10 }}
+                  onClick={() => this.onOpenPosition(-1)}
                 >
                   Short
                 </button>

@@ -54,7 +54,7 @@ namespace Screen3.Webapi.Controllers
             return Ok();
         }
 
-        [HttpPost("trade/accountId")]
+        [HttpPost("trade/{accountId}")]
         public async Task<ActionResult> PostTrade(string accountId, [FromBody] dynamic input)
         {
             JsonElement rootElement = input;

@@ -18,6 +18,11 @@ export class TradeService {
     const req = new RequestHelper().getIntance();
     return req.delete(`trade/account/${id}`);
   }
+
+  openPositionAccount(accountId, request) {
+    const req = new RequestHelper().getIntance();
+    return req.post(`trade/trade/${accountId}`, request);
+  }
 }
 
 export default TradeService;
