@@ -76,6 +76,8 @@ namespace Screen3.Webapi.Controllers
                 string id = rootElement.GetProperty("id").GetString();
                 double exitPrice = rootElement.GetProperty("exitPrice").GetDouble();
                 int exitDate = rootElement.GetProperty("exitDate").GetInt32();
+
+                await this.bLL.ClosePosition(accountId, id, exitPrice, exitDate);
             }
 
             return Ok();

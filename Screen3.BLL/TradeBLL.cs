@@ -78,7 +78,10 @@ namespace Screen3.BLL
                 {
                     trade.ExitPrice = exitPrice;
                     trade.ExitDate = exitDate;
-                    trade.PL = (trade.ExitPrice - trade.EntryPrice) * 100 * trade.Direction;
+                    if (trade.EntryPrice != 0)
+                    {
+                        trade.PL = ((trade.ExitPrice - trade.EntryPrice) / trade.EntryPrice) * 100 * trade.Direction;
+                    }
                 }
             }
             await this.dal.Update(account);

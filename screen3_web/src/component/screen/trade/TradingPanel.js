@@ -4,6 +4,7 @@ import AppContext from "../../../Context";
 import TradeCurrentTicker from "./TradeCurrentTicker";
 import TickerHelper from "../../../util/TickerHelper";
 import TradeOpenPositions from "./TradeOpenPositions";
+import TradeClosedPositions from "./TradeClosedPositions";
 
 export class TradingPanel extends Component {
   tradeService;
@@ -147,6 +148,11 @@ export class TradingPanel extends Component {
                   ticker={this.context.state.currentTradeTicker}
                   onTradeClose={this.onClosePosition}
                 ></TradeOpenPositions>
+              </div>
+              <div>
+                <TradeClosedPositions
+                  trades={this.state.closedPositions}
+                ></TradeClosedPositions>
               </div>
             </div>
           );
