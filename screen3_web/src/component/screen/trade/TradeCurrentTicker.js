@@ -13,7 +13,7 @@ export class TradeCurrentTicker extends Component {
           <h5>Current Ticker:</h5>
           <div>
             Code: {ticker.t} &nbsp; &nbsp; Date: {ticker.p} &nbsp; &nbsp; Mid:{" "}
-            {TickerHelper.formatNum((ticker.h + ticker.l) / 2, 4)}
+            {((ticker.h + ticker.l) / 2).toFixed(4)}
           </div>
 
           <div>
