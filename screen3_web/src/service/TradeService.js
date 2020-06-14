@@ -28,6 +28,11 @@ export class TradeService {
     const req = new RequestHelper().getIntance();
     return req.get(`trade/trade/${accountId}`);
   }
+
+  closePositionAccount(accountId, request) {
+    const req = new RequestHelper().getIntance();
+    return req.post(`trade/trade/${accountId}`, request);
+  }
 }
 
 export default TradeService;

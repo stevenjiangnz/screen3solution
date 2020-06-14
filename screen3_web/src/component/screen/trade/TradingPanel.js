@@ -4,6 +4,7 @@ import AppContext from "../../../Context";
 import TradeCurrentTicker from "./TradeCurrentTicker";
 import TickerHelper from "../../../util/TickerHelper";
 import TradeOpenPositions from "./TradeOpenPositions";
+import TradeClosedPositions from "./TradeClosedPositions";
 
 export class TradingPanel extends Component {
   tradeService;
@@ -25,28 +26,67 @@ export class TradingPanel extends Component {
     this.setState({
       selectedAccountId: e.target.value,
     });
+
+    this.loadAccountDetails(e.target.value);
   };
 
   onOpenPosition = (direction) => {
     const ticker = this.context.state.currentTradeTicker;
-    const entryPrice = TickerHelper.formatNum((ticker.h + ticker.l) / 2, 4);
+    const entryPrice = ((ticker.h + ticker.l) / 2).toFixed(4);
 
+    const newTrade = {
+      operation: "open",
+      id: new Date().getTime().toString(),
+      code: ticker.t,
+      direction,
+      entryDate: ticker.p,
+      entryPrice: parseFloat(entryPrice),
+    };
     this.tradeService
-      .openPositionAccount(this.state.selectedAccountId, {
-        operation: "open",
-        id: new Date().getTime().toString(),
-        code: ticker.t,
-        direction,
-        entryDate: ticker.p,
-        entryPrice: parseFloat(entryPrice),
-      })
+      .openPositionAccount(this.state.selectedAccountId, newTrade)
       .then(() => {
-        console.log("open position done");
+        this.setState({
+          openPositions: [newTrade, ...this.state.openPositions],
+        });
       });
   };
 
   onClosePosition = (trade, ticker) => {
-    console.log("about to close position: ", trade, ticker);
+    const closeRequest = {
+      operation: "close",
+      id: trade.id,
+      exitDate: ticker.p,
+      exitPrice: parseFloat(((ticker.h + ticker.l) / 2).toFixed(4)),
+    };
+
+    this.tradeService
+      .closePositionAccount(this.state.selectedAccountId, closeRequest)
+      .then(() => {
+        const tradeToClose = this.state.openPositions.filter(
+          (tr) => tr.id === trade.id
+        )[0];
+        this.setState({
+          openPositions: this.state.openPositions.filter(
+            (tr) => tr.id !== trade.id
+          ),
+        });
+
+        tradeToClose.exitDate = closeRequest.exitDate;
+        tradeToClose.exitPrice = closeRequest.exitPrice;
+
+        if (tradeToClose.exitPrice !== 0) {
+          tradeToClose.pl = (
+            ((tradeToClose.exitPrice - tradeToClose.entryPrice) /
+              tradeToClose.entryPrice) *
+            tradeToClose.direction *
+            100
+          ).toFixed(2);
+        }
+
+        this.setState({
+          closedPositions: [tradeToClose, ...this.state.closedPositions],
+        });
+      });
   };
 
   loadAccountDetails = (accountId) => {
@@ -144,6 +184,11 @@ export class TradingPanel extends Component {
                   ticker={this.context.state.currentTradeTicker}
                   onTradeClose={this.onClosePosition}
                 ></TradeOpenPositions>
+              </div>
+              <div>
+                <TradeClosedPositions
+                  trades={this.state.closedPositions}
+                ></TradeClosedPositions>
               </div>
             </div>
           );

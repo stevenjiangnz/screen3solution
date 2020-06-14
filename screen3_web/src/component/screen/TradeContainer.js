@@ -9,7 +9,7 @@ export class TradeContainer extends Component {
     super(props);
 
     this.state = {
-      selectedTab: "accountTab",
+      selectedTab: "tradeTab",
     };
   }
 
