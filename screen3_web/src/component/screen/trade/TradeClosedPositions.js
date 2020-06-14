@@ -69,13 +69,13 @@ export class TradeClosedPositions extends Component {
     return (
       <div style={{ marginTop: 10 }}>
         <h5>Close Positions ({trades?.length}):</h5>
-        <span>{`PL: ${summary.pl}`}</span>
+        <span>{`PL: ${summary.pl.toFixed(2)}`}</span>
         <span
           style={{ marginLeft: 30 }}
         >{`W/L/D : ${summary.win} / ${summary.loss} / ${summary.draw}`}</span>
         <span
           style={{ marginLeft: 30 }}
-        >{`L/S: ${summary.loss} / ${summary.short}`}</span>
+        >{`L/S: ${summary.long} / ${summary.short}`}</span>
 
         <div
           className="ag-theme-balham ag-grid-container"
