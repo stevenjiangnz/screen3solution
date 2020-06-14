@@ -46,15 +46,15 @@ export class TradeClosedPositions extends Component {
         summary.short++;
       }
 
-      if (tr.pl > 0) {
+      if (parseFloat(tr.pl) > 0) {
         summary.win++;
       }
 
-      if (tr.pl < 0) {
+      if (parseFloat(tr.pl) < 0) {
         summary.loss++;
       }
 
-      if (tr.pl === 0) {
+      if (parseFloat(tr.pl) == 0) {
         summary.draw++;
       }
     });
