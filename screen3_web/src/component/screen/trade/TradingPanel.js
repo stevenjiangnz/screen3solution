@@ -50,7 +50,41 @@ export class TradingPanel extends Component {
   };
 
   onClosePosition = (trade, ticker) => {
-    console.log("about to close position: ", trade, ticker);
+    const closeRequest = {
+      operation: "close",
+      id: trade.id,
+      exitDate: ticker.p,
+      exitPrice: parseFloat(((ticker.h + ticker.l) / 2).toFixed(4)),
+    };
+
+    this.tradeService
+      .closePositionAccount(this.state.selectedAccountId, closeRequest)
+      .then(() => {
+        const tradeToClose = this.state.openPositions.filter(
+          (tr) => tr.id === trade.id
+        );
+        this.setState({
+          openPositions: this.state.openPositions.filter(
+            (tr) => tr.id !== trade.id
+          ),
+        });
+
+        tradeToClose.exitDate = closeRequest.exitDate;
+        tradeToClose.exitPrice = closeRequest.exitPrice;
+
+        if (tradeToClose.exitPrice !== 0) {
+          tradeToClose.pl = (
+            ((tradeToClose.exitPrice - tradeToClose.entryPrice) /
+              tradeToClose.entryPrice) *
+            tradeToClose.direction *
+            100
+          ).toFixed(2);
+        }
+
+        this.setState({
+          closedPositions: [tradeToClose, ...this.state.closedPositions],
+        });
+      });
   };
 
   loadAccountDetails = (accountId) => {
