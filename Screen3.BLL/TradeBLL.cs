@@ -80,7 +80,7 @@ namespace Screen3.BLL
                     trade.ExitDate = exitDate;
                     if (trade.EntryPrice != 0)
                     {
-                        trade.PL = (((trade.ExitPrice - trade.EntryPrice) / trade.EntryPrice) * 10000 * trade.Direction);
+                        trade.PL = (((trade.ExitPrice - trade.EntryPrice) / trade.EntryPrice) * 100 * trade.Direction);
                         trade.PL = Math.Round(trade.PL.Value * 100) / 100;
                     }
                 }

@@ -26,6 +26,8 @@ export class TradingPanel extends Component {
     this.setState({
       selectedAccountId: e.target.value,
     });
+
+    this.loadAccountDetails(e.target.value);
   };
 
   onOpenPosition = (direction) => {
