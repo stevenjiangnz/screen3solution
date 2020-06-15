@@ -26,7 +26,7 @@ namespace Screen3.Webapi.Controllers
 
 
         [HttpPost("macd_william/{code}")]
-        public async Task<ActionResult> PostScreenRequest(string code, [FromBody] dynamic requestBody, string type = "day", int start = 0, int end = 0)
+        public async Task<ActionResult> PostScreenRequest_MACD_William(string code, [FromBody] dynamic requestBody, string type = "day", int start = 0, int end = 0)
         {
             JsonElement rootElement = requestBody;
 
@@ -79,6 +79,41 @@ namespace Screen3.Webapi.Controllers
             return Ok(matchedResult);
         }
 
+
+        [HttpPost("adx/{code}")]
+        public async Task<ActionResult> PostScreenRequest_ADX(string code, [FromBody] dynamic requestBody, string type = "day", int start = 0, int end = 0)
+        {
+            JsonElement rootElement = requestBody;
+
+            string name = rootElement.GetProperty("name").GetString();
+            this.screenBLL = ScreenFactory.GetScreenFunction(name, this.s3_bucket_name, this.local_temp_folder);
+
+            Dictionary<string, object> options = new Dictionary<string, object>();
+
+            JsonElement el;
+
+            if (rootElement.TryGetProperty("OFFSET", out el))
+            {
+                options.Add("OFFSET", el.GetDouble());
+            }
+
+            if (rootElement.TryGetProperty("DIRECTION", out el))
+            {
+                options.Add("DIRECTION", el.GetString());
+            }
+
+            List<ScreenResultEntity> matchedResult = new List<ScreenResultEntity>();
+            try
+            {
+                matchedResult = await this.screenBLL.DoScreen(code.ToUpper(), type, start, end, options);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"error occurs {code} {type} {start} {end} \n {rootElement.GetRawText()} \n {ex.ToString()}");
+            }
+
+            return Ok(matchedResult);
+        }
 
     }
 }

@@ -10,6 +10,10 @@ namespace Screen3.BLL
                 case "Screen_MACD_William":
                     screenObject = new Screen_MACD_William(s3_bucket_name, localFolder);
                     break;
+                case "Screen_ADX":
+                    screenObject = new Screen_ADX(s3_bucket_name, localFolder);
+                    break;
+
             }
 
             return screenObject;
