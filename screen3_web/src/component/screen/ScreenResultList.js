@@ -61,6 +61,7 @@ export class ScreenResultList extends Component {
                   quickFilter={this.state.filterText}
                   ref={this.adRef}
                   onRowClicked={this.onRowClicked}
+                  rowSelection="single"
                 ></AgGridReact>
               </div>
             </div>

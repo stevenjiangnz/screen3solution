@@ -56,8 +56,9 @@ export class ScreenInput extends Component {
 
     screenRequest.stocks.forEach((stock) => {
       requestTasks.push(
-        this.screenService.SubmitScreen_MACD_William(
+        this.screenService.SubmitScreen(
           stock,
+          this.state.selectedScreen,
           screenRequest.options,
           screenRequest.start,
           screenRequest.end
