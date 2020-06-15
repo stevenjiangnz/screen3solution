@@ -96,7 +96,6 @@ export class ScreenInput extends Component {
           this.context = context;
           return (
             <div style={{ marginTop: 10, marginBottom: 10 }}>
-              <p>{this.state.selectedScreen}</p>
               <div className="form-group">
                 <select
                   className="form-control"
