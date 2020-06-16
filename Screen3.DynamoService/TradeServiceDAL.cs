@@ -46,7 +46,6 @@ namespace Screen3.DynamoService
 
         public async Task Delete(string id)
         {
-            List<StockEntity> stockList = new List<StockEntity>();
             DeleteItemOperationConfig config = new DeleteItemOperationConfig
             {
                 // Return the deleted item.
