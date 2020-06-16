@@ -20,121 +20,97 @@ namespace Screen3.DynamoService
             this.table = Table.LoadTable(this.client, tableName);
         }
 
-        public async Task InsertNewTrade(TickerCollectionEntity tickerCollection)
-        {
-            var doc = this.toTickerDocument(tickerCollection);
 
-            await this.table.PutItemAsync(doc);
+        public async Task Delete(string code, int period)
+        {
+
+            var doc = await this.table.GetItemAsync(code, period);
+
+            await this.table.DeleteItemAsync(doc);
         }
 
-        public async Task<List<TickerCollectionEntity>> GetAll()
+        public async Task<TickerEntity> GetItem(string code, int period)
         {
-            List<TickerCollectionEntity> tickerCollectionList = new List<TickerCollectionEntity>();
-            ScanFilter scanFilter = new ScanFilter();
-            Search getAllItems = this.table.Scan(scanFilter);
+            var doc = await this.table.GetItemAsync(code, period);
 
-            List<Document> allItems = await getAllItems.GetRemainingAsync();
+            return this.toTickerEntity(doc);
+        }
 
-            foreach (Document doc in allItems)
+        public async Task<List<TickerEntity>> GetItemsByCode(string code)
+        {
+            List<TickerEntity> resultList = new List<TickerEntity>();
+            QueryFilter filter = new QueryFilter();
+            filter.AddCondition("code", QueryOperator.Equal, code);
+            Search search = this.table.Query(filter);
+
+            List<Document> documentSet = new List<Document>();
+            do
             {
-                TickerCollectionEntity en = this.toTickerCollectionEntity(doc);
-                tickerCollectionList.Add(en);
+                documentSet = await search.GetNextSetAsync();
+                foreach (var document in documentSet)
+                {
+
+                    resultList.Add(this.toTickerEntity(document));
+                }
+            } while (!search.IsDone);
+
+            return resultList;
+        }
+
+
+        public async Task Update(TickerEntity ticker)
+        {
+            Document updatedAccountDoc = null;
+            Document accountDoc = this.toTickerDocument(ticker);
+
+            updatedAccountDoc = await this.table.UpdateItemAsync(accountDoc);
+
+            return;
+        }
+
+        public async Task UpdateBatch(List<TickerEntity> tickers)
+        {
+            var batchWriter = this.table.CreateBatchWrite();
+
+            foreach(TickerEntity tr in tickers) {
+                Document tickerDoc = this.toTickerDocument(tr);
+                batchWriter.AddDocumentToPut(tickerDoc);
             }
 
-            return tickerCollectionList;
+            await batchWriter.ExecuteAsync();
+            return;
         }
 
-        public async Task Delete(string code)
-        {
-            DeleteItemOperationConfig config = new DeleteItemOperationConfig
-            {
-                // Return the deleted item.
-                ReturnValues = ReturnValues.AllOldAttributes
-            };
 
-            await this.table.DeleteItemAsync(code, config);
-        }
-
-        public async Task<TickerCollectionEntity> GetItem(string code)
-        {
-            TickerCollectionEntity tickerCollection = null;
-
-            var doc = await this.table.GetItemAsync(code);
-            tickerCollection = this.toTickerCollectionEntity(doc);
-
-            return tickerCollection;
-        }
-
-        public async Task<TickerCollectionEntity> Update(TickerCollectionEntity tickerCollection)
-        {
-            Document updatredAccountDoc = null;
-            Document accountDoc = this.toTickerDocument(tickerCollection);
-
-            updatredAccountDoc = await this.table.UpdateItemAsync(accountDoc);
-
-            return this.toTickerCollectionEntity(updatredAccountDoc);
-        }
-
-        private Document toTickerDocument(TickerCollectionEntity tickerCollection)
+        private Document toTickerDocument(TickerEntity ticker)
         {
             var doc = new Document();
 
-            doc["code"] = tickerCollection.Code;
-
-            List<Document> tickerDocs = new List<Document>();
-
-            if (tickerCollection.Tickers != null && tickerCollection.Tickers.Count > 0)
-            {
-                foreach (TickerEntity trade in tickerCollection.Tickers)
-                {
-                    Document tdoc = new Document();
-                    tdoc["t"] = trade.T;
-                    tdoc["p"] = trade.P;
-                    tdoc["o"] = trade.O;
-                    tdoc["h"] = trade.H;
-                    tdoc["c"] = trade.C;
-                    tdoc["l"] = trade.L;
-                    tdoc["v"] = trade.V;
-
-                    tickerDocs.Add(tdoc);
-                }
-                doc["tickers"] = tickerDocs;
-            }
+            doc["code"] = ticker.T;
+            doc["p"] = ticker.P;
+            doc["o"] = ticker.O;
+            doc["h"] = ticker.H;
+            doc["c"] = ticker.C;
+            doc["l"] = ticker.L;
+            doc["v"] = ticker.V;
 
             return doc;
         }
 
-        private TickerCollectionEntity toTickerCollectionEntity(Document doc)
+        private TickerEntity toTickerEntity(Document doc)
         {
-            TickerCollectionEntity en = null;
+            TickerEntity en = null;
 
             if (doc != null)
             {
-                en = new TickerCollectionEntity();
-                en.Code = doc["code"].ToString();
-
-
-                if (doc.ContainsKey("tickers"))
-                {
-                    var tradesDoc = doc["tickers"] as DynamoDBList;
-
-                    foreach (var item in tradesDoc.Entries)
-                    {
-                        Document tradeDoc = item as Document;
-                        TickerEntity trade = new TickerEntity();
-
-                        trade.T = tradeDoc["t"].AsString();
-                        trade.P = tradeDoc["p"].AsInt();
-                        trade.O = (float)tradeDoc["o"].AsDecimal();
-                        trade.H = (float)tradeDoc["h"].AsDecimal();
-                        trade.L = (float)tradeDoc["l"].AsDecimal();
-                        trade.C = (float)tradeDoc["c"].AsDecimal();
-                        trade.V = tradeDoc["v"].AsLong();
-
-                        en.Tickers.Add(trade);
-                    }
-
-                }
+                en = new TickerEntity();
+                en.T = doc["code"].ToString();
+                en.P = doc["p"].AsInt();
+                en.O = (float)doc["o"].AsDecimal();
+                en.H = (float)doc["h"].AsDecimal();
+                en.L = (float)doc["l"].AsDecimal();
+                en.C = (float)doc["c"].AsDecimal();
+                en.V = doc["v"].AsLong();
             }
             return en;
         }
