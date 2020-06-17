@@ -18,7 +18,6 @@ namespace screen3_data_loader.controllers.Tests
         public void TestStartProcessAsync()
         {
             DataLoadController controller = new DataLoadController();
-
             controller.StartProcessAsync().Wait();
         }
 

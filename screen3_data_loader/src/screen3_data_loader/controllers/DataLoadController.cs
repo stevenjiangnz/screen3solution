@@ -99,6 +99,7 @@ namespace screen3_data_loader.controllers
 
             ZipFile.ExtractToDirectory(fileName, targetPath);
 
+            Console.WriteLine("about to dir search: " + targetPath);
             resultFileList = FileHelper.DirSearch(targetPath);
 
             return resultFileList;

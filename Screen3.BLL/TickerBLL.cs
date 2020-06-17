@@ -1,11 +1,16 @@
 ﻿using System;
 using System.IO;
+using System.IO.Compression;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Screen3.Entity;
 using System.Linq;
 using System.Text;
 using Screen3.Utils;
+using MailKit.Net.Imap;
+using MailKit.Search;
+using MailKit;
+using MimeKit;
 
 namespace Screen3.BLL
 {
@@ -221,15 +226,65 @@ namespace Screen3.BLL
         }
 
 
-        public void GetTickerFromEmail(string emailAccount, string pwd)
+        public void GetTickerFromEmail(string emailAccount, string emailPwd)
         {
-            Console.WriteLine($"emailaccount: {emailAccount} pwd: {pwd}");
-
-            string localInbox = string.Format(".\\inbox", Directory.GetCurrentDirectory());
-            // If the folder is not existed, create it.
-            if (!Directory.Exists(localInbox))
+            List<string> fileNames = new List<string>();
+            string localInboxFolder = "/tmp/screen3_temp_files/inbox/";
+            string localInboxZip = "/tmp/screen3_temp_files/inbox_zip/";
+            string zipFileName = "";
+            
+            FileHelper.ClearDirectory(localInboxFolder, true);
+            FileHelper.ClearDirectory(localInboxZip, true);
+            
+            using (var client = new ImapClient())
             {
-                Directory.CreateDirectory(localInbox);
+                client.Connect("imap.gmail.com", 993, true);
+
+                client.Authenticate(emailAccount, emailPwd);
+
+                // The Inbox folder is always available on all IMAP servers...
+                var inbox = client.Inbox;
+                inbox.Open(FolderAccess.ReadWrite);
+                foreach (var uid in inbox.Search(SearchQuery.NotSeen))
+                {
+                    var message = inbox.GetMessage(uid);
+                    if (message.Subject.IndexOf("Daily Historical Data") >= 0)
+                    {
+                        foreach (MimeEntity attachment in message.Attachments)
+                        {
+                            var fileName = localInboxFolder + attachment.ContentDisposition?.FileName ?? attachment.ContentType.Name;
+
+                            using (var stream = File.Create(fileName))
+                            {
+                                if (attachment is MessagePart)
+                                {
+                                    var rfc822 = (MessagePart)attachment;
+                                    rfc822.Message.WriteTo(stream);
+                                }
+                                else
+                                {
+                                    var part = (MimePart)attachment;
+                                    part.Content.DecodeTo(stream);
+                                }
+                            }
+                            fileNames.Add(fileName);
+                        }
+                    }
+
+                    inbox.AddFlags(uid, MessageFlags.Seen, true);
+                }
+
+                client.Disconnect(true);
+
+                if (fileNames.Count > 0) {
+                    zipFileName = localInboxZip + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss") + ".zip";
+
+                    Console.WriteLine(zipFileName);
+                    ZipFile.CreateFromDirectory(localInboxFolder, zipFileName);
+
+
+                    
+                }
             }
         }
 
