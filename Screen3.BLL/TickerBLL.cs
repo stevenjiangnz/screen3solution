@@ -21,62 +21,75 @@ namespace Screen3.BLL
             this.localFolder = localFolder;
         }
 
-        public async Task<List<TickerEntity>> GetWeeklyTickerEntityList(string code, int? start = 0, int? end = 0) {
+        public async Task<List<TickerEntity>> GetWeeklyTickerEntityList(string code, int? start = 0, int? end = 0)
+        {
             List<TickerEntity> weeklyTickerList = null;
             int weekStart = 0;
             int weekEnd = 0;
 
-            if (start != 0) {
-                weekStart =  DateHelper.ToInt(DateHelper.ToDate(start.Value).AddDays(-7));
+            if (start != 0)
+            {
+                weekStart = DateHelper.ToInt(DateHelper.ToDate(start.Value).AddDays(-7));
             }
 
-            if ( end !=0 ) {
+            if (end != 0)
+            {
                 weekEnd = DateHelper.ToInt(DateHelper.ToDate(end.Value).AddDays(7));
             }
             List<TickerEntity> dayList = await this.GetDailyTickerEntityList(code, weekStart, weekEnd);
 
             weeklyTickerList = this.GetWeeklyTickerListFromDayList(dayList);
 
-            return weeklyTickerList.Where(t => (start == 0 || t.P >= start) && (end ==0 || t.P <= end)).ToList();
+            return weeklyTickerList.Where(t => (start == 0 || t.P >= start) && (end == 0 || t.P <= end)).ToList();
         }
 
 
-        public async Task<List<TickerEntity>> GetDailyTickerEntityList(string code, int? start = 0, int? end = 0) {
+        public async Task<List<TickerEntity>> GetDailyTickerEntityList(string code, int? start = 0, int? end = 0)
+        {
             List<TickerEntity> tickerList = null;
             string localTickerFilePath = $@"{localFolder}{code}/{code}_day.txt";
             bool isLocalAvailable = false;
-            
+
             Directory.CreateDirectory($@"{localFolder}{code}/");
-            if (File.Exists(localTickerFilePath)) {
+            if (File.Exists(localTickerFilePath))
+            {
                 FileInfo tickerFile = new FileInfo(localTickerFilePath);
 
-                if (tickerFile.CreationTime > DateTime.Now.AddHours(this.local_ticker_ttL * -1)) {
+                if (tickerFile.CreationTime > DateTime.Now.AddHours(this.local_ticker_ttL * -1))
+                {
                     isLocalAvailable = true;
-                } else {
+                }
+                else
+                {
                     File.Delete(localTickerFilePath);
                 }
             }
 
-            if (isLocalAvailable) {
+            if (isLocalAvailable)
+            {
                 Console.WriteLine("Screen3: load ticker form local");
                 string content = File.ReadAllText(localTickerFilePath);
                 tickerList = this.getTickerListFromString(content);
-            } else {
+            }
+            else
+            {
                 Console.WriteLine("Screen3: load ticker form S3");
 
                 tickerList = await this.GetExistingDayTickersFromS3(code);
                 this.SaveTickerlistToLocal(localTickerFilePath, tickerList);
             }
-            
-            var filteredList =  tickerList.Where(t => (start == 0 || t.P >= start) && (end ==0 || t.P <= end)).ToList();
+
+            var filteredList = tickerList.Where(t => (start == 0 || t.P >= start) && (end == 0 || t.P <= end)).ToList();
 
             return filteredList;
         }
 
-        public void SaveTickerlistToLocal(string path, List<TickerEntity> tickerList) {
+        public void SaveTickerlistToLocal(string path, List<TickerEntity> tickerList)
+        {
             StringBuilder sb = new StringBuilder();
 
-            foreach(var ticker in tickerList) {
+            foreach (var ticker in tickerList)
+            {
                 sb.AppendLine(ticker.ToString());
             }
 
@@ -162,7 +175,8 @@ namespace Screen3.BLL
                         if (weeklyTicker.L > tickerArray[i].L)
                             weeklyTicker.L = tickerArray[i].L;
 
-                        if (i == tickerArray.Length - 1) {
+                        if (i == tickerArray.Length - 1)
+                        {
                             weeklyTicker.C = tickerArray[i].C;
                             weeklyTicker.P = period;
                         }
@@ -205,5 +219,19 @@ namespace Screen3.BLL
 
             return tickers;
         }
+
+
+        public void GetTickerFromEmail(string emailAccount, string pwd)
+        {
+            Console.WriteLine($"emailaccount: {emailAccount} pwd: {pwd}");
+
+            string localInbox = string.Format(".\\inbox", Directory.GetCurrentDirectory());
+            // If the folder is not existed, create it.
+            if (!Directory.Exists(localInbox))
+            {
+                Directory.CreateDirectory(localInbox);
+            }
+        }
+
     }
 }

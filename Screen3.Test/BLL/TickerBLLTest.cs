@@ -15,12 +15,14 @@ namespace Screen3.Test.BLL
         private string tempTickerFolder = "/tmp/screen3_temp_files/localticker/";
 
         [Fact]
-        public void TestSaveTickers() {
+        public void TestSaveTickers()
+        {
             TickerBLL bll = new TickerBLL(this.s3_bucket_name, this.tempTickerFolder);
 
             List<TickerEntity> tickerList = new List<TickerEntity>();
 
-            tickerList.Add(new TickerEntity {
+            tickerList.Add(new TickerEntity
+            {
                 T = "CLL",
                 P = 20081201,
                 O = (float)66.01,
@@ -30,7 +32,8 @@ namespace Screen3.Test.BLL
                 V = 123124
             });
 
-            tickerList.Add(new TickerEntity {
+            tickerList.Add(new TickerEntity
+            {
                 T = "CLL",
                 P = 20071201,
                 O = (float)111111.01,
@@ -40,7 +43,8 @@ namespace Screen3.Test.BLL
                 V = 123124
             });
 
-            tickerList.Add(new TickerEntity {
+            tickerList.Add(new TickerEntity
+            {
                 T = "CLL",
                 P = 20091212,
                 O = (float)33.01,
@@ -50,7 +54,8 @@ namespace Screen3.Test.BLL
                 V = 2346
             });
 
-            tickerList.Add(new TickerEntity {
+            tickerList.Add(new TickerEntity
+            {
                 T = "CLL",
                 P = 20081202,
                 O = (float)33.01,
@@ -65,21 +70,24 @@ namespace Screen3.Test.BLL
 
 
         [Fact]
-        public void TestGetExistingDayTickers() {
+        public void TestGetExistingDayTickers()
+        {
             TickerBLL bll = new TickerBLL(this.s3_bucket_name, this.tempTickerFolder);
             bll.GetExistingDayTickersFromS3("CLL").Wait();
         }
 
         [Fact]
-        public void TestGetWeekListFromDay() {
+        public void TestGetWeekListFromDay()
+        {
             TickerBLL bll = new TickerBLL(this.s3_bucket_name, this.tempTickerFolder);
             string tickerFile = "/home/steven/devlocal/screen3solution/Fixture/ANZ_day_small.txt";
 
             string content = File.ReadAllText(tickerFile);
 
-            List<TickerEntity> tickers =  bll.getTickerListFromString(content);
+            List<TickerEntity> tickers = bll.getTickerListFromString(content);
 
-            foreach(var t in tickers ) {
+            foreach (var t in tickers)
+            {
 
                 Console.WriteLine(DateHelper.ToDate(t.P).ToLongDateString() + "  " + t.ToString());
             }
@@ -87,20 +95,34 @@ namespace Screen3.Test.BLL
             List<TickerEntity> weeklyTickers = bll.GetWeeklyTickerListFromDayList(tickers);
 
             Console.Write("\n\n");
-            foreach(var wt in weeklyTickers) {
+            foreach (var wt in weeklyTickers)
+            {
                 Console.WriteLine(DateHelper.ToDate(wt.P).ToLongDateString() + "  " + wt.ToString());
             }
 
         }
 
         [Fact]
-        public async void TestGetDailyTickerEntityList(){
+        public async void TestGetDailyTickerEntityList()
+        {
             string tempTickerFolder = "/tmp/screen3_temp_files/localticker/";
             TickerBLL bll = new TickerBLL(this.s3_bucket_name, tempTickerFolder);
 
             await bll.GetDailyTickerEntityList("ANZ");
             await bll.GetDailyTickerEntityList("SUN");
 
+        }
+
+        [Fact]
+        public async void TestGetTickerFromEmail()
+        {
+            string tempTickerFolder = "/tmp/screen3_temp_files/localticker/";
+            TickerBLL bll = new TickerBLL(this.s3_bucket_name, tempTickerFolder);
+
+            string emailAccount = Environment.GetEnvironmentVariable("SCREEN3_TICKER_EMAIL_ACCOUNT");
+            string emailPwd = Environment.GetEnvironmentVariable("SCREEN3_TICKER_EMAIL_PWD");
+
+            bll.GetTickerFromEmail(emailAccount, emailPwd);
         }
     }
 }

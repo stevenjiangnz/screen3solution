@@ -38,8 +38,6 @@ namespace screen3_data_loader.controllers
         {
             this.stockList = await this.dal.GetAll();
 
-            this.stockList = await this.dal.GetAll();
-
             List<S3Object> fileList = await this.GetSourceFileListAsync(this.S3_Bucket_Name, "source");
 
             LambdaLogger.Log($"found files in the source folder, {fileList.Count}\n");
