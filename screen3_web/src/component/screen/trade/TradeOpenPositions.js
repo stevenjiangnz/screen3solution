@@ -25,7 +25,7 @@ export class TradeOpenPositions extends Component {
     ) {
       const mid = (ticker.l + ticker.h) / 2;
       const diff = (
-        ((mid - trade.entryPrice) / trade.entryPrice) *
+        ((ticker.c - trade.entryPrice) / trade.entryPrice) *
         trade.direction *
         100
       ).toFixed(2);

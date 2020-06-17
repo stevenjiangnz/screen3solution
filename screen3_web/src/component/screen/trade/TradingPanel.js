@@ -32,7 +32,7 @@ export class TradingPanel extends Component {
 
   onOpenPosition = (direction) => {
     const ticker = this.context.state.currentTradeTicker;
-    const entryPrice = ((ticker.h + ticker.l) / 2).toFixed(4);
+    const entryPrice = ticker.c.toFixed(4);
 
     const newTrade = {
       operation: "open",
@@ -56,7 +56,7 @@ export class TradingPanel extends Component {
       operation: "close",
       id: trade.id,
       exitDate: ticker.p,
-      exitPrice: parseFloat(((ticker.h + ticker.l) / 2).toFixed(4)),
+      exitPrice: parseFloat(ticker.c.toFixed(4)),
     };
 
     this.tradeService
