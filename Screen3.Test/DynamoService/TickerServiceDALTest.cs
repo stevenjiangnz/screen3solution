@@ -13,13 +13,6 @@ namespace Screen3.Test.DynamoService
         private string id = "SUN";
 
         [Fact]
-        public async void TestInsertNewTickerCollection()
-        {
-            TickerServiceDAL tradeService = new TickerServiceDAL(tableName);
-
-        }
-
-        [Fact]
         public async void TestGetItem_TickerCollection()
         {
             TickerServiceDAL service = new TickerServiceDAL(this.tableName);

@@ -121,8 +121,10 @@ namespace Screen3.Test.BLL
 
             string emailAccount = Environment.GetEnvironmentVariable("SCREEN3_TICKER_EMAIL_ACCOUNT");
             string emailPwd = Environment.GetEnvironmentVariable("SCREEN3_TICKER_EMAIL_PWD");
+            string bucketName = Environment.GetEnvironmentVariable("SCREEN3_S3_BUCKET");
 
-            bll.GetTickerFromEmail(emailAccount, emailPwd);
+
+            await bll.GetTickerFromEmail(emailAccount, emailPwd, bucketName);
         }
     }
 }

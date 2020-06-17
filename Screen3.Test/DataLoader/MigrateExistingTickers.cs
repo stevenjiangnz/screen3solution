@@ -12,7 +12,6 @@ namespace Screen3.Test.DataLoader
     public class MigrateExistingTickers
     {
         private string s3_bucket_name = "stevenjiangnz-screen3-eod-source";
-        private string tempTickerFolder = "/tmp/screen3_temp_files/localticker/";
 
         [Fact]
         public async void TestMigrateExistingTickersToDb()

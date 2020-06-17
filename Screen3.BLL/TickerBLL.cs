@@ -7,6 +7,7 @@ using Screen3.Entity;
 using System.Linq;
 using System.Text;
 using Screen3.Utils;
+using Screen3.S3Service;
 using MailKit.Net.Imap;
 using MailKit.Search;
 using MailKit;
@@ -226,20 +227,19 @@ namespace Screen3.BLL
         }
 
 
-        public void GetTickerFromEmail(string emailAccount, string emailPwd)
+        public async Task GetTickerFromEmail(string emailAccount, string emailPwd, string bucketName)
         {
             List<string> fileNames = new List<string>();
             string localInboxFolder = "/tmp/screen3_temp_files/inbox/";
-            string localInboxZip = "/tmp/screen3_temp_files/inbox_zip/";
+            string localInboxZipFolder = "/tmp/screen3_temp_files/inbox_zip/";
             string zipFileName = "";
             
             FileHelper.ClearDirectory(localInboxFolder, true);
-            FileHelper.ClearDirectory(localInboxZip, true);
+            FileHelper.ClearDirectory(localInboxZipFolder, true);
             
             using (var client = new ImapClient())
             {
                 client.Connect("imap.gmail.com", 993, true);
-
                 client.Authenticate(emailAccount, emailPwd);
 
                 // The Inbox folder is always available on all IMAP servers...
@@ -277,16 +277,16 @@ namespace Screen3.BLL
                 client.Disconnect(true);
 
                 if (fileNames.Count > 0) {
-                    zipFileName = localInboxZip + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss") + ".zip";
+                    S3Service.S3Service service = new S3Service.S3Service();
 
-                    Console.WriteLine(zipFileName);
-                    ZipFile.CreateFromDirectory(localInboxFolder, zipFileName);
-
-
+                    zipFileName = DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss") + ".zip";
+                    var zipFilePath = localInboxZipFolder + zipFileName;
                     
+                    ZipFile.CreateFromDirectory(localInboxFolder, zipFilePath);
+
+                    await service.UploadFileToS3Async(bucketName, "source/" + zipFileName, zipFilePath);
                 }
             }
         }
-
     }
 }
