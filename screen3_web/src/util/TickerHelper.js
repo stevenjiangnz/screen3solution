@@ -9,6 +9,16 @@ export class TickerHelper {
     return convertedTickers;
   }
 
+  static ConvertVolume(tickers) {
+    const convertedVolume = [];
+
+    tickers.forEach((t) => {
+      convertedVolume.push([t.p_Stamp, t.v]);
+    });
+
+    return convertedVolume;
+  }
+
   static ConvertSingleValueIndicator(Indicator) {
     const convertedIndicators = [];
 

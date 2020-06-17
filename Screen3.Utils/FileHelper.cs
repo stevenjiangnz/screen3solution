@@ -8,31 +8,36 @@ namespace Screen3.Utils
     {
         private static List<String> fileList = new List<String>();
 
-        public static void ClearDirectory(string targetPath, bool? withCreate = false) {
-            if (Directory.Exists(targetPath)) {
+        public static void ClearDirectory(string targetPath, bool? withCreate = false)
+        {
+            if (Directory.Exists(targetPath))
+            {
                 DirectoryInfo dir = new DirectoryInfo(targetPath);
                 dir.Delete(true);
             }
 
-            if (withCreate.HasValue && withCreate == true) {
+            if (withCreate.HasValue && withCreate == true)
+            {
                 Directory.CreateDirectory(targetPath);
             }
         }
 
         public static List<String> DirSearch(string sDir, bool? isInit = true)
         {
-            if (isInit.HasValue && isInit== true) {
+            if (isInit.HasValue && isInit == true)
+            {
                 fileList.Clear();
             }
 
             try
             {
+                foreach (string f in Directory.GetFiles(sDir))
+                {
+                    fileList.Add(f);
+                }
+
                 foreach (string d in Directory.GetDirectories(sDir))
                 {
-                    foreach (string f in Directory.GetFiles(d))
-                    {
-                        fileList.Add(f);
-                    }
                     DirSearch(d, false);
                 }
             }
@@ -41,7 +46,7 @@ namespace Screen3.Utils
                 Console.WriteLine(excpt.Message);
             }
 
-            return fileList; 
+            return fileList;
         }
 
         public static string GetFileNameFromKey(string key)

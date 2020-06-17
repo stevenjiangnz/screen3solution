@@ -8,6 +8,10 @@
     <ProjectReference Include="..\Screen3.DynamoService\Screen3.DynamoService.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="2.7.0" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>

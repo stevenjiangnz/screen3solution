@@ -21,6 +21,8 @@ namespace screen3_data_loader.controllers
     {
         private string S3_Bucket_Name;
         private string Temp_Folder;
+        private string Ticker_Email_Account;
+        private string Ticker_Email_Pwd;
         private List<StockEntity> stockList;
         private StockServiceDAL dal;
         private Dictionary<String, List<TickerEntity>> stockDict;
@@ -30,13 +32,17 @@ namespace screen3_data_loader.controllers
             this.S3_Bucket_Name = Environment.GetEnvironmentVariable("SCREEN3_S3_BUCKET");
             this.Temp_Folder = Environment.GetEnvironmentVariable("SCREEN3_TEMP_FOLDER");
             string asx300TableName = Environment.GetEnvironmentVariable("SCREEN3_ASX300_TABLE_NAME");
+            this.Ticker_Email_Account = Environment.GetEnvironmentVariable("SCREEN3_TICKER_EMAIL_ACCOUNT");
+            this.Ticker_Email_Pwd = Environment.GetEnvironmentVariable("SCREEN3_TICKER_EMAIL_PWD");
             this.dal = new StockServiceDAL(asx300TableName);
             this.stockDict = new Dictionary<string, List<TickerEntity>>();
         }
 
         public async Task StartProcessAsync()
         {
-            this.stockList = await this.dal.GetAll();
+            // load ticker from email
+            TickerBLL bll = new TickerBLL(this.S3_Bucket_Name, this.Temp_Folder);
+            await bll.GetTickerFromEmail(this.Ticker_Email_Account, this.Ticker_Email_Pwd, this.S3_Bucket_Name);
 
             this.stockList = await this.dal.GetAll();
 
@@ -69,7 +75,7 @@ namespace screen3_data_loader.controllers
                 this.AddDailyFileIntoStockDict(path);
             }
 
-            TickerBLL bll = new TickerBLL(this.S3_Bucket_Name, Temp_Folder);
+            TickerBLL bll = new TickerBLL(this.S3_Bucket_Name, this.Temp_Folder);
             // save tickers into S3
             foreach (KeyValuePair<string, List<TickerEntity>> tickerGroup in this.stockDict)
             {
@@ -101,6 +107,7 @@ namespace screen3_data_loader.controllers
 
             ZipFile.ExtractToDirectory(fileName, targetPath);
 
+            Console.WriteLine("about to dir search: " + targetPath);
             resultFileList = FileHelper.DirSearch(targetPath);
 
             return resultFileList;

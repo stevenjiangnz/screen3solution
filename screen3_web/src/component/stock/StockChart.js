@@ -51,6 +51,13 @@ export class StockChart extends Component {
           cursor: "pointer",
           groupingUnits: this.groupingUnits,
         },
+        {
+          name: "volume",
+          type: "column",
+          lineWidth: 1,
+          yAxis: 1,
+          groupingUnits: this.groupingUnits,
+        },
       ],
       rangeSelector: {
         selected: 2,
@@ -75,7 +82,7 @@ export class StockChart extends Component {
           },
           height: 300,
           lineWidth: 1,
-          top: 120,
+          top: 110,
           crosshair: {
             label: {
               enabled: false,
@@ -83,8 +90,8 @@ export class StockChart extends Component {
           },
         },
         {
-          top: 340,
-          height: 90,
+          top: 330,
+          height: 80,
           lineWidth: 1,
           offset: -6,
           opposite: false,
@@ -254,6 +261,9 @@ export class StockChart extends Component {
       this.chart.setTitle({ text: `${stock.code} - ${stock.company}` });
       this.chart.series[0].setData(this.tickers);
       this.chart.series[0].name = `${stock.code} - ${this.currentChartSettings.type}`;
+
+      const volumnData = TickerHelper.ConvertVolume(this.tickersOrigin);
+      this.chart.series[1].setData(volumnData);
 
       for (var i = 1; i < values.length; i++) {
         const indSetting = indicators[i - 1];

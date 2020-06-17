@@ -1,11 +1,17 @@
 ﻿using System;
 using System.IO;
+using System.IO.Compression;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Screen3.Entity;
 using System.Linq;
 using System.Text;
 using Screen3.Utils;
+using Screen3.S3Service;
+using MailKit.Net.Imap;
+using MailKit.Search;
+using MailKit;
+using MimeKit;
 
 namespace Screen3.BLL
 {
@@ -21,62 +27,75 @@ namespace Screen3.BLL
             this.localFolder = localFolder;
         }
 
-        public async Task<List<TickerEntity>> GetWeeklyTickerEntityList(string code, int? start = 0, int? end = 0) {
+        public async Task<List<TickerEntity>> GetWeeklyTickerEntityList(string code, int? start = 0, int? end = 0)
+        {
             List<TickerEntity> weeklyTickerList = null;
             int weekStart = 0;
             int weekEnd = 0;
 
-            if (start != 0) {
-                weekStart =  DateHelper.ToInt(DateHelper.ToDate(start.Value).AddDays(-7));
+            if (start != 0)
+            {
+                weekStart = DateHelper.ToInt(DateHelper.ToDate(start.Value).AddDays(-7));
             }
 
-            if ( end !=0 ) {
+            if (end != 0)
+            {
                 weekEnd = DateHelper.ToInt(DateHelper.ToDate(end.Value).AddDays(7));
             }
             List<TickerEntity> dayList = await this.GetDailyTickerEntityList(code, weekStart, weekEnd);
 
             weeklyTickerList = this.GetWeeklyTickerListFromDayList(dayList);
 
-            return weeklyTickerList.Where(t => (start == 0 || t.P >= start) && (end ==0 || t.P <= end)).ToList();
+            return weeklyTickerList.Where(t => (start == 0 || t.P >= start) && (end == 0 || t.P <= end)).ToList();
         }
 
 
-        public async Task<List<TickerEntity>> GetDailyTickerEntityList(string code, int? start = 0, int? end = 0) {
+        public async Task<List<TickerEntity>> GetDailyTickerEntityList(string code, int? start = 0, int? end = 0)
+        {
             List<TickerEntity> tickerList = null;
             string localTickerFilePath = $@"{localFolder}{code}/{code}_day.txt";
             bool isLocalAvailable = false;
-            
+
             Directory.CreateDirectory($@"{localFolder}{code}/");
-            if (File.Exists(localTickerFilePath)) {
+            if (File.Exists(localTickerFilePath))
+            {
                 FileInfo tickerFile = new FileInfo(localTickerFilePath);
 
-                if (tickerFile.CreationTime > DateTime.Now.AddHours(this.local_ticker_ttL * -1)) {
+                if (tickerFile.CreationTime > DateTime.Now.AddHours(this.local_ticker_ttL * -1))
+                {
                     isLocalAvailable = true;
-                } else {
+                }
+                else
+                {
                     File.Delete(localTickerFilePath);
                 }
             }
 
-            if (isLocalAvailable) {
+            if (isLocalAvailable)
+            {
                 Console.WriteLine("Screen3: load ticker form local");
                 string content = File.ReadAllText(localTickerFilePath);
                 tickerList = this.getTickerListFromString(content);
-            } else {
+            }
+            else
+            {
                 Console.WriteLine("Screen3: load ticker form S3");
 
                 tickerList = await this.GetExistingDayTickersFromS3(code);
                 this.SaveTickerlistToLocal(localTickerFilePath, tickerList);
             }
-            
-            var filteredList =  tickerList.Where(t => (start == 0 || t.P >= start) && (end ==0 || t.P <= end)).ToList();
+
+            var filteredList = tickerList.Where(t => (start == 0 || t.P >= start) && (end == 0 || t.P <= end)).ToList();
 
             return filteredList;
         }
 
-        public void SaveTickerlistToLocal(string path, List<TickerEntity> tickerList) {
+        public void SaveTickerlistToLocal(string path, List<TickerEntity> tickerList)
+        {
             StringBuilder sb = new StringBuilder();
 
-            foreach(var ticker in tickerList) {
+            foreach (var ticker in tickerList)
+            {
                 sb.AppendLine(ticker.ToString());
             }
 
@@ -162,7 +181,8 @@ namespace Screen3.BLL
                         if (weeklyTicker.L > tickerArray[i].L)
                             weeklyTicker.L = tickerArray[i].L;
 
-                        if (i == tickerArray.Length - 1) {
+                        if (i == tickerArray.Length - 1)
+                        {
                             weeklyTicker.C = tickerArray[i].C;
                             weeklyTicker.P = period;
                         }
@@ -204,6 +224,69 @@ namespace Screen3.BLL
             }
 
             return tickers;
+        }
+
+
+        public async Task GetTickerFromEmail(string emailAccount, string emailPwd, string bucketName)
+        {
+            List<string> fileNames = new List<string>();
+            string localInboxFolder = "/tmp/screen3_temp_files/inbox/";
+            string localInboxZipFolder = "/tmp/screen3_temp_files/inbox_zip/";
+            string zipFileName = "";
+            
+            FileHelper.ClearDirectory(localInboxFolder, true);
+            FileHelper.ClearDirectory(localInboxZipFolder, true);
+            
+            using (var client = new ImapClient())
+            {
+                client.Connect("imap.gmail.com", 993, true);
+                client.Authenticate(emailAccount, emailPwd);
+
+                // The Inbox folder is always available on all IMAP servers...
+                var inbox = client.Inbox;
+                inbox.Open(FolderAccess.ReadWrite);
+                foreach (var uid in inbox.Search(SearchQuery.NotSeen))
+                {
+                    var message = inbox.GetMessage(uid);
+                    if (message.Subject.IndexOf("Daily Historical Data") >= 0)
+                    {
+                        foreach (MimeEntity attachment in message.Attachments)
+                        {
+                            var fileName = localInboxFolder + attachment.ContentDisposition?.FileName ?? attachment.ContentType.Name;
+
+                            using (var stream = File.Create(fileName))
+                            {
+                                if (attachment is MessagePart)
+                                {
+                                    var rfc822 = (MessagePart)attachment;
+                                    rfc822.Message.WriteTo(stream);
+                                }
+                                else
+                                {
+                                    var part = (MimePart)attachment;
+                                    part.Content.DecodeTo(stream);
+                                }
+                            }
+                            fileNames.Add(fileName);
+                        }
+                    }
+
+                    inbox.AddFlags(uid, MessageFlags.Seen, true);
+                }
+
+                client.Disconnect(true);
+
+                if (fileNames.Count > 0) {
+                    S3Service.S3Service service = new S3Service.S3Service();
+
+                    zipFileName = DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss") + ".zip";
+                    var zipFilePath = localInboxZipFolder + zipFileName;
+                    
+                    ZipFile.CreateFromDirectory(localInboxFolder, zipFilePath);
+
+                    await service.UploadFileToS3Async(bucketName, "source/" + zipFileName, zipFilePath);
+                }
+            }
         }
     }
 }

@@ -108,6 +108,14 @@ namespace Screen3.S3Service
             }
         }
 
+        public async Task UploadFileToS3Async(string bucketName, string keyName, string path)
+        {
+            var fileTransferUtility = new TransferUtility(client);
+
+            await fileTransferUtility.UploadAsync(path, bucketName, keyName);
+        }
+
+
         public async Task<List<S3Object>> ListingObjectsAsync(String bucketName, String prefix)
         {
             List<S3Object> fileList = new List<S3Object>();
@@ -148,7 +156,8 @@ namespace Screen3.S3Service
             return fileList;
         }
 
-        public async Task CopyObject(string srcBuctet, string srcKey, string destBucket, string destKey) {
+        public async Task CopyObject(string srcBuctet, string srcKey, string destBucket, string destKey)
+        {
             try
             {
                 CopyObjectRequest request = new CopyObjectRequest
@@ -170,8 +179,9 @@ namespace Screen3.S3Service
             }
         }
 
-        public async Task DeleteObject(string bucketName, string keyName) {
-           try
+        public async Task DeleteObject(string bucketName, string keyName)
+        {
+            try
             {
                 var deleteObjectRequest = new DeleteObjectRequest
                 {

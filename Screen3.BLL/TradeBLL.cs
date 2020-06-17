@@ -88,6 +88,5 @@ namespace Screen3.BLL
             await this.dal.Update(account);
         }
 
-
     }
 }
