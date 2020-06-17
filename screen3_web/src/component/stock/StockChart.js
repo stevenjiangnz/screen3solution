@@ -63,7 +63,7 @@ export class StockChart extends Component {
         selected: 2,
       },
       tooltip: {
-        enabled: false,
+        enabled: true,
       },
       xAxis: {
         type: "datetime",
