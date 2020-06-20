@@ -13,7 +13,7 @@ namespace Screen3.Utils
             if (Directory.Exists(targetPath))
             {
                 DirectoryInfo dir = new DirectoryInfo(targetPath);
-                dir.Delete(true);
+                dir.Delete(true); 
             }
 
             if (withCreate.HasValue && withCreate == true)
